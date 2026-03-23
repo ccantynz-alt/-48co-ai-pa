@@ -2,7 +2,7 @@ import './globals.css'
 
 export const metadata = {
   title: '48co — AI Personal Assistant',
-  description: 'Context-aware voice input for AI workflows',
+  description: 'Context-aware voice input HUD for AI workflows',
 }
 
 export default function RootLayout({ children }) {
@@ -14,7 +14,7 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
       </head>
-      <body className="bg-black text-white antialiased">{children}</body>
+      <body className="bg-[#0a0a0e] text-white antialiased font-mono">{children}</body>
     </html>
   )
 }
