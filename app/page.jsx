@@ -1,362 +1,267 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
-import MicToggle from '../components/MicToggle'
+import { useState } from 'react'
 import Waveform from '../components/Waveform'
 
-// Voice commands that trigger specific actions
-const VOICE_COMMANDS = {
-  'claude refactor this': 'Refactor the following code. Identify inefficiencies, simplify logic, and rewrite it cleanly:\n\n',
-  'claude explain this':  'Explain what the following code does, step by step:\n\n',
-  'claude debug this':    'Debug the following code. Find any errors, explain them, and provide a fix:\n\n',
-  'send it':              '__SUBMIT__',
-  'cancel':               '__CANCEL__',
-}
+const FEATURES = [
+  {
+    icon: '&#8679;&#8681;',
+    title: 'Scroll Wheel Toggle',
+    desc: 'Scroll up to record, down to stop. No clicking. No fumbling.',
+    color: '#00f0ff',
+  },
+  {
+    icon: '&#9001;/&#9002;',
+    title: 'Auto Code Fences',
+    desc: 'Detects coding keywords and wraps your transcript in markdown code blocks automatically.',
+    color: '#00f0ff',
+  },
+  {
+    icon: '&#128483;',
+    title: 'Voice Commands',
+    desc: '"Refactor this", "Debug this", "Send it" — developer prompts triggered by voice.',
+    color: '#ff3b5c',
+  },
+  {
+    icon: '&#10547;',
+    title: 'Direct Injection',
+    desc: 'Types directly into Claude, ChatGPT, Gemini & DeepSeek. No clipboard. No paste.',
+    color: '#00ff88',
+  },
+  {
+    icon: '&#9881;',
+    title: 'Whisper API Support',
+    desc: 'Free Web Speech by default. Upgrade to Whisper API for 99%+ accuracy with your own key.',
+    color: '#ffb800',
+  },
+  {
+    icon: '&#8997;',
+    title: 'Keyboard Shortcut',
+    desc: 'Ctrl+Shift+Space (Win) or Cmd+Shift+Space (Mac) toggles recording instantly.',
+    color: '#00f0ff',
+  },
+]
 
-// Keywords that trigger auto code-fence wrapping
-const CODING_KEYWORDS = ['function', 'class', 'import', 'const', 'let', 'var',
-  'loop', 'array', 'object', 'return', 'async', 'await', 'def']
+const COMPETITORS = [
+  { name: 'VoiceWave', type: 'Extension', price: 'Free', claude: 'Buggy', codeFence: 'No', voiceCmd: 'No', scrollToggle: 'No' },
+  { name: 'Wispr Flow', type: 'Desktop', price: '$15/mo', claude: 'No', codeFence: 'No', voiceCmd: 'No', scrollToggle: 'No' },
+  { name: 'Voicy', type: 'Extension', price: '$8.49/mo', claude: 'Generic', codeFence: 'No', voiceCmd: 'No', scrollToggle: 'No' },
+  { name: 'Superwhisper', type: 'Desktop', price: '$8.49/mo', claude: 'No', codeFence: 'No', voiceCmd: 'No', scrollToggle: 'No' },
+  { name: '48co', type: 'Extension', price: 'Free', claude: 'Native', codeFence: 'Yes', voiceCmd: 'Yes', scrollToggle: 'Yes' },
+]
 
-export default function HUD() {
-  const [status, setStatus] = useState('idle')       // idle | record | process | done
-  const [transcript, setTranscript] = useState('')
-  const [codingMode, setCodingMode] = useState(false) // manual code mode toggle
-  const [showSettings, setShowSettings] = useState(false)
-  const [settings, setSettings] = useState({
-    noiseSuppression: true,
-    autoCoding: true,
-    typeSpeed: 30,
-    autoSubmit: false,
-  })
-  const recognitionRef = useRef(null)
-  const transcriptRef = useRef('')
+const COMMANDS = [
+  { trigger: 'refactor this', action: 'Pastes refactor prompt' },
+  { trigger: 'explain this', action: 'Pastes explain prompt' },
+  { trigger: 'debug this', action: 'Pastes debug prompt' },
+  { trigger: 'fix this', action: 'Pastes fix prompt' },
+  { trigger: 'test this', action: 'Pastes test prompt' },
+  { trigger: 'optimize this', action: 'Pastes optimize prompt' },
+  { trigger: 'send it', action: 'Submits the message' },
+  { trigger: 'cancel', action: 'Clears and resets' },
+]
 
-  // Keep ref in sync so onend callback reads latest value
-  useEffect(() => { transcriptRef.current = transcript }, [transcript])
-
-  // ── Detect coding content ────────────────────────────────────────
-  const isCodingText = (text) =>
-    CODING_KEYWORDS.some(k => text.toLowerCase().includes(k))
-
-  const wrapAsCode = (text) => {
-    const lower = text.toLowerCase()
-    const lang = lower.includes('python') || lower.includes('def') ? 'python' : 'javascript'
-    return `\`\`\`${lang}\n${text}\n\`\`\``
-  }
-
-  // ── Check for voice commands ─────────────────────────────────────
-  const checkVoiceCommands = (text) => {
-    const lower = text.toLowerCase().trim()
-    for (const [trigger, action] of Object.entries(VOICE_COMMANDS)) {
-      if (lower.includes(trigger)) return action
-    }
-    return null
-  }
-
-  // ── Paste text into the active window via clipboard ──────────────
-  const pasteText = useCallback(async (text) => {
-    try {
-      await navigator.clipboard.writeText(text)
-      setStatus('done')
-      setTimeout(() => {
-        setStatus('idle')
-        setTranscript('')
-      }, 1500)
-    } catch {
-      setStatus('idle')
-    }
-  }, [])
-
-  // ── Process transcript after recording ends ──────────────────────
-  const processTranscript = useCallback((text) => {
-    if (!text) {
-      setStatus('idle')
-      return
-    }
-
-    setStatus('process')
-
-    const command = checkVoiceCommands(text)
-
-    if (command === '__CANCEL__') {
-      setTranscript('')
-      setStatus('idle')
-      return
-    }
-
-    if (command === '__SUBMIT__') {
-      // Simulate Enter key press on the focused element
-      document.activeElement?.dispatchEvent(
-        new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })
-      )
-      setTranscript('')
-      setStatus('idle')
-      return
-    }
-
-    let output = command || text
-
-    // Auto coding mode: wrap in fences if coding keywords detected
-    if (codingMode || (settings.autoCoding && isCodingText(output))) {
-      output = wrapAsCode(output)
-    }
-
-    pasteText(output)
-  }, [codingMode, settings.autoCoding, pasteText])
-
-  // ── Start recording ──────────────────────────────────────────────
-  const startRecording = useCallback(() => {
-    if (status !== 'idle') return
-
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-    if (!SpeechRecognition) {
-      alert('Speech recognition not supported in this browser. Please use Chrome or Edge.')
-      return
-    }
-
-    const recognition = new SpeechRecognition()
-    recognition.continuous = true
-    recognition.interimResults = true
-    recognition.lang = 'en-NZ'
-
-    recognition.onstart = () => setStatus('record')
-
-    recognition.onresult = (e) => {
-      // Build full transcript from all results
-      let full = ''
-      for (let i = 0; i < e.results.length; i++) {
-        full += e.results[i][0].transcript
-      }
-      setTranscript(full)
-    }
-
-    recognition.onend = () => {
-      processTranscript(transcriptRef.current)
-    }
-
-    recognition.onerror = (e) => {
-      if (e.error !== 'aborted') setStatus('idle')
-    }
-
-    recognitionRef.current = recognition
-    recognition.start()
-  }, [status, processTranscript])
-
-  // ── Stop recording ───────────────────────────────────────────────
-  const stopRecording = useCallback(() => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop()
-    }
-  }, [])
-
-  // ── Handle toggle from MicToggle (scroll + click) ────────────────
-  const handleToggle = useCallback((action) => {
-    if (action === 'start') startRecording()
-    if (action === 'stop')  stopRecording()
-  }, [startRecording, stopRecording])
-
-  // ── Keyboard shortcut: Ctrl/Cmd + Shift + Space ──────────────────
-  useEffect(() => {
-    const handler = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === 'Space') {
-        e.preventDefault()
-        if (status === 'idle')   startRecording()
-        if (status === 'record') stopRecording()
-      }
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [status, startRecording, stopRecording])
-
-  // ── Update a settings field ──────────────────────────────────────
-  const updateSetting = (key, value) => {
-    setSettings(prev => ({ ...prev, [key]: value }))
-  }
+export default function LandingPage() {
+  const [demoRecording, setDemoRecording] = useState(false)
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-4 bg-[#0a0a0e] relative">
+    <main className="min-h-screen bg-[#0a0a0e] text-white font-mono">
 
-      {/* ── HUD Panel ──────────────────────────────────────────── */}
-      <div className="glass rounded-2xl w-[380px] overflow-hidden select-none z-10">
+      {/* ── Hero ──────────────────────────────────────────────────── */}
+      <section className="flex flex-col items-center justify-center min-h-screen px-4 text-center relative">
+        {/* Subtle gradient glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#00f0ff]/5 rounded-full blur-[120px] pointer-events-none" />
 
-        {/* Title bar */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06]">
-          <span className="text-[13px] font-bold tracking-[0.2em] text-white/80">
-            &#8803; 48CO
-          </span>
-          <div className="flex items-center gap-2">
-            {/* Code mode toggle */}
+        <p className="text-[11px] tracking-[0.3em] text-[#00f0ff]/60 mb-4 uppercase">
+          Voice-to-AI for developers
+        </p>
+
+        <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6">
+          <span className="text-white/90">48</span>
+          <span className="text-[#00f0ff]">co</span>
+        </h1>
+
+        <p className="text-white/40 text-sm md:text-base max-w-lg leading-relaxed mb-8">
+          A Chrome extension that injects voice input directly into Claude, ChatGPT, Gemini &amp; DeepSeek.
+          Developer voice commands. Auto code fences. Scroll-wheel control.
+        </p>
+
+        {/* Demo widget */}
+        <div className="glass rounded-2xl w-[340px] overflow-hidden mb-8">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06]">
+            <span className="text-[11px] font-bold tracking-[0.2em] text-white/60">&equiv; 48CO</span>
+            <span className="text-[9px] px-2 py-0.5 rounded border border-white/10 text-white/30">Claude</span>
+          </div>
+
+          <div className="py-4 border-b border-white/[0.06]">
+            <Waveform isRecording={demoRecording} />
+          </div>
+
+          <div className="py-6 flex flex-col items-center gap-3">
             <button
-              onClick={() => setCodingMode(m => !m)}
-              className={`text-[10px] px-2 py-1 rounded border transition-all ${
-                codingMode
-                  ? 'border-[#00f0ff] text-[#00f0ff]'
-                  : 'border-white/10 text-white/30 hover:border-white/20'
+              onClick={() => setDemoRecording(r => !r)}
+              className={`w-14 h-14 rounded-full glass flex items-center justify-center transition-all duration-300 cursor-pointer ${
+                demoRecording
+                  ? 'ring-2 ring-[#ff3b5c] shadow-[0_0_20px_rgba(255,59,92,0.4)]'
+                  : 'ring-2 ring-white/15'
               }`}
             >
-              CODE
+              {demoRecording ? (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff3b5c" strokeWidth="1.5">
+                  <path d="M2 12h2M6 8v8M10 5v14M14 9v6M18 7v10M22 12h-2"/>
+                </svg>
+              ) : (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="1.5">
+                  <rect x="9" y="2" width="6" height="11" rx="3"/>
+                  <path d="M5 10a7 7 0 0014 0"/>
+                  <line x1="12" y1="21" x2="12" y2="17"/>
+                  <line x1="9" y1="21" x2="15" y2="21"/>
+                </svg>
+              )}
             </button>
-
-            {/* Settings gear */}
-            <button
-              onClick={() => setShowSettings(s => !s)}
-              className="text-white/30 hover:text-white/60 transition-colors text-[16px] leading-none"
-              title="Settings"
-            >
-              &#9881;
-            </button>
+            <span className={`text-[11px] tracking-wider transition-colors ${
+              demoRecording ? 'text-[#ff3b5c]' : 'text-white/30'
+            }`}>
+              {demoRecording ? 'Click to stop' : 'Click to try'}
+            </span>
           </div>
         </div>
 
-        {/* Waveform */}
-        <div className="py-4 border-b border-white/[0.06]">
-          <Waveform isRecording={status === 'record'} />
+        <a
+          href="#install"
+          className="px-8 py-3 rounded-xl bg-[#00f0ff]/10 border border-[#00f0ff]/30 text-[#00f0ff] text-sm tracking-wider hover:bg-[#00f0ff]/20 transition-all"
+        >
+          INSTALL CHROME EXTENSION
+        </a>
+
+        <p className="text-[10px] text-white/15 mt-4">Free &middot; No account required &middot; Open source</p>
+      </section>
+
+      {/* ── Features Grid ─────────────────────────────────────────── */}
+      <section className="max-w-5xl mx-auto px-4 py-24">
+        <h2 className="text-[11px] tracking-[0.3em] text-[#00f0ff]/40 text-center mb-12 uppercase">
+          Built for developers
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {FEATURES.map((f) => (
+            <div
+              key={f.title}
+              className="glass rounded-2xl p-5 hover:border-white/[0.12] transition-all"
+            >
+              <span
+                className="text-2xl mb-3 block"
+                style={{ color: f.color }}
+                dangerouslySetInnerHTML={{ __html: f.icon }}
+              />
+              <h3 className="text-sm font-bold text-white/80 mb-2">{f.title}</h3>
+              <p className="text-[11px] text-white/35 leading-relaxed">{f.desc}</p>
+            </div>
+          ))}
         </div>
+      </section>
 
-        {/* Mic toggle — the star of the show */}
-        <div className="py-6 flex flex-col items-center gap-4">
-          <MicToggle status={status} onToggle={handleToggle} />
+      {/* ── Voice Commands ────────────────────────────────────────── */}
+      <section className="max-w-3xl mx-auto px-4 py-24">
+        <h2 className="text-[11px] tracking-[0.3em] text-[#ff3b5c]/40 text-center mb-12 uppercase">
+          Voice Commands
+        </h2>
 
-          {/* Transcript preview */}
-          {transcript && (
-            <p className="text-[11px] text-white/40 text-center px-6 leading-relaxed max-h-16 overflow-hidden">
-              {transcript}
-            </p>
-          )}
+        <div className="glass rounded-2xl overflow-hidden">
+          {COMMANDS.map((cmd, i) => (
+            <div
+              key={cmd.trigger}
+              className={`flex items-center justify-between px-5 py-3 ${
+                i < COMMANDS.length - 1 ? 'border-b border-white/[0.04]' : ''
+              }`}
+            >
+              <span className="text-[12px] text-[#00f0ff]">&ldquo;{cmd.trigger}&rdquo;</span>
+              <span className="text-[11px] text-white/30">{cmd.action}</span>
+            </div>
+          ))}
         </div>
+      </section>
 
-        {/* Footer hint */}
-        <div className="px-4 py-2 border-t border-white/[0.06]">
-          <p className="text-[10px] text-white/20 text-center tracking-wider">
-            CTRL+SHIFT+SPACE &middot; SCROLL &uarr;&darr; &middot; CLICK
-          </p>
+      {/* ── Comparison Table ──────────────────────────────────────── */}
+      <section className="max-w-4xl mx-auto px-4 py-24">
+        <h2 className="text-[11px] tracking-[0.3em] text-[#00ff88]/40 text-center mb-12 uppercase">
+          vs Competitors
+        </h2>
+
+        <div className="glass rounded-2xl overflow-hidden overflow-x-auto">
+          <table className="w-full text-[11px]">
+            <thead>
+              <tr className="border-b border-white/[0.06]">
+                <th className="text-left px-4 py-3 text-white/30 font-normal">Tool</th>
+                <th className="text-left px-4 py-3 text-white/30 font-normal">Type</th>
+                <th className="text-left px-4 py-3 text-white/30 font-normal">Price</th>
+                <th className="text-left px-4 py-3 text-white/30 font-normal">Claude</th>
+                <th className="text-left px-4 py-3 text-white/30 font-normal">Code Fences</th>
+                <th className="text-left px-4 py-3 text-white/30 font-normal">Voice Cmds</th>
+                <th className="text-left px-4 py-3 text-white/30 font-normal">Scroll Toggle</th>
+              </tr>
+            </thead>
+            <tbody>
+              {COMPETITORS.map((c) => {
+                const is48 = c.name === '48co'
+                return (
+                  <tr key={c.name} className={`border-b border-white/[0.04] ${is48 ? 'bg-[#00f0ff]/5' : ''}`}>
+                    <td className={`px-4 py-3 font-bold ${is48 ? 'text-[#00f0ff]' : 'text-white/60'}`}>{c.name}</td>
+                    <td className="px-4 py-3 text-white/30">{c.type}</td>
+                    <td className="px-4 py-3 text-white/30">{c.price}</td>
+                    <td className={`px-4 py-3 ${c.claude === 'Native' ? 'text-[#00ff88]' : c.claude === 'Buggy' ? 'text-[#ffb800]' : 'text-white/20'}`}>{c.claude}</td>
+                    <td className={`px-4 py-3 ${c.codeFence === 'Yes' ? 'text-[#00ff88]' : 'text-white/20'}`}>{c.codeFence}</td>
+                    <td className={`px-4 py-3 ${c.voiceCmd === 'Yes' ? 'text-[#00ff88]' : 'text-white/20'}`}>{c.voiceCmd}</td>
+                    <td className={`px-4 py-3 ${c.scrollToggle === 'Yes' ? 'text-[#00ff88]' : 'text-white/20'}`}>{c.scrollToggle}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
         </div>
-      </div>
+      </section>
 
-      {/* ── Settings Panel (slides from right) ─────────────────── */}
-      <div
-        className={`
-          glass rounded-2xl w-[300px] p-5 fixed right-4 top-4 bottom-4 overflow-y-auto z-20
-          transition-transform duration-300 ease-in-out
-          ${showSettings ? 'translate-x-0' : 'translate-x-[340px]'}
-        `}
-      >
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-[12px] tracking-[0.2em] text-white/60">SETTINGS</h2>
-          <button
-            onClick={() => setShowSettings(false)}
-            className="text-white/30 hover:text-white/60 transition-colors text-lg"
+      {/* ── Install Section ───────────────────────────────────────── */}
+      <section id="install" className="max-w-3xl mx-auto px-4 py-24 text-center">
+        <h2 className="text-3xl font-bold mb-4 text-white/90">Get 48co</h2>
+        <p className="text-white/35 text-sm mb-10 max-w-md mx-auto">
+          Install the Chrome extension and start dictating into any AI chat in seconds.
+        </p>
+
+        <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-8">
+          <a
+            href="#"
+            className="px-8 py-3 rounded-xl bg-[#00f0ff]/10 border border-[#00f0ff]/30 text-[#00f0ff] text-sm tracking-wider hover:bg-[#00f0ff]/20 transition-all"
           >
-            &times;
-          </button>
+            Chrome Web Store (coming soon)
+          </a>
+          <a
+            href="https://github.com/ccantynz-alt/-48co-ai-pa"
+            className="px-8 py-3 rounded-xl border border-white/10 text-white/40 text-sm tracking-wider hover:border-white/20 transition-all"
+          >
+            View on GitHub
+          </a>
         </div>
 
-        {/* Audio */}
-        <Section title="AUDIO">
-          <Setting label="Input device">
-            <select className="bg-white/5 border border-white/10 text-white/60 text-[11px] rounded px-2 py-1 w-full outline-none">
-              <option>Default Mic</option>
-            </select>
-          </Setting>
-          <Setting label="Noise suppression">
-            <Toggle
-              on={settings.noiseSuppression}
-              onChange={(v) => updateSetting('noiseSuppression', v)}
-            />
-          </Setting>
-        </Section>
+        <div className="glass rounded-2xl p-6 text-left max-w-lg mx-auto">
+          <p className="text-[10px] tracking-[0.15em] text-white/25 mb-3 uppercase">Manual Install</p>
+          <ol className="text-[11px] text-white/40 space-y-2 list-decimal list-inside">
+            <li>Download or clone the <code className="text-[#00f0ff]/60">extension/</code> folder</li>
+            <li>Open <code className="text-[#00f0ff]/60">chrome://extensions</code></li>
+            <li>Enable &ldquo;Developer mode&rdquo; (top right toggle)</li>
+            <li>Click &ldquo;Load unpacked&rdquo; and select the extension folder</li>
+            <li>Navigate to Claude, ChatGPT, Gemini, or DeepSeek</li>
+            <li>Scroll up to record, scroll down to paste</li>
+          </ol>
+        </div>
+      </section>
 
-        {/* Transcription */}
-        <Section title="TRANSCRIPTION">
-          <Setting label="Engine">
-            <select className="bg-white/5 border border-white/10 text-white/60 text-[11px] rounded px-2 py-1 w-full outline-none">
-              <option>Browser (Web Speech)</option>
-              <option>Whisper (coming soon)</option>
-            </select>
-          </Setting>
-          <Setting label="Auto coding mode">
-            <Toggle
-              on={settings.autoCoding}
-              onChange={(v) => updateSetting('autoCoding', v)}
-            />
-          </Setting>
-        </Section>
-
-        {/* Behaviour */}
-        <Section title="BEHAVIOUR">
-          <Setting label={`Type speed: ${settings.typeSpeed}ms`}>
-            <input
-              type="range"
-              min="10"
-              max="100"
-              value={settings.typeSpeed}
-              onChange={(e) => updateSetting('typeSpeed', Number(e.target.value))}
-              className="w-full accent-[#00f0ff]"
-            />
-          </Setting>
-          <Setting label="Auto-submit on paste">
-            <Toggle
-              on={settings.autoSubmit}
-              onChange={(v) => updateSetting('autoSubmit', v)}
-            />
-          </Setting>
-        </Section>
-
-        {/* Templates */}
-        <Section title="TEMPLATES">
-          {Object.keys(VOICE_COMMANDS)
-            .filter(k => k !== 'send it' && k !== 'cancel')
-            .map(cmd => (
-              <div key={cmd} className="text-[10px] text-white/30 py-1.5 border-b border-white/5">
-                &ldquo;{cmd}&rdquo;
-              </div>
-            ))}
-        </Section>
-      </div>
-
-      {/* Backdrop when settings open */}
-      {showSettings && (
-        <div
-          className="fixed inset-0 z-10"
-          onClick={() => setShowSettings(false)}
-        />
-      )}
+      {/* ── Footer ────────────────────────────────────────────────── */}
+      <footer className="border-t border-white/[0.06] py-8 text-center">
+        <p className="text-[10px] text-white/15 tracking-wider">
+          48co &middot; Built in NZ &middot; Open Source
+        </p>
+      </footer>
     </main>
-  )
-}
-
-// ── Small helper components ──────────────────────────────────────────
-function Section({ title, children }) {
-  return (
-    <div className="mb-5">
-      <p className="text-[10px] tracking-[0.15em] text-white/30 mb-2">{title}</p>
-      <div className="space-y-3">{children}</div>
-    </div>
-  )
-}
-
-function Setting({ label, children }) {
-  return (
-    <div className="flex items-center justify-between gap-3">
-      <span className="text-[11px] text-white/50 flex-1">{label}</span>
-      {children}
-    </div>
-  )
-}
-
-function Toggle({ on, onChange }) {
-  return (
-    <button
-      onClick={() => onChange(!on)}
-      className={`w-9 h-5 rounded-full relative transition-colors flex-shrink-0 ${
-        on ? 'bg-[#00f0ff]/40' : 'bg-white/10'
-      }`}
-    >
-      <span
-        className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${
-          on ? 'left-[18px]' : 'left-0.5'
-        }`}
-      />
-    </button>
   )
 }

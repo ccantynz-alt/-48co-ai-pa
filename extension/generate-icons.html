@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head><title>48co Icon Generator</title></head>
+<body>
+<h3>48co Icon Generator</h3>
+<p>Right-click each icon and "Save Image As" to get the PNG files.</p>
+<div style="display:flex;gap:20px;align-items:end;padding:20px;background:#333;">
+  <div>
+    <p>16x16</p>
+    <canvas id="c16" width="16" height="16"></canvas>
+  </div>
+  <div>
+    <p>48x48</p>
+    <canvas id="c48" width="48" height="48"></canvas>
+  </div>
+  <div>
+    <p>128x128</p>
+    <canvas id="c128" width="128" height="128"></canvas>
+  </div>
+</div>
+<script>
+function drawIcon(canvas) {
+  const s = canvas.width;
+  const ctx = canvas.getContext('2d');
+  const r = s * 0.15; // corner radius
+
+  // Background
+  ctx.fillStyle = '#0a0a0e';
+  ctx.beginPath();
+  ctx.roundRect(0, 0, s, s, r);
+  ctx.fill();
+
+  // Mic body
+  ctx.strokeStyle = '#00f0ff';
+  ctx.lineWidth = Math.max(1, s * 0.04);
+  ctx.lineCap = 'round';
+
+  const mw = s * 0.25;
+  const mh = s * 0.375;
+  const mx = (s - mw) / 2;
+  const my = s * 0.16;
+  const mr = mw / 2;
+
+  ctx.beginPath();
+  ctx.roundRect(mx, my, mw, mh, mr);
+  ctx.stroke();
+
+  // Arc
+  const arcR = s * 0.25;
+  const arcY = s * 0.46;
+  ctx.beginPath();
+  ctx.arc(s/2, arcY, arcR, 0, Math.PI, false);
+  ctx.stroke();
+
+  // Stem
+  ctx.beginPath();
+  ctx.moveTo(s/2, arcY + arcR);
+  ctx.lineTo(s/2, s * 0.78);
+  ctx.stroke();
+
+  // Base
+  ctx.beginPath();
+  ctx.moveTo(s * 0.35, s * 0.78);
+  ctx.lineTo(s * 0.65, s * 0.78);
+  ctx.stroke();
+}
+
+drawIcon(document.getElementById('c16'));
+drawIcon(document.getElementById('c48'));
+drawIcon(document.getElementById('c128'));
+</script>
+</body>
+</html>
