@@ -44,7 +44,7 @@ body {
 }
 .ring-record { animation: pulse_ring 1.2s ease-in-out infinite; }
 
-/* Waveform bars */
+/* Waveform bar animations — staggered durations for organic feel */
 @keyframes bar1 { 0%,100%{height:6px}  50%{height:22px} }
 @keyframes bar2 { 0%,100%{height:10px} 50%{height:30px} }
 @keyframes bar3 { 0%,100%{height:4px}  50%{height:26px} }
