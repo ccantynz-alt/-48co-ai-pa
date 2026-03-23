@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --hud-bg: rgba(10, 10, 14, 0.88);
+  --hud-border: rgba(255, 255, 255, 0.08);
+  --glow-cyan: #00f0ff;
+  --glow-red: #ff3b5c;
+  --glow-green: #00ff88;
+  --glow-amber: #ffb800;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #0a0a0e;
+  font-family: 'JetBrains Mono', monospace;
+  overflow: hidden;
+}
+
+/* Glass panel */
+.glass {
+  background: var(--hud-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--hud-border);
+}
+
+/* Status glow rings */
+.ring-idle    { box-shadow: 0 0 0 2px rgba(255,255,255,0.15); }
+.ring-record  { box-shadow: 0 0 0 2px var(--glow-red), 0 0 16px var(--glow-red); }
+.ring-process { box-shadow: 0 0 0 2px var(--glow-amber), 0 0 12px var(--glow-amber); }
+.ring-done    { box-shadow: 0 0 0 2px var(--glow-green), 0 0 12px var(--glow-green); }
+
+/* Pulse animation for recording state */
+@keyframes pulse_ring {
+  0%, 100% { box-shadow: 0 0 0 2px var(--glow-red), 0 0 16px var(--glow-red); }
+  50%       { box-shadow: 0 0 0 4px var(--glow-red), 0 0 28px var(--glow-red); }
+}
+.ring-record { animation: pulse_ring 1.2s ease-in-out infinite; }
+
+/* Waveform bars */
+@keyframes bar1 { 0%,100%{height:6px}  50%{height:22px} }
+@keyframes bar2 { 0%,100%{height:10px} 50%{height:30px} }
+@keyframes bar3 { 0%,100%{height:4px}  50%{height:26px} }
+@keyframes bar4 { 0%,100%{height:14px} 50%{height:36px} }
+@keyframes bar5 { 0%,100%{height:8px}  50%{height:20px} }
+
+.bar1 { animation: bar1 0.7s ease-in-out infinite; }
+.bar2 { animation: bar2 0.9s ease-in-out infinite 0.1s; }
+.bar3 { animation: bar3 0.6s ease-in-out infinite 0.2s; }
+.bar4 { animation: bar4 1.0s ease-in-out infinite 0.05s; }
+.bar5 { animation: bar5 0.75s ease-in-out infinite 0.15s; }
+
+/* Scrollbar hidden */
+::-webkit-scrollbar { display: none; }
