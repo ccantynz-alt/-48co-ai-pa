@@ -1,0 +1,141 @@
+/**
+ * 48co Background Service Worker
+ * Orchestrates messaging between content script and offscreen document.
+ * Handles keyboard shortcuts and extension lifecycle.
+ */
+
+// ── Offscreen document management ──────────────────────────────────
+let offscreenCreating = null
+
+async function ensureOffscreen() {
+  const contexts = await chrome.runtime.getContexts({
+    contextTypes: ['OFFSCREEN_DOCUMENT'],
+  })
+  if (contexts.length > 0) return
+
+  if (offscreenCreating) {
+    await offscreenCreating
+    return
+  }
+
+  offscreenCreating = chrome.offscreen.createDocument({
+    url: 'offscreen.html',
+    reasons: ['USER_MEDIA'],
+    justification: 'Microphone access for voice-to-text recording',
+  })
+  await offscreenCreating
+  offscreenCreating = null
+}
+
+// ── State persisted in chrome.storage ──────────────────────────────
+async function getState() {
+  const defaults = {
+    isRecording: false,
+    codingMode: false,
+    autoCoding: true,
+    noiseSuppression: true,
+    typeSpeed: 30,
+    autoSubmit: false,
+    whisperApiKey: '',
+    engine: 'web-speech', // 'web-speech' | 'whisper'
+  }
+  const stored = await chrome.storage.local.get(Object.keys(defaults))
+  return { ...defaults, ...stored }
+}
+
+async function setState(updates) {
+  await chrome.storage.local.set(updates)
+}
+
+// ── Keyboard shortcut handler ──────────────────────────────────────
+chrome.commands.onCommand.addListener(async (command) => {
+  if (command === 'toggle-recording') {
+    const state = await getState()
+    // Forward toggle to the active tab's content script
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+    if (tab?.id) {
+      chrome.tabs.sendMessage(tab.id, {
+        type: state.isRecording ? 'STOP_RECORDING' : 'START_RECORDING',
+      })
+    }
+  }
+})
+
+// ── Message router ─────────────────────────────────────────────────
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  handleMessage(msg, sender).then(sendResponse).catch((err) => {
+    console.error('[48co bg] Error:', err)
+    sendResponse({ error: err.message })
+  })
+  return true // keep channel open for async response
+})
+
+async function handleMessage(msg, sender) {
+  switch (msg.type) {
+    case 'START_RECORDING': {
+      const state = await getState()
+      if (state.engine === 'whisper') {
+        // Use offscreen document for Whisper API recording
+        await ensureOffscreen()
+        chrome.runtime.sendMessage({ type: 'OFFSCREEN_START', apiKey: state.whisperApiKey })
+      }
+      await setState({ isRecording: true })
+      return { ok: true, engine: state.engine }
+    }
+
+    case 'STOP_RECORDING': {
+      const state = await getState()
+      if (state.engine === 'whisper') {
+        chrome.runtime.sendMessage({ type: 'OFFSCREEN_STOP' })
+      }
+      await setState({ isRecording: false })
+      return { ok: true }
+    }
+
+    case 'TRANSCRIPTION_READY': {
+      // Forward transcription from offscreen → content script
+      await setState({ isRecording: false })
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+      if (tab?.id) {
+        chrome.tabs.sendMessage(tab.id, {
+          type: 'TRANSCRIPTION_READY',
+          text: msg.text,
+        })
+      }
+      return { ok: true }
+    }
+
+    case 'GET_STATE': {
+      return await getState()
+    }
+
+    case 'SET_STATE': {
+      await setState(msg.updates)
+      // Broadcast state change to all tabs
+      const tabs = await chrome.tabs.query({})
+      for (const tab of tabs) {
+        chrome.tabs.sendMessage(tab.id, { type: 'STATE_UPDATED', updates: msg.updates }).catch(() => {})
+      }
+      return { ok: true }
+    }
+
+    default:
+      return { error: 'Unknown message type' }
+  }
+}
+
+// ── Extension install / update ─────────────────────────────────────
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === 'install') {
+    // Set defaults on first install
+    setState({
+      isRecording: false,
+      codingMode: false,
+      autoCoding: true,
+      noiseSuppression: true,
+      typeSpeed: 30,
+      autoSubmit: false,
+      engine: 'web-speech',
+    })
+  }
+})

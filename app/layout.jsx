@@ -1,8 +1,8 @@
 import './globals.css'
 
 export const metadata = {
-  title: '48co — AI Personal Assistant',
-  description: 'Context-aware voice input HUD for AI workflows',
+  title: '48co — Voice Input for Claude, ChatGPT, Gemini & DeepSeek',
+  description: 'Developer-first Chrome extension. Voice commands, auto code fences, scroll-wheel control. Free.',
 }
 
 export default function RootLayout({ children }) {
