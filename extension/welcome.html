@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to 48co</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0a0a0e;
+      color: #fff;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 560px;
+      width: 100%;
+    }
+
+    .logo {
+      font-family: 'JetBrains Mono', 'SF Mono', monospace;
+      font-size: 32px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .logo .co { color: #00f0ff; }
+
+    .subtitle {
+      text-align: center;
+      color: rgba(255,255,255,0.3);
+      font-size: 13px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(0, 240, 255, 0.1);
+      color: #00f0ff;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .card h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      font-size: 13px;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .highlight {
+      color: #00f0ff;
+      font-weight: 500;
+    }
+
+    .sites {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .site-badge {
+      padding: 6px 14px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .control {
+      text-align: center;
+      padding: 14px 8px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .control-icon {
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+    .control-label {
+      font-size: 10px;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.05em;
+    }
+
+    .commands-list {
+      margin-top: 12px;
+    }
+    .cmd-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 12px;
+    }
+    .cmd-row:last-child { border-bottom: none; }
+    .cmd-trigger { color: #00f0ff; }
+    .cmd-action { color: rgba(255,255,255,0.25); }
+
+    .cta {
+      display: block;
+      text-align: center;
+      margin-top: 32px;
+      padding: 14px 32px;
+      border-radius: 12px;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      color: #00f0ff;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .cta:hover { background: rgba(0, 240, 255, 0.2); }
+
+    .footer {
+      text-align: center;
+      margin-top: 24px;
+      color: rgba(255,255,255,0.15);
+      font-size: 11px;
+    }
+    .footer a { color: rgba(255,255,255,0.2); text-decoration: none; }
+    .footer a:hover { color: #00f0ff; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">48<span class="co">co</span></div>
+    <p class="subtitle">Voice input for AI chat &mdash; installed successfully</p>
+
+    <!-- Step 1: Go to a supported site -->
+    <div class="card">
+      <div class="step-number">1</div>
+      <h3>Open an AI chat</h3>
+      <p>Navigate to any of these sites. The <span class="highlight">48co widget</span> appears automatically in the bottom-right corner.</p>
+      <div class="sites">
+        <a href="https://claude.ai" target="_blank" class="site-badge">Claude.ai</a>
+        <a href="https://chatgpt.com" target="_blank" class="site-badge">ChatGPT</a>
+        <a href="https://gemini.google.com" target="_blank" class="site-badge">Gemini</a>
+        <a href="https://chat.deepseek.com" target="_blank" class="site-badge">DeepSeek</a>
+      </div>
+    </div>
+
+    <!-- Step 2: Start recording -->
+    <div class="card">
+      <div class="step-number">2</div>
+      <h3>Start talking</h3>
+      <p>Three ways to start recording. Pick whichever feels natural.</p>
+      <div class="controls-grid">
+        <div class="control">
+          <div class="control-icon">&#8679;</div>
+          <div class="control-label">Scroll up</div>
+        </div>
+        <div class="control">
+          <div class="control-icon">&#9673;</div>
+          <div class="control-label">Click widget</div>
+        </div>
+        <div class="control">
+          <div class="control-icon">&#8984;&#8679;&#9251;</div>
+          <div class="control-label">Shortcut</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Stop and it types -->
+    <div class="card">
+      <div class="step-number">3</div>
+      <h3>Stop &mdash; and it types for you</h3>
+      <p><span class="highlight">Scroll down</span> or click again to stop. Your transcript is typed directly into the chat input. No clipboard. No paste. It just appears.</p>
+    </div>
+
+    <!-- Voice commands -->
+    <div class="card">
+      <div class="step-number">&#9733;</div>
+      <h3>Voice commands</h3>
+      <p>Say these phrases and 48co does the rest.</p>
+      <div class="commands-list">
+        <div class="cmd-row"><span class="cmd-trigger">&ldquo;refactor this&rdquo;</span> <span class="cmd-action">Pastes refactor prompt</span></div>
+        <div class="cmd-row"><span class="cmd-trigger">&ldquo;explain this&rdquo;</span> <span class="cmd-action">Pastes explain prompt</span></div>
+        <div class="cmd-row"><span class="cmd-trigger">&ldquo;debug this&rdquo;</span> <span class="cmd-action">Pastes debug prompt</span></div>
+        <div class="cmd-row"><span class="cmd-trigger">&ldquo;send it&rdquo;</span> <span class="cmd-action">Submits message</span></div>
+        <div class="cmd-row"><span class="cmd-trigger">&ldquo;cancel&rdquo;</span> <span class="cmd-action">Clears &amp; resets</span></div>
+      </div>
+    </div>
+
+    <!-- Tip: code mode -->
+    <div class="card">
+      <div class="step-number">&lt;/&gt;</div>
+      <h3>Auto code mode</h3>
+      <p>If you say words like <span class="highlight">function</span>, <span class="highlight">class</span>, <span class="highlight">import</span>, or <span class="highlight">const</span>, your transcript is automatically wrapped in markdown code fences. Click <span class="highlight">CODE</span> on the widget to force it on.</p>
+    </div>
+
+    <a href="https://claude.ai" target="_blank" class="cta">
+      Open Claude.ai &rarr;
+    </a>
+
+    <div class="footer">
+      <a href="https://48co.nz">48co.nz</a> &middot; v1.0.0
+    </div>
+  </div>
+</body>
+</html>

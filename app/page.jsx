@@ -128,13 +128,13 @@ export default function LandingPage() {
         </div>
 
         <a
-          href="#install"
+          href="/install"
           className="px-8 py-3 rounded-xl bg-[#00f0ff]/10 border border-[#00f0ff]/30 text-[#00f0ff] text-sm tracking-wider hover:bg-[#00f0ff]/20 transition-all"
         >
-          INSTALL CHROME EXTENSION
+          DOWNLOAD CHROME EXTENSION
         </a>
 
-        <p className="text-[10px] text-white/15 mt-4">Free &middot; No account required &middot; Open source</p>
+        <p className="text-[10px] text-white/15 mt-4">Free &middot; No account required &middot; 60-second install</p>
       </section>
 
       {/* ── Features Grid ─────────────────────────────────────────── */}
@@ -230,30 +230,24 @@ export default function LandingPage() {
 
         <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-8">
           <a
-            href="#"
+            href="/install"
             className="px-8 py-3 rounded-xl bg-[#00f0ff]/10 border border-[#00f0ff]/30 text-[#00f0ff] text-sm tracking-wider hover:bg-[#00f0ff]/20 transition-all"
           >
-            Chrome Web Store (coming soon)
+            Download + Install Guide
           </a>
           <a
             href="https://github.com/ccantynz-alt/-48co-ai-pa"
+            target="_blank"
             className="px-8 py-3 rounded-xl border border-white/10 text-white/40 text-sm tracking-wider hover:border-white/20 transition-all"
           >
             View on GitHub
           </a>
         </div>
 
-        <div className="glass rounded-2xl p-6 text-left max-w-lg mx-auto">
-          <p className="text-[10px] tracking-[0.15em] text-white/25 mb-3 uppercase">Manual Install</p>
-          <ol className="text-[11px] text-white/40 space-y-2 list-decimal list-inside">
-            <li>Download or clone the <code className="text-[#00f0ff]/60">extension/</code> folder</li>
-            <li>Open <code className="text-[#00f0ff]/60">chrome://extensions</code></li>
-            <li>Enable &ldquo;Developer mode&rdquo; (top right toggle)</li>
-            <li>Click &ldquo;Load unpacked&rdquo; and select the extension folder</li>
-            <li>Navigate to Claude, ChatGPT, Gemini, or DeepSeek</li>
-            <li>Scroll up to record, scroll down to paste</li>
-          </ol>
-        </div>
+        <p className="text-[11px] text-white/25 max-w-md mx-auto text-center leading-relaxed">
+          Download the .zip, unzip it, load it into Chrome. Takes 60 seconds.
+          No accounts, no API keys, no config. Just works.
+        </p>
       </section>
 
       {/* ── Footer ────────────────────────────────────────────────── */}

@@ -137,5 +137,8 @@ chrome.runtime.onInstalled.addListener((details) => {
       autoSubmit: false,
       engine: 'web-speech',
     })
+
+    // Open welcome page so user knows what to do next
+    chrome.tabs.create({ url: chrome.runtime.getURL('welcome.html') })
   }
 })
