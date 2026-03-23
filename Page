@@ -1,0 +1,280 @@
+'use client'
+
+import { useState, useEffect, useCallback, useRef } from 'react'
+import MicToggle from '../components/MicToggle'
+import Waveform from '../components/Waveform'
+
+// Voice commands that trigger actions
+const VOICE_COMMANDS = {
+  'claude refactor this': '🔧 Refactor the code I just shared. Identify any inefficiencies and rewrite it cleanly.',
+  'claude explain this':  '💡 Please explain what the code or text above does, step by step.',
+  'claude debug this':    '🐛 Debug the code above. Find any errors, explain them, and provide a fix.',
+  'send it':              '__SUBMIT__',
+  'cancel':               '__CANCEL__',
+}
+
+export default function HUD() {
+  const [status, setStatus] = useState('idle')      // idle | record | process | done
+  const [transcript, setTranscript] = useState('')
+  const [mode, setMode] = useState('normal')         // normal | code
+  const [lang, setLang] = useState('EN')
+  const [showSettings, setShowSettings] = useState(false)
+  const [micLabel, setMicLabel] = useState('Default Mic')
+  const recognitionRef = useRef(null)
+
+  // ── Coding keywords — triggers auto code mode ──────────────────
+  const CODING_KEYWORDS = ['function', 'class', 'import', 'const', 'let', 'var',
+    'loop', 'array', 'object', 'return', 'async', 'await', 'def', 'python']
+
+  const wrapAsCode = (text) => {
+    const lower = text.toLowerCase()
+    const lang = lower.includes('python') || lower.includes('def') ? 'python' : 'javascript'
+    return `\`\`\`${lang}\n${text}\n\`\`\``
+  }
+
+  const isCodingText = (text) =>
+    CODING_KEYWORDS.some(k => text.toLowerCase().includes(k))
+
+  // ── Check for voice commands ───────────────────────────────────
+  const checkVoiceCommands = (text) => {
+    const lower = text.toLowerCase().trim()
+    for (const [trigger, action] of Object.entries(VOICE_COMMANDS)) {
+      if (lower.includes(trigger)) return action
+    }
+    return null
+  }
+
+  // ── Paste text into active window via clipboard ────────────────
+  const pasteText = useCallback(async (text) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setStatus('done')
+      setTimeout(() => setStatus('idle'), 1500)
+    } catch {
+      setStatus('idle')
+    }
+  }, [])
+
+  // ── Start recording ────────────────────────────────────────────
+  const startRecording = useCallback(() => {
+    if (status !== 'idle') return
+
+    // Use Web Speech API (browser built-in, no Python needed for web version)
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SpeechRecognition) {
+      alert('Speech recognition not supported in this browser. Please use Chrome.')
+      return
+    }
+
+    const recognition = new SpeechRecognition()
+    recognition.continuous = false
+    recognition.interimResults = false
+    recognition.lang = lang === 'EN' ? 'en-NZ' : lang
+
+    recognition.onstart  = () => setStatus('record')
+    recognition.onresult = (e) => {
+      const text = e.results[0][0].transcript
+      setTranscript(text)
+    }
+    recognition.onend = () => processTranscript()
+    recognition.onerror = () => setStatus('idle')
+
+    recognitionRef.current = recognition
+    recognition.start()
+  }, [status, lang])
+
+  // ── Stop recording ─────────────────────────────────────────────
+  const stopRecording = useCallback(() => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop()
+    }
+  }, [])
+
+  // ── Process the transcript ─────────────────────────────────────
+  const processTranscript = useCallback(() => {
+    setStatus('process')
+  }, [])
+
+  // Watch transcript changes → process them
+  useEffect(() => {
+    if (status !== 'process' || !transcript) return
+
+    const command = checkVoiceCommands(transcript)
+
+    if (command === '__CANCEL__') {
+      setTranscript('')
+      setStatus('idle')
+      return
+    }
+
+    let output = command || transcript
+
+    // Auto coding mode
+    if (mode === 'code' || (mode === 'normal' && isCodingText(output))) {
+      output = wrapAsCode(output)
+    }
+
+    pasteText(output)
+  }, [status, transcript])
+
+  // ── Handle toggle from MicToggle (scroll + click) ──────────────
+  const handleToggle = useCallback((action) => {
+    if (action === 'start') startRecording()
+    if (action === 'stop')  stopRecording()
+  }, [startRecording, stopRecording])
+
+  // ── Keyboard shortcut: Ctrl/Cmd + Shift + Space ────────────────
+  useEffect(() => {
+    const handler = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === 'Space') {
+        e.preventDefault()
+        if (status === 'idle')   startRecording()
+        if (status === 'record') stopRecording()
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [status, startRecording, stopRecording])
+
+  return (
+    <main className="min-h-screen flex items-center justify-center p-4 bg-[#0a0a0e]">
+
+      {/* ── HUD Panel ────────────────────────────────────────── */}
+      <div className="glass rounded-2xl w-[380px] overflow-hidden select-none">
+
+        {/* Title bar */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06]">
+          <span className="text-[13px] font-bold tracking-[0.2em] text-white/80">≋ 48CO</span>
+          <div className="flex items-center gap-2">
+            {/* Mode toggle */}
+            <button
+              onClick={() => setMode(m => m === 'code' ? 'normal' : 'code')}
+              className={`text-[10px] px-2 py-1 rounded border transition-all ${
+                mode === 'code'
+                  ? 'border-[var(--glow-cyan)] text-[var(--glow-cyan)]'
+                  : 'border-white/10 text-white/30 hover:border-white/20'
+              }`}
+            >
+              CODE
+            </button>
+
+            {/* Language */}
+            <button className="text-[10px] px-2 py-1 rounded border border-white/10 text-white/30 hover:border-white/20 transition-all">
+              {lang} ▾
+            </button>
+
+            {/* Settings */}
+            <button
+              onClick={() => setShowSettings(s => !s)}
+              className="text-white/30 hover:text-white/60 transition-colors text-[16px] leading-none"
+            >
+              ⚙
+            </button>
+          </div>
+        </div>
+
+        {/* Waveform */}
+        <div className="py-4 border-b border-white/[0.06]">
+          <Waveform isRecording={status === 'record'} />
+        </div>
+
+        {/* Mic toggle — the star of the show */}
+        <div className="py-6 flex flex-col items-center gap-4">
+          <MicToggle status={status} onToggle={handleToggle} />
+
+          {/* Transcript preview */}
+          {transcript && (
+            <p className="text-[11px] text-white/40 text-center px-6 leading-relaxed max-h-12 overflow-hidden">
+              {transcript}
+            </p>
+          )}
+        </div>
+
+        {/* Footer hint */}
+        <div className="px-4 py-2 border-t border-white/[0.06]">
+          <p className="text-[10px] text-white/20 text-center tracking-wider">
+            CTRL+SHIFT+SPACE  •  SCROLL ↑↓  •  CLICK
+          </p>
+        </div>
+      </div>
+
+      {/* ── Settings Panel (slide in) ─────────────────────────── */}
+      {showSettings && (
+        <div className="glass rounded-2xl w-[300px] ml-3 p-5 absolute right-4 top-4 bottom-4 overflow-y-auto">
+          <h2 className="text-[12px] tracking-[0.2em] text-white/60 mb-4">SETTINGS</h2>
+
+          <Section title="AUDIO">
+            <Setting label="Input device">
+              <select className="bg-white/5 border border-white/10 text-white/60 text-[11px] rounded px-2 py-1 w-full">
+                <option>Default Mic</option>
+              </select>
+            </Setting>
+            <Setting label="Noise suppression">
+              <Toggle />
+            </Setting>
+          </Section>
+
+          <Section title="TRANSCRIPTION">
+            <Setting label="Engine">
+              <select className="bg-white/5 border border-white/10 text-white/60 text-[11px] rounded px-2 py-1 w-full">
+                <option>Browser (Web Speech)</option>
+                <option>Local Whisper (coming)</option>
+              </select>
+            </Setting>
+            <Setting label="Auto coding mode">
+              <Toggle defaultOn />
+            </Setting>
+          </Section>
+
+          <Section title="BEHAVIOUR">
+            <Setting label="Type speed (ms)">
+              <input type="range" min="10" max="100" defaultValue="30" className="w-full accent-cyan-400" />
+            </Setting>
+            <Setting label="Auto-submit on paste">
+              <Toggle />
+            </Setting>
+          </Section>
+
+          <Section title="TEMPLATES">
+            {Object.keys(VOICE_COMMANDS).filter(k => !k.startsWith('send') && !k.startsWith('cancel')).map(cmd => (
+              <div key={cmd} className="text-[10px] text-white/30 py-1 border-b border-white/5">
+                "{cmd}"
+              </div>
+            ))}
+          </Section>
+        </div>
+      )}
+    </main>
+  )
+}
+
+// ── Small helper components ──────────────────────────────────────
+function Section({ title, children }) {
+  return (
+    <div className="mb-5">
+      <p className="text-[10px] tracking-[0.15em] text-white/30 mb-2">{title}</p>
+      <div className="space-y-3">{children}</div>
+    </div>
+  )
+}
+
+function Setting({ label, children }) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <span className="text-[11px] text-white/50 flex-1">{label}</span>
+      {children}
+    </div>
+  )
+}
+
+function Toggle({ defaultOn = false }) {
+  const [on, setOn] = useState(defaultOn)
+  return (
+    <button
+      onClick={() => setOn(v => !v)}
+      className={`w-9 h-5 rounded-full relative transition-colors ${on ? 'bg-cyan-500/60' : 'bg-white/10'}`}
+    >
+      <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${on ? 'left-4' : 'left-0.5'}`} />
+    </button>
+  )
+}
