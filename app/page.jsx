@@ -5,57 +5,77 @@ import Waveform from '../components/Waveform'
 
 const FEATURES = [
   {
-    icon: '&#8679;&#8681;',
-    title: 'Scroll Wheel Toggle',
-    desc: 'Scroll up to record, down to stop. No clicking. No fumbling.',
+    icon: '&#127760;',
+    title: '50+ Languages',
+    desc: 'Dictate in English, Spanish, French, German, Chinese, Japanese, Korean, Arabic and 40+ more languages.',
     color: '#00f0ff',
   },
   {
-    icon: '&#9001;/&#9002;',
-    title: 'Auto Code Fences',
-    desc: 'Detects coding keywords and wraps your transcript in markdown code blocks automatically.',
+    icon: '&#8679;&#8681;',
+    title: 'Scroll Wheel Toggle',
+    desc: 'Scroll up to record, down to stop. Or use push-to-talk. No clicking. No fumbling.',
     color: '#00f0ff',
   },
   {
     icon: '&#128483;',
-    title: 'Voice Commands',
-    desc: '"Refactor this", "Debug this", "Send it" — developer prompts triggered by voice.',
+    title: 'Voice Commands & Punctuation',
+    desc: '"Period", "new line", "question mark" — say punctuation naturally. Plus developer commands like "refactor this".',
     color: '#ff3b5c',
   },
   {
     icon: '&#10547;',
-    title: 'Direct Injection',
-    desc: 'Types directly into Claude, ChatGPT, Gemini & DeepSeek. No clipboard. No paste.',
+    title: 'Works Everywhere',
+    desc: 'Types into any website — Claude, ChatGPT, Gemini, DeepSeek, Gmail, Slack, Notion, and every text field on the web.',
     color: '#00ff88',
   },
   {
     icon: '&#9881;',
     title: 'Whisper API Support',
-    desc: 'Free Web Speech by default. Upgrade to Whisper API for 99%+ accuracy with your own key.',
+    desc: 'Free Web Speech by default. Upgrade to OpenAI Whisper for 99%+ accuracy with your own key.',
     color: '#ffb800',
   },
   {
-    icon: '&#8997;',
-    title: 'Keyboard Shortcut',
-    desc: 'Ctrl+Shift+Space (Win) or Cmd+Shift+Space (Mac) toggles recording instantly.',
+    icon: '&#128218;',
+    title: 'Custom Vocabulary',
+    desc: 'Add technical terms, brand names, and jargon. Create text replacement rules for abbreviations and corrections.',
     color: '#00f0ff',
+  },
+  {
+    icon: '&#8997;',
+    title: 'Push-to-Talk & Shortcuts',
+    desc: 'Hold Ctrl+Shift for push-to-talk, or use Ctrl+Shift+Space to toggle. Multiple activation modes.',
+    color: '#00f0ff',
+  },
+  {
+    icon: '&#9001;/&#9002;',
+    title: 'Auto Code Fences',
+    desc: 'Detects coding keywords and wraps your transcript in markdown code blocks with language detection.',
+    color: '#00f0ff',
+  },
+  {
+    icon: '&#128172;',
+    title: 'Smart Post-Processing',
+    desc: 'Auto-capitalizes sentences, formats punctuation, and cleans up transcription for natural-sounding text.',
+    color: '#ffb800',
   },
 ]
 
 const COMPETITORS = [
-  { name: 'VoiceWave', type: 'Extension', price: 'Free', claude: 'Buggy', codeFence: 'No', voiceCmd: 'No', scrollToggle: 'No' },
-  { name: 'Wispr Flow', type: 'Desktop', price: '$15/mo', claude: 'No', codeFence: 'No', voiceCmd: 'No', scrollToggle: 'No' },
-  { name: 'Voicy', type: 'Extension', price: '$8.49/mo', claude: 'Generic', codeFence: 'No', voiceCmd: 'No', scrollToggle: 'No' },
-  { name: 'Superwhisper', type: 'Desktop', price: '$8.49/mo', claude: 'No', codeFence: 'No', voiceCmd: 'No', scrollToggle: 'No' },
-  { name: '48co', type: 'Extension', price: 'Free', claude: 'Native', codeFence: 'Yes', voiceCmd: 'Yes', scrollToggle: 'Yes' },
+  { name: 'WhisperTyping', type: 'Desktop', price: '$5/mo', languages: '50+', anySite: 'Yes', codeFence: 'No', voiceCmd: 'Limited', pushToTalk: 'Yes' },
+  { name: 'Wispr Flow', type: 'Desktop', price: '$15/mo', languages: '~10', anySite: 'Yes', codeFence: 'No', voiceCmd: 'No', pushToTalk: 'Yes' },
+  { name: 'Voicy', type: 'Extension', price: '$8.49/mo', languages: '~30', anySite: 'No', codeFence: 'No', voiceCmd: 'No', pushToTalk: 'No' },
+  { name: 'Superwhisper', type: 'Desktop', price: '$8.49/mo', languages: '~90', anySite: 'Yes', codeFence: 'No', voiceCmd: 'No', pushToTalk: 'Yes' },
+  { name: '48co', type: 'Extension', price: 'Free', languages: '50+', anySite: 'Yes', codeFence: 'Yes', voiceCmd: 'Yes', pushToTalk: 'Yes' },
 ]
 
 const COMMANDS = [
+  { trigger: 'period / comma / question mark', action: 'Inserts punctuation' },
+  { trigger: 'new line / new paragraph', action: 'Inserts line breaks' },
+  { trigger: 'open paren / close paren', action: 'Inserts brackets' },
+  { trigger: 'thumbs up emoji / fire emoji', action: 'Inserts emoji' },
   { trigger: 'refactor this', action: 'Pastes refactor prompt' },
   { trigger: 'explain this', action: 'Pastes explain prompt' },
-  { trigger: 'debug this', action: 'Pastes debug prompt' },
-  { trigger: 'fix this', action: 'Pastes fix prompt' },
-  { trigger: 'test this', action: 'Pastes test prompt' },
+  { trigger: 'debug this / fix this / test this', action: 'Pastes dev prompt' },
   { trigger: 'optimize this', action: 'Pastes optimize prompt' },
   { trigger: 'send it', action: 'Submits the message' },
   { trigger: 'cancel', action: 'Clears and resets' },
@@ -82,8 +102,9 @@ export default function LandingPage() {
         </h1>
 
         <p className="text-white/40 text-sm md:text-base max-w-lg leading-relaxed mb-8">
-          A Chrome extension that injects voice input directly into Claude, ChatGPT, Gemini &amp; DeepSeek.
-          Developer voice commands. Auto code fences. Scroll-wheel control.
+          A Chrome extension that types your voice into any website.
+          50+ languages. Push-to-talk. Voice punctuation. Custom vocabulary.
+          Like WhisperTyping, but free and in your browser.
         </p>
 
         {/* Demo widget */}
@@ -140,7 +161,7 @@ export default function LandingPage() {
       {/* ── Features Grid ─────────────────────────────────────────── */}
       <section className="max-w-5xl mx-auto px-4 py-24">
         <h2 className="text-[11px] tracking-[0.3em] text-[#00f0ff]/40 text-center mb-12 uppercase">
-          Built for developers
+          Everything WhisperTyping does, free in your browser
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -164,7 +185,7 @@ export default function LandingPage() {
       {/* ── Voice Commands ────────────────────────────────────────── */}
       <section className="max-w-3xl mx-auto px-4 py-24">
         <h2 className="text-[11px] tracking-[0.3em] text-[#ff3b5c]/40 text-center mb-12 uppercase">
-          Voice Commands
+          Voice Commands & Punctuation
         </h2>
 
         <div className="glass rounded-2xl overflow-hidden">
@@ -195,10 +216,11 @@ export default function LandingPage() {
                 <th className="text-left px-4 py-3 text-white/30 font-normal">Tool</th>
                 <th className="text-left px-4 py-3 text-white/30 font-normal">Type</th>
                 <th className="text-left px-4 py-3 text-white/30 font-normal">Price</th>
-                <th className="text-left px-4 py-3 text-white/30 font-normal">Claude</th>
+                <th className="text-left px-4 py-3 text-white/30 font-normal">Languages</th>
+                <th className="text-left px-4 py-3 text-white/30 font-normal">Any Site</th>
                 <th className="text-left px-4 py-3 text-white/30 font-normal">Code Fences</th>
                 <th className="text-left px-4 py-3 text-white/30 font-normal">Voice Cmds</th>
-                <th className="text-left px-4 py-3 text-white/30 font-normal">Scroll Toggle</th>
+                <th className="text-left px-4 py-3 text-white/30 font-normal">Push-to-Talk</th>
               </tr>
             </thead>
             <tbody>
@@ -208,11 +230,12 @@ export default function LandingPage() {
                   <tr key={c.name} className={`border-b border-white/[0.04] ${is48 ? 'bg-[#00f0ff]/5' : ''}`}>
                     <td className={`px-4 py-3 font-bold ${is48 ? 'text-[#00f0ff]' : 'text-white/60'}`}>{c.name}</td>
                     <td className="px-4 py-3 text-white/30">{c.type}</td>
-                    <td className="px-4 py-3 text-white/30">{c.price}</td>
-                    <td className={`px-4 py-3 ${c.claude === 'Native' ? 'text-[#00ff88]' : c.claude === 'Buggy' ? 'text-[#ffb800]' : 'text-white/20'}`}>{c.claude}</td>
+                    <td className={`px-4 py-3 ${c.price === 'Free' ? 'text-[#00ff88]' : 'text-white/30'}`}>{c.price}</td>
+                    <td className="px-4 py-3 text-white/30">{c.languages}</td>
+                    <td className={`px-4 py-3 ${c.anySite === 'Yes' ? 'text-[#00ff88]' : 'text-white/20'}`}>{c.anySite}</td>
                     <td className={`px-4 py-3 ${c.codeFence === 'Yes' ? 'text-[#00ff88]' : 'text-white/20'}`}>{c.codeFence}</td>
-                    <td className={`px-4 py-3 ${c.voiceCmd === 'Yes' ? 'text-[#00ff88]' : 'text-white/20'}`}>{c.voiceCmd}</td>
-                    <td className={`px-4 py-3 ${c.scrollToggle === 'Yes' ? 'text-[#00ff88]' : 'text-white/20'}`}>{c.scrollToggle}</td>
+                    <td className={`px-4 py-3 ${c.voiceCmd === 'Yes' ? 'text-[#00ff88]' : c.voiceCmd === 'Limited' ? 'text-[#ffb800]' : 'text-white/20'}`}>{c.voiceCmd}</td>
+                    <td className={`px-4 py-3 ${c.pushToTalk === 'Yes' ? 'text-[#00ff88]' : 'text-white/20'}`}>{c.pushToTalk}</td>
                   </tr>
                 )
               })}
@@ -225,7 +248,7 @@ export default function LandingPage() {
       <section id="install" className="max-w-3xl mx-auto px-4 py-24 text-center">
         <h2 className="text-3xl font-bold mb-4 text-white/90">Get 48co</h2>
         <p className="text-white/35 text-sm mb-10 max-w-md mx-auto">
-          Install the Chrome extension and start dictating into any AI chat in seconds.
+          Install the Chrome extension and start dictating into any text field on any website in seconds.
         </p>
 
         <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-8">

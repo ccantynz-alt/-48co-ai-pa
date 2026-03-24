@@ -38,6 +38,10 @@ async function getState() {
     autoSubmit: false,
     whisperApiKey: '',
     engine: 'web-speech', // 'web-speech' | 'whisper'
+    language: 'en',
+    pushToTalk: false,
+    vocabulary: [],
+    replacements: [],
   }
   const stored = await chrome.storage.local.get(Object.keys(defaults))
   return { ...defaults, ...stored }
@@ -77,7 +81,11 @@ async function handleMessage(msg, sender) {
       if (state.engine === 'whisper') {
         // Use offscreen document for Whisper API recording
         await ensureOffscreen()
-        chrome.runtime.sendMessage({ type: 'OFFSCREEN_START', apiKey: state.whisperApiKey })
+        chrome.runtime.sendMessage({
+          type: 'OFFSCREEN_START',
+          apiKey: state.whisperApiKey,
+          language: state.language || 'en',
+        })
       }
       await setState({ isRecording: true })
       return { ok: true, engine: state.engine }
@@ -136,6 +144,10 @@ chrome.runtime.onInstalled.addListener((details) => {
       typeSpeed: 30,
       autoSubmit: false,
       engine: 'web-speech',
+      language: 'en',
+      pushToTalk: false,
+      vocabulary: [],
+      replacements: [],
     })
 
     // Open welcome page so user knows what to do next

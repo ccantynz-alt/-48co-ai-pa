@@ -7,10 +7,12 @@
 let mediaRecorder = null
 let audioChunks = []
 let apiKey = ''
+let language = 'en'
 
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.type === 'OFFSCREEN_START') {
     apiKey = msg.apiKey || ''
+    language = msg.language || 'en'
     startRecording()
   }
   if (msg.type === 'OFFSCREEN_STOP') {
@@ -71,7 +73,9 @@ async function transcribeWithWhisper(audioBlob) {
     const formData = new FormData()
     formData.append('file', audioBlob, 'recording.webm')
     formData.append('model', 'whisper-1')
-    formData.append('language', 'en')
+    // Extract base language code for Whisper API (e.g., 'en-US' → 'en')
+    const langCode = (language || 'en').split('-')[0]
+    formData.append('language', langCode)
     formData.append('response_format', 'json')
 
     const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
