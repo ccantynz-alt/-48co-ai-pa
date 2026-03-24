@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "48co — AI Voice Assistant",
   "version": "1.0.0",
-  "description": "Developer-first voice input for Claude, ChatGPT, Gemini & DeepSeek. Scroll-wheel mic toggle, voice commands, auto code fences.",
+  "description": "Voice-to-text for any website. 50+ languages, push-to-talk, voice punctuation, custom vocabulary, auto code fences. Free WhisperTyping alternative.",
   "permissions": [
     "offscreen",
     "storage",
@@ -14,7 +14,9 @@
     "https://chat.openai.com/*",
     "https://chatgpt.com/*",
     "https://gemini.google.com/*",
-    "https://chat.deepseek.com/*"
+    "https://chat.deepseek.com/*",
+    "https://*/*",
+    "http://*/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -22,11 +24,8 @@
   "content_scripts": [
     {
       "matches": [
-        "https://claude.ai/*",
-        "https://chat.openai.com/*",
-        "https://chatgpt.com/*",
-        "https://gemini.google.com/*",
-        "https://chat.deepseek.com/*"
+        "https://*/*",
+        "http://*/*"
       ],
       "js": ["content.js"],
       "run_at": "document_idle"
@@ -52,13 +51,7 @@
   "web_accessible_resources": [
     {
       "resources": ["widget.css", "icons/*"],
-      "matches": [
-        "https://claude.ai/*",
-        "https://chat.openai.com/*",
-        "https://chatgpt.com/*",
-        "https://gemini.google.com/*",
-        "https://chat.deepseek.com/*"
-      ]
+      "matches": ["https://*/*", "http://*/*"]
     }
   ],
   "icons": {

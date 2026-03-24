@@ -160,18 +160,19 @@
 <body>
   <div class="container">
     <div class="logo">48<span class="co">co</span></div>
-    <p class="subtitle">Voice input for AI chat &mdash; installed successfully</p>
+    <p class="subtitle">Voice-to-text for any website &mdash; installed successfully</p>
 
-    <!-- Step 1: Go to a supported site -->
+    <!-- Step 1: Go to any website -->
     <div class="card">
       <div class="step-number">1</div>
-      <h3>Open an AI chat</h3>
-      <p>Navigate to any of these sites. The <span class="highlight">48co widget</span> appears automatically in the bottom-right corner.</p>
+      <h3>Open any website</h3>
+      <p>The <span class="highlight">48co widget</span> appears on every website. Optimized for AI chats but works everywhere.</p>
       <div class="sites">
         <a href="https://claude.ai" target="_blank" class="site-badge">Claude.ai</a>
         <a href="https://chatgpt.com" target="_blank" class="site-badge">ChatGPT</a>
         <a href="https://gemini.google.com" target="_blank" class="site-badge">Gemini</a>
         <a href="https://chat.deepseek.com" target="_blank" class="site-badge">DeepSeek</a>
+        <span class="site-badge">Gmail, Slack, Notion, any site...</span>
       </div>
     </div>
 
@@ -179,8 +180,8 @@
     <div class="card">
       <div class="step-number">2</div>
       <h3>Start talking</h3>
-      <p>Three ways to start recording. Pick whichever feels natural.</p>
-      <div class="controls-grid">
+      <p>Four ways to start recording. Pick whichever feels natural.</p>
+      <div class="controls-grid" style="grid-template-columns: 1fr 1fr;">
         <div class="control">
           <div class="control-icon">&#8679;</div>
           <div class="control-label">Scroll up</div>
@@ -191,7 +192,11 @@
         </div>
         <div class="control">
           <div class="control-icon">&#8984;&#8679;&#9251;</div>
-          <div class="control-label">Shortcut</div>
+          <div class="control-label">Keyboard shortcut</div>
+        </div>
+        <div class="control">
+          <div class="control-icon">&#9041;</div>
+          <div class="control-label">Push-to-talk (hold Ctrl+Shift)</div>
         </div>
       </div>
     </div>
@@ -200,21 +205,30 @@
     <div class="card">
       <div class="step-number">3</div>
       <h3>Stop &mdash; and it types for you</h3>
-      <p><span class="highlight">Scroll down</span> or click again to stop. Your transcript is typed directly into the chat input. No clipboard. No paste. It just appears.</p>
+      <p><span class="highlight">Scroll down</span> or click again to stop. Your transcript is typed directly into the focused text field. Punctuation, capitalization, and formatting are applied automatically.</p>
     </div>
 
-    <!-- Voice commands -->
+    <!-- Voice punctuation & commands -->
     <div class="card">
       <div class="step-number">&#9733;</div>
-      <h3>Voice commands</h3>
-      <p>Say these phrases and 48co does the rest.</p>
+      <h3>Voice punctuation &amp; commands</h3>
+      <p>Say punctuation naturally. 48co converts it for you.</p>
       <div class="commands-list">
-        <div class="cmd-row"><span class="cmd-trigger">&ldquo;refactor this&rdquo;</span> <span class="cmd-action">Pastes refactor prompt</span></div>
-        <div class="cmd-row"><span class="cmd-trigger">&ldquo;explain this&rdquo;</span> <span class="cmd-action">Pastes explain prompt</span></div>
-        <div class="cmd-row"><span class="cmd-trigger">&ldquo;debug this&rdquo;</span> <span class="cmd-action">Pastes debug prompt</span></div>
+        <div class="cmd-row"><span class="cmd-trigger">&ldquo;period&rdquo; / &ldquo;comma&rdquo; / &ldquo;question mark&rdquo;</span> <span class="cmd-action">Inserts punctuation</span></div>
+        <div class="cmd-row"><span class="cmd-trigger">&ldquo;new line&rdquo; / &ldquo;new paragraph&rdquo;</span> <span class="cmd-action">Line breaks</span></div>
+        <div class="cmd-row"><span class="cmd-trigger">&ldquo;open paren&rdquo; / &ldquo;close paren&rdquo;</span> <span class="cmd-action">Brackets</span></div>
+        <div class="cmd-row"><span class="cmd-trigger">&ldquo;thumbs up emoji&rdquo;</span> <span class="cmd-action">Inserts emoji</span></div>
+        <div class="cmd-row"><span class="cmd-trigger">&ldquo;refactor this&rdquo; / &ldquo;debug this&rdquo;</span> <span class="cmd-action">Dev prompts</span></div>
         <div class="cmd-row"><span class="cmd-trigger">&ldquo;send it&rdquo;</span> <span class="cmd-action">Submits message</span></div>
         <div class="cmd-row"><span class="cmd-trigger">&ldquo;cancel&rdquo;</span> <span class="cmd-action">Clears &amp; resets</span></div>
       </div>
+    </div>
+
+    <!-- Languages & settings -->
+    <div class="card">
+      <div class="step-number">&#127760;</div>
+      <h3>50+ languages &amp; custom vocabulary</h3>
+      <p>Click the <span class="highlight">48co extension icon</span> in the toolbar to change language, add custom vocabulary, configure text replacements, and switch to the Whisper API for higher accuracy.</p>
     </div>
 
     <!-- Tip: code mode -->
@@ -225,7 +239,7 @@
     </div>
 
     <a href="https://claude.ai" target="_blank" class="cta">
-      Open Claude.ai &rarr;
+      Try it on Claude.ai &rarr;
     </a>
 
     <div class="footer">

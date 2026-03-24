@@ -87,20 +87,50 @@
     },
   }
 
+  // Generic adapter — works on any website by finding the focused/active text input
+  const ADAPTERS_GENERIC = {
+    name: 'Any Site',
+    input: [
+      'textarea:focus',
+      'input[type="text"]:focus',
+      'div[contenteditable="true"]:focus',
+      // Fallbacks: find first visible text input on page
+      'textarea',
+      'div[contenteditable="true"]',
+      'input[type="text"]',
+      'input:not([type])',
+    ],
+    send: [
+      'button[type="submit"]',
+      'form button:last-of-type',
+    ],
+  }
+
   function detectSite() {
     const host = window.location.hostname
     if (host.includes('claude.ai')) return ADAPTERS.claude
     if (host.includes('chatgpt.com') || host.includes('chat.openai.com')) return ADAPTERS.chatgpt
     if (host.includes('gemini.google.com')) return ADAPTERS.gemini
     if (host.includes('chat.deepseek.com')) return ADAPTERS.deepseek
-    return null
+    return ADAPTERS_GENERIC // fallback to generic adapter for any site
   }
 
   function getInput(adapter) { return queryFirst(adapter.input) }
   function getSend(adapter) { return queryFirst(adapter.send) }
 
+  // Track the last focused text input for generic mode
+  let lastFocusedInput = null
+  document.addEventListener('focusin', (e) => {
+    const t = e.target
+    if (t.tagName === 'TEXTAREA' || t.tagName === 'INPUT' || t.contentEditable === 'true') {
+      lastFocusedInput = t
+    }
+  }, true)
+
   function insertText(adapter, text) {
-    const el = getInput(adapter)
+    // On generic sites, prefer the last focused input element
+    let el = getInput(adapter)
+    if (!el && lastFocusedInput) el = lastFocusedInput
     if (!el) return false
     el.focus()
 
@@ -167,6 +197,133 @@
   }
 
   // ═══════════════════════════════════════════════════════════════════
+  // PUNCTUATION & EMOJI VOICE SUBSTITUTIONS (WhisperTyping parity)
+  // ═══════════════════════════════════════════════════════════════════
+
+  const PUNCTUATION_MAP = [
+    // Sentence punctuation
+    { pattern: /\b(full stop|period)\b/gi, replacement: '.' },
+    { pattern: /\bcomma\b/gi, replacement: ',' },
+    { pattern: /\b(question mark)\b/gi, replacement: '?' },
+    { pattern: /\b(exclamation mark|exclamation point)\b/gi, replacement: '!' },
+    { pattern: /\bsemicolon\b/gi, replacement: ';' },
+    { pattern: /\bcolon\b/gi, replacement: ':' },
+    { pattern: /\bellipsis\b/gi, replacement: '...' },
+    { pattern: /\bdash\b/gi, replacement: ' — ' },
+    { pattern: /\bhyphen\b/gi, replacement: '-' },
+
+    // Whitespace / structure
+    { pattern: /\b(new line|newline)\b/gi, replacement: '\n' },
+    { pattern: /\b(new paragraph)\b/gi, replacement: '\n\n' },
+    { pattern: /\btab\b/gi, replacement: '\t' },
+
+    // Brackets / quotes
+    { pattern: /\b(open parenthesis|open paren|left paren)\b/gi, replacement: '(' },
+    { pattern: /\b(close parenthesis|close paren|right paren)\b/gi, replacement: ')' },
+    { pattern: /\b(open bracket|left bracket)\b/gi, replacement: '[' },
+    { pattern: /\b(close bracket|right bracket)\b/gi, replacement: ']' },
+    { pattern: /\b(open brace|left brace|open curly)\b/gi, replacement: '{' },
+    { pattern: /\b(close brace|right brace|close curly)\b/gi, replacement: '}' },
+    { pattern: /\b(open quote|begin quote)\b/gi, replacement: '"' },
+    { pattern: /\b(close quote|end quote|unquote)\b/gi, replacement: '"' },
+    { pattern: /\bsingle quote\b/gi, replacement: "'" },
+
+    // Symbols
+    { pattern: /\b(at sign|at symbol)\b/gi, replacement: '@' },
+    { pattern: /\b(hash sign|hashtag|pound sign)\b/gi, replacement: '#' },
+    { pattern: /\b(dollar sign)\b/gi, replacement: '$' },
+    { pattern: /\b(percent sign|percentage)\b/gi, replacement: '%' },
+    { pattern: /\b(ampersand)\b/gi, replacement: '&' },
+    { pattern: /\b(asterisk|star)\b/gi, replacement: '*' },
+    { pattern: /\bforward slash\b/gi, replacement: '/' },
+    { pattern: /\bbackslash\b/gi, replacement: '\\' },
+    { pattern: /\b(pipe|vertical bar)\b/gi, replacement: '|' },
+    { pattern: /\b(underscore)\b/gi, replacement: '_' },
+    { pattern: /\b(equals sign)\b/gi, replacement: '=' },
+    { pattern: /\b(plus sign)\b/gi, replacement: '+' },
+    { pattern: /\b(less than|left angle)\b/gi, replacement: '<' },
+    { pattern: /\b(greater than|right angle)\b/gi, replacement: '>' },
+    { pattern: /\btilde\b/gi, replacement: '~' },
+
+    // Common emojis
+    { pattern: /\b(thumbs up emoji|thumbsup emoji)\b/gi, replacement: '👍' },
+    { pattern: /\b(thumbs down emoji)\b/gi, replacement: '👎' },
+    { pattern: /\b(smiley face|smiley emoji|smile emoji)\b/gi, replacement: '😊' },
+    { pattern: /\b(heart emoji)\b/gi, replacement: '❤️' },
+    { pattern: /\b(fire emoji)\b/gi, replacement: '🔥' },
+    { pattern: /\b(check mark emoji|checkmark emoji)\b/gi, replacement: '✅' },
+    { pattern: /\b(cross mark emoji|x emoji)\b/gi, replacement: '❌' },
+    { pattern: /\b(warning emoji)\b/gi, replacement: '⚠️' },
+    { pattern: /\b(rocket emoji)\b/gi, replacement: '🚀' },
+    { pattern: /\b(thinking emoji)\b/gi, replacement: '🤔' },
+    { pattern: /\b(clap emoji)\b/gi, replacement: '👏' },
+    { pattern: /\b(laughing emoji|lol emoji)\b/gi, replacement: '😂' },
+    { pattern: /\b(crying emoji|sad emoji)\b/gi, replacement: '😢' },
+    { pattern: /\b(wave emoji)\b/gi, replacement: '👋' },
+    { pattern: /\b(party emoji)\b/gi, replacement: '🎉' },
+    { pattern: /\b(eyes emoji)\b/gi, replacement: '👀' },
+    { pattern: /\b(100 emoji)\b/gi, replacement: '💯' },
+    { pattern: /\b(bug emoji)\b/gi, replacement: '🐛' },
+  ]
+
+  function applyPunctuation(text) {
+    let result = text
+    for (const { pattern, replacement } of PUNCTUATION_MAP) {
+      result = result.replace(pattern, replacement)
+    }
+    return result
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // TEXT POST-PROCESSING (auto-capitalize, clean whitespace)
+  // ═══════════════════════════════════════════════════════════════════
+
+  function postProcess(text) {
+    let result = text
+
+    // Apply punctuation/emoji substitutions
+    result = applyPunctuation(result)
+
+    // Apply custom vocabulary replacements
+    if (state.vocabulary && state.vocabulary.length > 0) {
+      for (const { from, to } of state.vocabulary) {
+        if (from && to) {
+          const escaped = from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+          result = result.replace(new RegExp('\\b' + escaped + '\\b', 'gi'), to)
+        }
+      }
+    }
+
+    // Apply custom text replacements
+    if (state.replacements && state.replacements.length > 0) {
+      for (const { from, to } of state.replacements) {
+        if (from && to) {
+          result = result.replaceAll(from, to)
+        }
+      }
+    }
+
+    // Remove space before punctuation that was substituted
+    result = result.replace(/\s+([.,;:!?)\]}])/g, '$1')
+    // Add space after punctuation if missing (but not for newlines/tabs)
+    result = result.replace(/([.,;:!?])([A-Za-z])/g, '$1 $2')
+
+    // Auto-capitalize first letter of text
+    result = result.replace(/^(\s*)([a-z])/, (_, ws, ch) => ws + ch.toUpperCase())
+
+    // Auto-capitalize after sentence-ending punctuation
+    result = result.replace(/([.!?]\s+)([a-z])/g, (_, punct, ch) => punct + ch.toUpperCase())
+
+    // Auto-capitalize after newlines
+    result = result.replace(/(\n\s*)([a-z])/g, (_, nl, ch) => nl + ch.toUpperCase())
+
+    // Clean up multiple spaces (but preserve intentional newlines)
+    result = result.replace(/ {2,}/g, ' ')
+
+    return result.trim()
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
   // AUTO CODING MODE
   // ═══════════════════════════════════════════════════════════════════
 
@@ -211,18 +368,28 @@
     autoCoding: true,
     autoSubmit: false,
     engine: 'web-speech',
+    language: 'en',
+    pushToTalk: false,
+    vocabulary: [],    // [{from, to}] custom word replacements
+    replacements: [],  // [{from, to}] text replacement rules
   }
 
   let recognition = null
   const adapter = detectSite()
-  if (!adapter) return // not on a supported site
 
   // Load persisted settings
-  chrome.storage.local.get(['codingMode', 'autoCoding', 'autoSubmit', 'engine'], (stored) => {
+  chrome.storage.local.get([
+    'codingMode', 'autoCoding', 'autoSubmit', 'engine', 'language',
+    'pushToTalk', 'vocabulary', 'replacements',
+  ], (stored) => {
     if (stored.codingMode !== undefined) state.codingMode = stored.codingMode
     if (stored.autoCoding !== undefined) state.autoCoding = stored.autoCoding
     if (stored.autoSubmit !== undefined) state.autoSubmit = stored.autoSubmit
     if (stored.engine !== undefined) state.engine = stored.engine
+    if (stored.language !== undefined) state.language = stored.language
+    if (stored.pushToTalk !== undefined) state.pushToTalk = stored.pushToTalk
+    if (stored.vocabulary) state.vocabulary = stored.vocabulary
+    if (stored.replacements) state.replacements = stored.replacements
   })
 
   // ═══════════════════════════════════════════════════════════════════
@@ -497,11 +664,9 @@
     }
   }
 
-  // Use MutationObserver to wait for the chat input to appear (SPA)
+  // Use MutationObserver to wait for page to be ready (SPA)
   const observer = new MutationObserver(() => {
-    if (getInput(adapter)) {
-      inject()
-    }
+    inject()
   })
   observer.observe(document.body, { childList: true, subtree: true })
 
@@ -574,7 +739,7 @@
     recognition = new SpeechRecognition()
     recognition.continuous = true
     recognition.interimResults = true
-    recognition.lang = 'en-NZ'
+    recognition.lang = state.language || 'en'
 
     recognition.onstart = () => {
       state.status = 'recording'
@@ -673,7 +838,7 @@
       return
     }
 
-    let output = (cmd && cmd.action === 'text') ? cmd.output : text
+    let output = (cmd && cmd.action === 'text') ? cmd.output : postProcess(text)
 
     // Auto coding mode — wrap in code fences if coding content detected
     if (state.codingMode || (state.autoCoding && isCodingContent(output))) {
@@ -755,6 +920,32 @@
     if (msg.type === 'STATE_UPDATED') {
       Object.assign(state, msg.updates)
       updateUI()
+    }
+  })
+
+  // ── Push-to-talk: Hold Ctrl+Shift to record, release to stop ─────
+  let pttActive = false
+
+  window.addEventListener('keydown', (e) => {
+    if (!state.pushToTalk) return
+    // Hold Ctrl+Shift (no other keys) to start push-to-talk
+    if (e.ctrlKey && e.shiftKey && !e.altKey && !e.metaKey && e.key === 'Shift' && !pttActive) {
+      // Don't trigger if user is typing in an input
+      const tag = document.activeElement?.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.contentEditable === 'true') return
+      pttActive = true
+      startRecording()
+      panel.classList.add('open')
+      e.preventDefault()
+    }
+  })
+
+  window.addEventListener('keyup', (e) => {
+    if (!state.pushToTalk) return
+    if (pttActive && (e.key === 'Shift' || e.key === 'Control')) {
+      pttActive = false
+      stopRecording()
+      e.preventDefault()
     }
   })
 
