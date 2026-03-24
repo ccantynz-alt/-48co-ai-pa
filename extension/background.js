@@ -108,6 +108,7 @@ async function handleMessage(msg, sender) {
         chrome.tabs.sendMessage(tab.id, {
           type: 'TRANSCRIPTION_READY',
           text: msg.text,
+          error: msg.error,
         })
       }
       return { ok: true }

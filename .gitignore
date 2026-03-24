@@ -1,2 +1,7 @@
 node_modules/
 .next/
+desktop/dist/
+desktop/node_modules/
+*.dmg
+*.exe
+*.msi

@@ -106,7 +106,7 @@ export default function InstallPage() {
           <h3 className="text-[11px] tracking-[0.15em] text-white/25 mb-4 uppercase">Troubleshooting</h3>
           <div className="space-y-3 text-[12px] text-white/35 leading-relaxed">
             <p><span className="text-white/50">Widget not showing?</span> Refresh the AI chat page after installing. The extension only loads on claude.ai, chatgpt.com, gemini.google.com, and chat.deepseek.com.</p>
-            <p><span className="text-white/50">Mic not working?</span> Chrome will ask for microphone permission the first time. Click "Allow".</p>
+            <p><span className="text-white/50">Mic not working?</span> Chrome will ask for microphone permission the first time. Click &quot;Allow&quot;.</p>
             <p><span className="text-white/50">Nothing happens when you speak?</span> Make sure you&apos;re using Chrome or Edge. Firefox and Safari don&apos;t support the Web Speech API.</p>
           </div>
         </div>
