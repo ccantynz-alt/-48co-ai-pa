@@ -50,7 +50,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["widget.css", "icons/*"],
+      "resources": ["icons/*"],
       "matches": ["https://*/*", "http://*/*"]
     }
   ],

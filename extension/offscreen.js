@@ -59,6 +59,12 @@ async function startRecording() {
     mediaRecorder.start(250) // collect chunks every 250ms
   } catch (err) {
     console.error('[48co offscreen] Mic access error:', err)
+    // Send error back to background → content script so UI doesn't hang
+    chrome.runtime.sendMessage({
+      type: 'TRANSCRIPTION_READY',
+      text: '',
+      error: 'Microphone access denied. Check browser permissions and try again.',
+    })
   }
 }
 
@@ -78,11 +84,18 @@ async function transcribeWithWhisper(audioBlob) {
     formData.append('language', langCode)
     formData.append('response_format', 'json')
 
+    // 30-second timeout to prevent hanging on network issues
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 30000)
+
     const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}` },
       body: formData,
+      signal: controller.signal,
     })
+
+    clearTimeout(timeout)
 
     if (!response.ok) {
       const err = await response.text()

@@ -662,16 +662,21 @@
     if (!document.body.contains(host)) {
       document.body.appendChild(host)
     }
+    return document.body.contains(host)
   }
 
   // Use MutationObserver to wait for page to be ready (SPA)
   const observer = new MutationObserver(() => {
-    inject()
+    if (inject()) {
+      observer.disconnect() // Stop observing once widget is injected
+    }
   })
   observer.observe(document.body, { childList: true, subtree: true })
 
   // Also try immediately
-  if (document.body) inject()
+  if (document.body && inject()) {
+    observer.disconnect()
+  }
 
   // ── Widget element references ────────────────────────────────────
   const micBtn = container.querySelector('#mic-btn')
@@ -760,10 +765,18 @@
     }
 
     recognition.onerror = (e) => {
-      if (e.error !== 'aborted') {
-        state.status = 'idle'
-        updateUI()
+      if (e.error === 'aborted') return
+      state.status = 'idle'
+
+      const errorMessages = {
+        'not-allowed': 'Microphone access denied — check browser permissions',
+        'no-speech': 'No speech detected — try again',
+        'network': 'Network error — check your connection',
+        'audio-capture': 'No microphone found — check your audio devices',
+        'service-not-allowed': 'Speech service not available — try Chrome or Edge',
       }
+      statusLabel.textContent = errorMessages[e.error] || 'Error: ' + e.error
+      updateUI()
     }
 
     recognition.start()
@@ -864,12 +877,22 @@
       }, 1500)
     } else {
       // Fallback: copy to clipboard
-      navigator.clipboard.writeText(output).then(() => {
-        statusLabel.textContent = 'Copied to clipboard (no input found)'
-        state.status = 'done'
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(output).then(() => {
+          statusLabel.textContent = 'Copied to clipboard (no input found)'
+          state.status = 'done'
+          updateUI()
+          setTimeout(() => { state.status = 'idle'; state.transcript = ''; updateUI() }, 2000)
+        }).catch(() => {
+          statusLabel.textContent = 'No text field found — click a chat input first'
+          state.status = 'idle'
+          updateUI()
+        })
+      } else {
+        statusLabel.textContent = 'No text field found — click a chat input first'
+        state.status = 'idle'
         updateUI()
-        setTimeout(() => { state.status = 'idle'; state.transcript = ''; updateUI() }, 2000)
-      })
+      }
     }
   }
 
@@ -897,9 +920,18 @@
     updateUI()
   })
 
-  // Scroll wheel — anywhere on the page
+  // Scroll wheel — only near the widget to avoid hijacking normal page scrolling
+  // Check if the scroll event target is within 200px of the widget
   window.addEventListener('wheel', (e) => {
-    // Only trigger if scrolled near the widget or if chat is at scroll boundary
+    const widgetRect = host.getBoundingClientRect()
+    const nearWidget = (
+      e.clientX >= widgetRect.left - 200 &&
+      e.clientX <= widgetRect.right + 200 &&
+      e.clientY >= widgetRect.top - 200 &&
+      e.clientY <= widgetRect.bottom + 200
+    )
+    if (!nearWidget) return
+
     if (e.deltaY < -30 && state.status === 'idle') {
       startRecording()
       panel.classList.add('open')
@@ -914,6 +946,13 @@
     if (msg.type === 'START_RECORDING') startRecording()
     if (msg.type === 'STOP_RECORDING') stopRecording()
     if (msg.type === 'TRANSCRIPTION_READY') {
+      if (msg.error) {
+        statusLabel.textContent = msg.error
+        state.status = 'idle'
+        state.transcript = ''
+        updateUI()
+        return
+      }
       state.transcript = msg.text
       processTranscript(msg.text)
     }
@@ -929,10 +968,8 @@
   window.addEventListener('keydown', (e) => {
     if (!state.pushToTalk) return
     // Hold Ctrl+Shift (no other keys) to start push-to-talk
+    // Works even when focused on text inputs — that's the primary use case
     if (e.ctrlKey && e.shiftKey && !e.altKey && !e.metaKey && e.key === 'Shift' && !pttActive) {
-      // Don't trigger if user is typing in an input
-      const tag = document.activeElement?.tagName
-      if (tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.contentEditable === 'true') return
       pttActive = true
       startRecording()
       panel.classList.add('open')
