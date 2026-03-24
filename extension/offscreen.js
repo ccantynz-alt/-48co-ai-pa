@@ -51,7 +51,8 @@ async function startRecording() {
         // so signal an error
         chrome.runtime.sendMessage({
           type: 'TRANSCRIPTION_READY',
-          text: '[Error: No Whisper API key configured. Go to 48co settings.]',
+          text: '',
+          error: 'No Whisper API key configured. Go to 48co settings.',
         })
       }
     }
