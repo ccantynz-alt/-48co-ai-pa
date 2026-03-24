@@ -240,7 +240,7 @@ export default function LivePage() {
         <section className="glass rounded-2xl p-6 mb-8">
           <h2 className="text-sm font-bold text-white/80 mb-2">Use on ANY Website</h2>
           <p className="text-[11px] text-white/35 leading-relaxed mb-4">
-            The bookmarklet injects the 48co voice widget into any webpage. It types directly into the page's text fields — no copy-paste needed.
+            The bookmarklet injects the 48co voice widget into any webpage. It types directly into the page&apos;s text fields — no copy-paste needed.
           </p>
 
           <div className="flex flex-col gap-3">
@@ -270,7 +270,7 @@ export default function LivePage() {
             <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02]">
               <span className="text-white/30 text-lg">3</span>
               <div>
-                <p className="text-[11px] text-white/40">Click the "48co Voice" bookmark — the voice widget appears</p>
+                <p className="text-[11px] text-white/40">Click the &quot;48co Voice&quot; bookmark — the voice widget appears</p>
               </div>
             </div>
 

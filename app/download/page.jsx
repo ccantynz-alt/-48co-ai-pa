@@ -85,7 +85,7 @@ export default function DownloadPage() {
             <span className="text-[#00f0ff]">48co</span>
           </h1>
           <p className="text-white/35 text-sm max-w-md mx-auto">
-            System-wide voice-to-text. Press a hotkey, speak, and it types into whatever app you're using.
+            System-wide voice-to-text. Press a hotkey, speak, and it types into whatever app you&apos;re using.
           </p>
         </section>
 
@@ -188,7 +188,7 @@ export default function DownloadPage() {
 
         {/* Alternative */}
         <section className="text-center py-8">
-          <p className="text-[11px] text-white/25 mb-3">Don't want to download anything?</p>
+          <p className="text-[11px] text-white/25 mb-3">Don&apos;t want to download anything?</p>
           <a
             href="/live"
             className="inline-block px-6 py-2 rounded-xl border border-white/10 text-white/40 text-[11px] tracking-wider hover:border-white/20 transition-all"

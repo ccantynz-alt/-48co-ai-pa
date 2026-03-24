@@ -184,7 +184,7 @@ export default function LandingPage() {
           <div className="glass rounded-2xl p-5">
             <span className="text-white/60 text-lg mb-3 block">Web Bookmarklet</span>
             <p className="text-[11px] text-white/50 leading-relaxed mb-3">
-              Zero download. Click a bookmark on any website to inject the voice widget. Types directly into the page's text fields.
+              Zero download. Click a bookmark on any website to inject the voice widget. Types directly into the page&apos;s text fields.
             </p>
             <p className="text-[9px] text-white/30">Browser only. Re-click per page.</p>
           </div>
