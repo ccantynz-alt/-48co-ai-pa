@@ -113,7 +113,7 @@ function createSettingsWindow() {
 // ─── System Tray ───────────────────────────────────────────────
 function createTray() {
   // Create a simple tray icon (16x16 template image)
-  const iconPath = path.join(__dirname, '..', 'assets', 'tray-icon.png')
+  const iconPath = path.join(__dirname, '..', 'assets', 'tray-icon.svg')
   let trayIcon
   try {
     trayIcon = nativeImage.createFromPath(iconPath)

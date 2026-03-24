@@ -9,11 +9,13 @@ export default function LivePage() {
   const [bookmarkletCopied, setBookmarkletCopied] = useState(false)
   const recognitionRef = useRef(null)
 
-  // Bookmarklet code — loads inject.js from the site
-  const bookmarkletCode = `javascript:void(fetch(location.origin+'/inject.js').then(r=>r.text()).then(eval))`
-
-  // For production, use actual domain:
-  // const bookmarkletCode = `javascript:void(fetch('https://48co.nz/inject.js').then(r=>r.text()).then(eval))`
+  // Bookmarklet code — loads inject.js from the 48co domain
+  // Uses the current origin so it works in both dev (localhost) and production (48co.nz)
+  const [siteOrigin, setSiteOrigin] = useState('https://48co.nz')
+  useEffect(() => {
+    setSiteOrigin(window.location.origin)
+  }, [])
+  const bookmarkletCode = `javascript:void(fetch('${siteOrigin}/inject.js').then(r=>r.text()).then(eval))`
 
   const LANGUAGES = [
     { code: 'en', name: 'English' }, { code: 'es', name: 'Spanish' },

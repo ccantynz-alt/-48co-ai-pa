@@ -84,8 +84,70 @@
     [/\b(thinking emoji)\b/gi, '\u{1F914}'],
   ]
 
+  // ═══════════════════════════════════════════════════════════════
+  // VOICE COMMANDS
+  // ═══════════════════════════════════════════════════════════════
+
+  const VOICE_COMMANDS = [
+    { triggers: ['refactor this'], output: 'Refactor the following code. Identify inefficiencies, simplify logic, and rewrite it cleanly:\n\n' },
+    { triggers: ['explain this'], output: 'Explain what the following code does, step by step:\n\n' },
+    { triggers: ['debug this'], output: 'Debug the following code. Find errors, explain them, and provide a fix:\n\n' },
+    { triggers: ['fix this'], output: 'Fix the following code. Identify the bug and provide the corrected version:\n\n' },
+    { triggers: ['test this'], output: 'Write comprehensive tests for the following code:\n\n' },
+    { triggers: ['optimize this'], output: 'Optimize the following code for performance:\n\n' },
+  ]
+
+  function matchCommand(text) {
+    const lower = text.toLowerCase().trim()
+    for (const cmd of VOICE_COMMANDS) {
+      for (const trigger of cmd.triggers) {
+        if (lower.includes(trigger)) return cmd
+      }
+    }
+    return null
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // AUTO CODE FENCE DETECTION
+  // ═══════════════════════════════════════════════════════════════
+
+  const CODING_KEYWORDS = [
+    'function', 'class', 'import', 'export', 'const', 'let', 'var',
+    'loop', 'array', 'object', 'return', 'async', 'await', 'def',
+    'interface', 'struct', 'enum', 'module', 'require', 'extends',
+    'constructor', 'prototype', 'promise', 'component', 'useState',
+    'useEffect', 'middleware', 'endpoint', 'callback',
+  ]
+
+  function isCodingContent(text) {
+    const lower = text.toLowerCase()
+    return CODING_KEYWORDS.some(kw => lower.includes(kw))
+  }
+
+  function detectLang(text) {
+    const l = text.toLowerCase()
+    if (l.includes('python') || l.includes('def ')) return 'python'
+    if (l.includes('rust') || l.includes('fn ')) return 'rust'
+    if (l.includes('go ') || l.includes('goroutine')) return 'go'
+    if (l.includes('typescript')) return 'typescript'
+    if (l.includes('bash') || l.includes('terminal')) return 'bash'
+    if (l.includes('sql') || l.includes('query')) return 'sql'
+    if (l.includes('html') || l.includes('div ')) return 'html'
+    if (l.includes('css') || l.includes('flexbox')) return 'css'
+    return 'javascript'
+  }
+
+  function wrapCode(text) {
+    return '```' + detectLang(text) + '\n' + text + '\n```'
+  }
+
   function postProcess(text) {
     let result = text
+
+    // Check for voice commands first
+    const cmd = matchCommand(result)
+    if (cmd) return cmd.output
+
     for (const [pattern, replacement] of PUNCTUATION_MAP) {
       result = result.replace(pattern, replacement)
     }
@@ -95,7 +157,14 @@
     result = result.replace(/([.!?]\s+)([a-z])/g, (_, punct, ch) => punct + ch.toUpperCase())
     result = result.replace(/(\n\s*)([a-z])/g, (_, nl, ch) => nl + ch.toUpperCase())
     result = result.replace(/ {2,}/g, ' ')
-    return result.trim()
+    result = result.trim()
+
+    // Auto code fence detection
+    if (isCodingContent(result)) {
+      result = wrapCode(result)
+    }
+
+    return result
   }
 
   // ═══════════════════════════════════════════════════════════════

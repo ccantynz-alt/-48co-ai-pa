@@ -2,7 +2,7 @@ import './globals.css'
 
 export const metadata = {
   title: '48co — Voice-to-Text That Types Into Any App',
-  description: 'Desktop app + web bookmarklet + Chrome extension. Speak and it types into any app, any website. 50+ languages. Free.',
+  description: 'Desktop app + web bookmarklet + Chrome extension. Speak and it types into any app, any website, any text field. Free and open source.',
 }
 
 export default function RootLayout({ children }) {

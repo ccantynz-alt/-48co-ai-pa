@@ -215,9 +215,13 @@
 
           if (config.engine === 'whisper' && config.whisperApiKey) {
             await transcribeWithWhisper(audioBlob, config)
+          } else if (config.engine === 'web-speech') {
+            // Web Speech API used as fallback — transcription happens live
+            // Audio blob is not needed; Web Speech ran in parallel (see below)
+            // This path is reached if Web Speech was selected but MediaRecorder was also active
+            window.foureightco.sendTranscription(webSpeechTranscript || '')
           } else {
-            // Web Speech API fallback handled differently (see below)
-            window.foureightco.sendError('No Whisper API key configured. Please add your key in Settings.')
+            window.foureightco.sendError('No Whisper API key configured. Add your key in Settings, or switch to Web Speech engine.')
           }
         }
 
@@ -260,12 +264,62 @@
       }
     }
 
+    // ─── Web Speech API fallback ────────────────────────────────
+    let webSpeechTranscript = ''
+    let webSpeechRecognition = null
+
+    function startWebSpeech(config) {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition
+      if (!SR) {
+        window.foureightco.sendError('Web Speech API not available in this environment. Use Whisper engine instead.')
+        return
+      }
+
+      webSpeechTranscript = ''
+      webSpeechRecognition = new SR()
+      webSpeechRecognition.continuous = true
+      webSpeechRecognition.interimResults = true
+      webSpeechRecognition.lang = config.language || 'en'
+
+      webSpeechRecognition.onresult = (e) => {
+        let full = ''
+        for (let i = 0; i < e.results.length; i++) full += e.results[i][0].transcript
+        webSpeechTranscript = full
+        transcriptEl.textContent = full
+      }
+
+      webSpeechRecognition.onerror = (e) => {
+        if (e.error === 'not-allowed') {
+          window.foureightco.sendError('Microphone access denied for Web Speech API.')
+        }
+      }
+
+      webSpeechRecognition.onend = () => {
+        // When Web Speech stops, send the final transcript
+        window.foureightco.sendTranscription(webSpeechTranscript || '')
+      }
+
+      webSpeechRecognition.start()
+    }
+
+    function stopWebSpeech() {
+      if (webSpeechRecognition) {
+        webSpeechRecognition.stop()
+        webSpeechRecognition = null
+      }
+    }
+
     // ─── IPC Listeners ─────────────────────────────────────────
     window.foureightco.onStartRecording((config) => {
-      startAudioCapture(config)
+      if (config.engine === 'web-speech') {
+        startWebSpeech(config)
+      } else {
+        startAudioCapture(config)
+      }
     })
 
     window.foureightco.onStopRecording(() => {
+      stopWebSpeech()
       stopAudioCapture()
     })
 
