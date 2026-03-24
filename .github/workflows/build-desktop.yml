@@ -1,0 +1,135 @@
+name: Build Desktop App
+
+# Builds macOS (.dmg) and Windows (.exe) installers
+# and publishes them as a GitHub release so the download
+# page links work: /releases/latest/download/48co-mac.dmg
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'desktop/**'
+      - '.github/workflows/build-desktop.yml'
+  workflow_dispatch: # Manual trigger from GitHub UI
+
+# Only one build at a time
+concurrency:
+  group: desktop-build
+  cancel-in-progress: true
+
+jobs:
+  build-mac:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+
+      - name: Install dependencies
+        working-directory: desktop
+        run: npm install
+
+      - name: Generate icons
+        working-directory: desktop
+        run: npm run icons
+
+      - name: Build macOS .dmg
+        working-directory: desktop
+        run: npm run build:mac
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac-installer
+          path: desktop/dist/48co-mac.dmg
+          if-no-files-found: error
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+
+      - name: Install dependencies
+        working-directory: desktop
+        run: npm install
+
+      - name: Generate icons
+        working-directory: desktop
+        run: npm run icons
+
+      - name: Build Windows .exe
+        working-directory: desktop
+        run: npm run build:win
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: win-installer
+          path: desktop/dist/48co-win.exe
+          if-no-files-found: error
+
+  release:
+    needs: [build-mac, build-windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download macOS artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: mac-installer
+          path: dist
+
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: win-installer
+          path: dist
+
+      - name: List artifacts
+        run: ls -la dist/
+
+      - name: Create or update release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: 48co Desktop App
+          body: |
+            ## Download 48co
+
+            **macOS:** [48co-mac.dmg](https://github.com/${{ github.repository }}/releases/latest/download/48co-mac.dmg)
+            **Windows:** [48co-win.exe](https://github.com/${{ github.repository }}/releases/latest/download/48co-win.exe)
+
+            ### What you need
+            - An OpenAI API key for Whisper transcription (~$0.006/min)
+            - macOS: Accessibility + Microphone permissions
+            - Windows: No special permissions
+
+            ### Setup
+            1. Download and install
+            2. Right-click the tray icon → Settings → Enter your API key
+            3. Press Ctrl+Shift+Space (Cmd+Shift+Space on Mac) to start talking
+          draft: false
+          prerelease: false
+          make_latest: true
+          files: |
+            dist/48co-mac.dmg
+            dist/48co-win.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

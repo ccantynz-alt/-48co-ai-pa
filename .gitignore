@@ -5,3 +5,9 @@ desktop/node_modules/
 *.dmg
 *.exe
 *.msi
+
+# Generated icons (created by npm run icons in desktop/)
+desktop/assets/icon.png
+desktop/assets/tray-icon.png
+desktop/assets/tray-iconTemplate.png
+desktop/assets/tray-iconTemplate@2x.png
