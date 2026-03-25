@@ -395,102 +395,12 @@
   })
 
   // ═══════════════════════════════════════════════════════════════════
-  // TOAST NOTIFICATION (replaces the floating widget)
-  // Small, non-blocking status toast — appears briefly, then fades out.
-  // Positioned top-center so it never blocks any page UI.
+  // NO ON-PAGE UI — zero DOM elements injected.
+  // All status is shown via the extension toolbar icon badge only.
   // ═══════════════════════════════════════════════════════════════════
 
-  let toastHost = null
-  let toastShadow = null
-  let toastEl = null
-  let toastTimeout = null
-
-  function createToast() {
-    if (toastHost) return
-
-    toastHost = document.createElement('div')
-    toastHost.id = 'foureightco-toast'
-    toastHost.style.cssText = 'position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:2147483647;pointer-events:none;'
-    toastShadow = toastHost.attachShadow({ mode: 'closed' })
-
-    const style = document.createElement('style')
-    style.textContent = `
-      .toast {
-        font-family: 'JetBrains Mono', 'SF Mono', monospace;
-        font-size: 11px;
-        padding: 6px 14px;
-        border-radius: 8px;
-        background: rgba(10, 10, 14, 0.92);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        color: rgba(255, 255, 255, 0.6);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        opacity: 0;
-        transform: translateY(-8px);
-        transition: opacity 0.25s ease, transform 0.25s ease;
-        white-space: nowrap;
-      }
-      .toast.show {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      .dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        flex-shrink: 0;
-      }
-      .dot.idle { background: rgba(255,255,255,0.3); }
-      .dot.recording { background: #ff3b5c; box-shadow: 0 0 8px rgba(255,59,92,0.6); animation: pulse 1s ease-in-out infinite; }
-      .dot.processing { background: #ffb800; }
-      .dot.done { background: #00ff88; }
-      @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.4; }
-      }
-    `
-
-    toastEl = document.createElement('div')
-    toastEl.className = 'toast'
-    toastEl.innerHTML = '<span class="dot idle"></span><span class="text"></span>'
-
-    toastShadow.appendChild(style)
-    toastShadow.appendChild(toastEl)
-    document.body.appendChild(toastHost)
-  }
-
-  function showToast(message, statusClass, duration) {
-    createToast()
-    const dot = toastEl.querySelector('.dot')
-    const text = toastEl.querySelector('.text')
-
-    dot.className = 'dot ' + statusClass
-    text.textContent = message
-
-    // Show
-    requestAnimationFrame(() => {
-      toastEl.classList.add('show')
-    })
-
-    // Auto-hide (except during recording)
-    clearTimeout(toastTimeout)
-    if (duration > 0) {
-      toastTimeout = setTimeout(() => {
-        toastEl.classList.remove('show')
-      }, duration)
-    }
-  }
-
-  function hideToast() {
-    if (toastEl) toastEl.classList.remove('show')
-    clearTimeout(toastTimeout)
-  }
-
   // ═══════════════════════════════════════════════════════════════════
-  // UI UPDATE (badge + toast, NO page widget)
+  // UI UPDATE (badge only — zero page DOM)
   // ═══════════════════════════════════════════════════════════════════
 
   function updateUI() {
@@ -498,15 +408,6 @@
     try {
       chrome.runtime.sendMessage({ type: 'UPDATE_BADGE', status: state.status })
     } catch { /* extension context may be invalid */ }
-
-    if (state.status === 'recording') {
-      showToast('Recording...', 'recording', 0) // stays until stopped
-    } else if (state.status === 'processing') {
-      showToast('Transcribing...', 'processing', 0)
-    } else if (state.status === 'done') {
-      showToast('Typed \u2713', 'done', 1500)
-    }
-    // idle = hide toast (handled by done timeout)
   }
 
   // ═══════════════════════════════════════════════════════════════════
@@ -516,7 +417,7 @@
   function startWebSpeech() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     if (!SpeechRecognition) {
-      showToast('Speech API not supported — use Chrome', 'idle', 3000)
+      console.warn('[48co] Speech API not supported — use Chrome')
       return
     }
 
@@ -553,7 +454,7 @@
         'audio-capture': 'No mic found — check audio devices',
         'service-not-allowed': 'Speech service unavailable — try Chrome',
       }
-      showToast(errorMessages[e.error] || 'Error: ' + e.error, 'idle', 3000)
+      console.warn('[48co]', errorMessages[e.error] || 'Error: ' + e.error)
       updateUI()
     }
 
@@ -604,7 +505,6 @@
     if (!text || !text.trim()) {
       state.status = 'idle'
       state.transcript = ''
-      hideToast()
       updateUI()
       return
     }
@@ -618,7 +518,6 @@
     if (cmd && cmd.action === 'cancel') {
       state.status = 'idle'
       state.transcript = ''
-      hideToast()
       updateUI()
       return
     }
@@ -659,17 +558,17 @@
       // Fallback: copy to clipboard
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(output).then(() => {
-          showToast('Copied to clipboard (no input found)', 'done', 2000)
+          console.log('[48co] Copied to clipboard (no input found)')
           state.status = 'done'
           updateUI()
           setTimeout(() => { state.status = 'idle'; state.transcript = ''; updateUI() }, 2000)
         }).catch(() => {
-          showToast('No text field found — click input first', 'idle', 3000)
+          console.warn('[48co] No text field found — click input first')
           state.status = 'idle'
           updateUI()
         })
       } else {
-        showToast('No text field found — click input first', 'idle', 3000)
+        console.warn('[48co] No text field found — click input first')
         state.status = 'idle'
         updateUI()
       }
@@ -702,7 +601,7 @@
     }
     if (msg.type === 'TRANSCRIPTION_READY') {
       if (msg.error) {
-        showToast(msg.error, 'idle', 3000)
+        console.warn('[48co]', msg.error)
         state.status = 'idle'
         state.transcript = ''
         updateUI()
