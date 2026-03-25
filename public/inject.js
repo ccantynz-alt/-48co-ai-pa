@@ -334,7 +334,7 @@
       </div>
       <div class="waveform" id="waveform"></div>
       <div class="transcript" id="transcript"></div>
-      <div class="status" id="status">Click mic or press Ctrl+Shift+Space</div>
+      <div class="status" id="status">Click mic, middle-click, or Ctrl+Shift+Space</div>
       <div class="lang-select">
         <label>LANG</label>
         <select id="lang-sel">
@@ -428,7 +428,7 @@
     if (status === 'idle') {
       micBtn.innerHTML = ICONS.mic
       micBtn.className = 'mic-btn idle'
-      statusEl.textContent = 'Click mic or press Ctrl+Shift+Space'
+      statusEl.textContent = 'Click mic, middle-click, or Ctrl+Shift+Space'
     } else if (status === 'recording') {
       micBtn.innerHTML = ICONS.wave
       micBtn.className = 'mic-btn recording'
@@ -539,11 +539,14 @@
     }
   })
 
-  // Scroll wheel control
-  window.addEventListener('wheel', (e) => {
-    if (e.deltaY < -30 && status === 'idle') { startRecording(); panel.classList.add('open') }
-    if (e.deltaY > 30 && status === 'recording') stopRecording()
-  }, { passive: true })
+  // Middle-click (wheel button press) toggle
+  window.addEventListener('mousedown', (e) => {
+    if (e.button !== 1) return
+    e.preventDefault()
+    if (status === 'idle') { startRecording(); panel.classList.add('open') }
+    else if (status === 'recording') stopRecording()
+  })
+  window.addEventListener('auxclick', (e) => { if (e.button === 1) e.preventDefault() })
 
   // Save language preference
   langSel.addEventListener('change', () => {
@@ -555,5 +558,5 @@
   updateUI()
   panel.classList.add('open')
 
-  console.log('[48co] Voice widget injected. Ctrl+Shift+Space to toggle.')
+  console.log('[48co] Voice widget injected. Middle-click or Ctrl+Shift+Space to toggle.')
 })()

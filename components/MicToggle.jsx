@@ -4,8 +4,8 @@ import { useEffect } from 'react'
 
 // Status config — ring class, label text, and label colour per state
 const STATUS = {
-  idle:    { label: 'Scroll \u2191 to record', ring: 'ring-idle',    color: 'text-white/40' },
-  record:  { label: 'Scroll \u2193 to stop',   ring: 'ring-record',  color: 'text-[#ff3b5c]' },
+  idle:    { label: 'Middle-click to record', ring: 'ring-idle',    color: 'text-white/40' },
+  record:  { label: 'Middle-click to stop',   ring: 'ring-record',  color: 'text-[#ff3b5c]' },
   process: { label: 'Transcribing\u2026',      ring: 'ring-process', color: 'text-[#ffb800]' },
   done:    { label: 'Pasted \u2713',           ring: 'ring-done',    color: 'text-[#00ff88]' },
 }
@@ -13,15 +13,23 @@ const STATUS = {
 export default function MicToggle({ status, onToggle }) {
   const { label, ring, color } = STATUS[status] || STATUS.idle
 
-  // ── Mouse wheel listener — scroll anywhere on page ─────────────
+  // ── Middle-click (wheel button press) listener — anywhere on page ──
   useEffect(() => {
     const handler = (e) => {
-      if (e.deltaY < 0) onToggle('start')   // scroll UP  = start recording
-      if (e.deltaY > 0) onToggle('stop')    // scroll DOWN = stop recording
+      if (e.button !== 1) return          // only middle mouse button
+      e.preventDefault()                   // prevent auto-scroll
+      if (status === 'idle')   onToggle('start')
+      if (status === 'record') onToggle('stop')
     }
-    window.addEventListener('wheel', handler, { passive: true })
-    return () => window.removeEventListener('wheel', handler)
-  }, [onToggle])
+    // mousedown for the press, auxclick to prevent default browser behavior
+    const preventAux = (e) => { if (e.button === 1) e.preventDefault() }
+    window.addEventListener('mousedown', handler)
+    window.addEventListener('auxclick', preventAux)
+    return () => {
+      window.removeEventListener('mousedown', handler)
+      window.removeEventListener('auxclick', preventAux)
+    }
+  }, [onToggle, status])
 
   // ── Click handler — toggles between idle/recording ─────────────
   const handleClick = () => {
@@ -34,7 +42,7 @@ export default function MicToggle({ status, onToggle }) {
       {/* The mic button */}
       <button
         onClick={handleClick}
-        title="Click or scroll to toggle mic"
+        title="Click or middle-click to toggle mic"
         className={`
           w-14 h-14 rounded-full glass flex items-center justify-center
           transition-all duration-300 cursor-pointer select-none

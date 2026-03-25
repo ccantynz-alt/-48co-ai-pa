@@ -36,7 +36,7 @@ const STEPS = [
   {
     number: '6',
     title: 'Done — go to an AI chat',
-    desc: 'Open Claude.ai, ChatGPT, Gemini, or DeepSeek. The 48co mic widget appears in the bottom-right. Scroll up to record.',
+    desc: 'Open Claude.ai, ChatGPT, Gemini, or DeepSeek. The 48co mic widget appears in the bottom-right. Middle-click to record.',
     detail: null,
   },
 ]
