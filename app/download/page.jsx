@@ -15,6 +15,11 @@ export default function DownloadPage() {
 
   const FEATURES = [
     {
+      icon: '\u{2728}',
+      title: 'AI Rewrite Mode',
+      desc: 'Speak rough ideas, get polished text. Claude AI fixes grammar, removes filler words, adjusts tone based on which app you\u2019re in.',
+    },
+    {
       icon: '\u{1F310}',
       title: 'Works in ANY App',
       desc: 'Types into any focused text field \u2014 browsers, Slack, Discord, VS Code, email, Word, anything on your computer.',
