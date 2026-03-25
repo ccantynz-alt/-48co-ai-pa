@@ -78,11 +78,20 @@ Before implementing any feature:
    - Bookmarklet activation page
 
 ### Tech Stack:
-- **Website**: Next.js 14, React 18, Tailwind CSS 3.4
-- **Desktop App**: Electron 28+, @nut-tree/nut-js, OpenAI Whisper API
-- **Browser Extension**: Chrome MV3 (existing, maintained as option)
+- **Website**: Next.js 14, React 18, Tailwind CSS 3.4 (LIGHT THEME — white bg, indigo accent)
+- **Desktop App**: Electron 28+, @nut-tree/nut-js, OpenAI Whisper API, Claude API (grammar + rewrite)
+- **Browser Extension**: Chrome MV3 with AI grammar checker + voice-to-text
+- **Mobile Keyboard**: React Native/Expo companion app + native keyboard extensions (Swift/Kotlin)
+- **AI Grammar**: Claude Haiku API (fast grammar) + Claude Sonnet (rewrite/polish)
 - **Speech-to-Text**: OpenAI Whisper API (primary), Web Speech API (free fallback)
-- **Build/Package**: electron-builder for Win (.exe/.msi) + Mac (.dmg)
+- **Build/Package**: electron-builder for Win + Mac, EAS Build for iOS + Android
+
+### Product Delivery — Five Platforms:
+1. **Desktop App** (PRIMARY) — Electron, system tray, global hotkey, types into any app
+2. **Chrome Extension** (VIRAL ENGINE) — Grammar check on any website, free tier drives upgrades
+3. **iPhone Keyboard** — Custom keyboard extension, corrects as you type, voice button
+4. **Android Keyboard** — Same as iPhone, InputMethodService
+5. **Website** (48co.nz) — Marketing, live demo, SEO, downloads
 
 ### Quality Checklist (Run Before Every Commit):
 - [ ] Does every feature work end-to-end?
