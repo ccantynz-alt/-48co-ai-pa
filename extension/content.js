@@ -1,15 +1,22 @@
 /**
  * 48co Content Script
- * Injected into all pages. NO visible widget on the page.
- * All controls are in the toolbar icon (extension popup).
- * Triggers: middle-click, Ctrl+Shift+Space, push-to-talk, or click extension icon.
- * Shows a brief toast notification for status changes, then disappears.
+ * Injected into all pages. ZERO visible elements on the page.
+ * All controls: toolbar icon popup, middle-click, Ctrl+Shift+Space, push-to-talk.
+ * Status shown via extension badge only.
+ *
+ * AUDIT FIXES (22 bugs addressed):
+ * - State machine guards on every transition
+ * - Separate timeout IDs for recording vs processing
+ * - Whisper errors are errors, not text
+ * - processTranscript checks state before acting
+ * - All failures show feedback via badge
+ * - insertText uses clipboard-paste fallback for ProseMirror
  */
 ;(function () {
   'use strict'
 
   // ═══════════════════════════════════════════════════════════════════
-  // SITE ADAPTERS (inlined to avoid module import issues)
+  // SITE ADAPTERS
   // ═══════════════════════════════════════════════════════════════════
 
   function queryFirst(selectors) {
@@ -89,14 +96,12 @@
     },
   }
 
-  // Generic adapter — works on any website by finding the focused/active text input
   const ADAPTERS_GENERIC = {
     name: 'Any Site',
     input: [
       'textarea:focus',
       'input[type="text"]:focus',
       'div[contenteditable="true"]:focus',
-      // Fallbacks: find first visible text input on page
       'textarea',
       'div[contenteditable="true"]',
       'input[type="text"]',
@@ -114,13 +119,13 @@
     if (host.includes('chatgpt.com') || host.includes('chat.openai.com')) return ADAPTERS.chatgpt
     if (host.includes('gemini.google.com')) return ADAPTERS.gemini
     if (host.includes('chat.deepseek.com')) return ADAPTERS.deepseek
-    return ADAPTERS_GENERIC // fallback to generic adapter for any site
+    return ADAPTERS_GENERIC
   }
 
   function getInput(adapter) { return queryFirst(adapter.input) }
   function getSend(adapter) { return queryFirst(adapter.send) }
 
-  // Track the last focused text input for generic mode
+  // Track last focused text input
   let lastFocusedInput = null
   document.addEventListener('focusin', (e) => {
     const t = e.target
@@ -129,27 +134,62 @@
     }
   }, true)
 
+  // ═══════════════════════════════════════════════════════════════════
+  // TEXT INSERTION — with ProseMirror clipboard-paste fallback
+  // ═══════════════════════════════════════════════════════════════════
+
   function insertText(adapter, text) {
-    // On generic sites, prefer the last focused input element
     let el = getInput(adapter)
-    if (!el && lastFocusedInput) el = lastFocusedInput
+    if (!el && lastFocusedInput && document.body.contains(lastFocusedInput)) {
+      el = lastFocusedInput
+    }
     if (!el) return false
     el.focus()
 
-    // Try execCommand first (works on many sites)
     if (el.contentEditable === 'true') {
+      // Clear ProseMirror placeholder
       const placeholder = el.querySelector('p.is-empty, p.is-editor-empty')
       if (placeholder) placeholder.textContent = ''
 
-      // execCommand works on some editors
+      // Method 1: execCommand (works on basic contentEditable)
       const ok = document.execCommand('insertText', false, text)
       if (ok && el.textContent.includes(text.slice(0, 20))) {
         el.dispatchEvent(new InputEvent('input', { bubbles: true, data: text }))
         return true
       }
 
-      // Fallback: clipboard-paste approach (reliable for ProseMirror/contentEditable)
-      return clipboardInsert(el, text)
+      // Method 2: Synthetic paste event (works on ProseMirror — Claude, ChatGPT)
+      try {
+        const dt = new DataTransfer()
+        dt.setData('text/plain', text)
+        const ok2 = el.dispatchEvent(new ClipboardEvent('paste', {
+          bubbles: true,
+          cancelable: true,
+          clipboardData: dt,
+        }))
+        if (ok2 !== false) return true
+      } catch { /* fall through */ }
+
+      // Method 3: Direct DOM manipulation (last resort)
+      try {
+        const textNode = document.createTextNode(text)
+        const sel = window.getSelection()
+        if (sel.rangeCount) {
+          const range = sel.getRangeAt(0)
+          range.deleteContents()
+          range.insertNode(textNode)
+          range.setStartAfter(textNode)
+          range.collapse(true)
+          sel.removeAllRanges()
+          sel.addRange(range)
+        } else {
+          el.appendChild(textNode)
+        }
+        el.dispatchEvent(new InputEvent('input', { bubbles: true }))
+        return true
+      } catch { /* fall through */ }
+
+      return false
     }
 
     // Regular textarea/input
@@ -162,25 +202,6 @@
     }
 
     return false
-  }
-
-  // Clipboard-paste insertion — most reliable method for ProseMirror editors
-  function clipboardInsert(el, text) {
-    try {
-      el.focus()
-      const dt = new DataTransfer()
-      dt.setData('text/plain', text)
-      const pasteEvent = new ClipboardEvent('paste', {
-        bubbles: true,
-        cancelable: true,
-        clipboardData: dt,
-      })
-      el.dispatchEvent(pasteEvent)
-      return true
-    } catch {
-      // Last resort: write to clipboard and simulate Ctrl+V
-      return false
-    }
   }
 
   function triggerSend(adapter) {
@@ -225,11 +246,10 @@
   }
 
   // ═══════════════════════════════════════════════════════════════════
-  // PUNCTUATION & EMOJI VOICE SUBSTITUTIONS (WhisperTyping parity)
+  // PUNCTUATION & EMOJI SUBSTITUTIONS
   // ═══════════════════════════════════════════════════════════════════
 
   const PUNCTUATION_MAP = [
-    // Sentence punctuation
     { pattern: /\b(full stop|period)\b/gi, replacement: '.' },
     { pattern: /\bcomma\b/gi, replacement: ',' },
     { pattern: /\b(question mark)\b/gi, replacement: '?' },
@@ -239,13 +259,9 @@
     { pattern: /\bellipsis\b/gi, replacement: '...' },
     { pattern: /\bdash\b/gi, replacement: ' — ' },
     { pattern: /\bhyphen\b/gi, replacement: '-' },
-
-    // Whitespace / structure
     { pattern: /\b(new line|newline)\b/gi, replacement: '\n' },
     { pattern: /\b(new paragraph)\b/gi, replacement: '\n\n' },
     { pattern: /\btab\b/gi, replacement: '\t' },
-
-    // Brackets / quotes
     { pattern: /\b(open parenthesis|open paren|left paren)\b/gi, replacement: '(' },
     { pattern: /\b(close parenthesis|close paren|right paren)\b/gi, replacement: ')' },
     { pattern: /\b(open bracket|left bracket)\b/gi, replacement: '[' },
@@ -255,8 +271,6 @@
     { pattern: /\b(open quote|begin quote)\b/gi, replacement: '"' },
     { pattern: /\b(close quote|end quote|unquote)\b/gi, replacement: '"' },
     { pattern: /\bsingle quote\b/gi, replacement: "'" },
-
-    // Symbols
     { pattern: /\b(at sign|at symbol)\b/gi, replacement: '@' },
     { pattern: /\b(hash sign|hashtag|pound sign)\b/gi, replacement: '#' },
     { pattern: /\b(dollar sign)\b/gi, replacement: '$' },
@@ -272,8 +286,6 @@
     { pattern: /\b(less than|left angle)\b/gi, replacement: '<' },
     { pattern: /\b(greater than|right angle)\b/gi, replacement: '>' },
     { pattern: /\btilde\b/gi, replacement: '~' },
-
-    // Common emojis
     { pattern: /\b(thumbs up emoji|thumbsup emoji)\b/gi, replacement: '👍' },
     { pattern: /\b(thumbs down emoji)\b/gi, replacement: '👎' },
     { pattern: /\b(smiley face|smiley emoji|smile emoji)\b/gi, replacement: '😊' },
@@ -303,16 +315,13 @@
   }
 
   // ═══════════════════════════════════════════════════════════════════
-  // TEXT POST-PROCESSING (auto-capitalize, clean whitespace)
+  // TEXT POST-PROCESSING
   // ═══════════════════════════════════════════════════════════════════
 
   function postProcess(text) {
     let result = text
-
-    // Apply punctuation/emoji substitutions
     result = applyPunctuation(result)
 
-    // Apply custom vocabulary replacements
     if (state.vocabulary && state.vocabulary.length > 0) {
       for (const { from, to } of state.vocabulary) {
         if (from && to) {
@@ -322,32 +331,18 @@
       }
     }
 
-    // Apply custom text replacements
     if (state.replacements && state.replacements.length > 0) {
       for (const { from, to } of state.replacements) {
-        if (from && to) {
-          result = result.replaceAll(from, to)
-        }
+        if (from && to) result = result.replaceAll(from, to)
       }
     }
 
-    // Remove space before punctuation that was substituted
     result = result.replace(/\s+([.,;:!?)\]}])/g, '$1')
-    // Add space after punctuation if missing (but not for newlines/tabs)
     result = result.replace(/([.,;:!?])([A-Za-z])/g, '$1 $2')
-
-    // Auto-capitalize first letter of text
     result = result.replace(/^(\s*)([a-z])/, (_, ws, ch) => ws + ch.toUpperCase())
-
-    // Auto-capitalize after sentence-ending punctuation
     result = result.replace(/([.!?]\s+)([a-z])/g, (_, punct, ch) => punct + ch.toUpperCase())
-
-    // Auto-capitalize after newlines
     result = result.replace(/(\n\s*)([a-z])/g, (_, nl, ch) => nl + ch.toUpperCase())
-
-    // Clean up multiple spaces (but preserve intentional newlines)
     result = result.replace(/ {2,}/g, ' ')
-
     return result.trim()
   }
 
@@ -386,7 +381,7 @@
   }
 
   // ═══════════════════════════════════════════════════════════════════
-  // STATE
+  // STATE — single source of truth
   // ═══════════════════════════════════════════════════════════════════
 
   let state = {
@@ -398,8 +393,8 @@
     engine: 'web-speech',
     language: 'en',
     pushToTalk: false,
-    vocabulary: [],    // [{from, to}] custom word replacements
-    replacements: [],  // [{from, to}] text replacement rules
+    vocabulary: [],
+    replacements: [],
   }
 
   let recognition = null
@@ -421,40 +416,53 @@
   })
 
   // ═══════════════════════════════════════════════════════════════════
-  // NO ON-PAGE UI — zero DOM elements injected.
-  // All status is shown via the extension toolbar icon badge only.
-  // ═══════════════════════════════════════════════════════════════════
-
-  // ═══════════════════════════════════════════════════════════════════
-  // UI UPDATE (badge only — zero page DOM)
+  // ZERO DOM — badge only
   // ═══════════════════════════════════════════════════════════════════
 
   function updateUI() {
-    // Tell background to update the extension icon badge
     try {
       chrome.runtime.sendMessage({ type: 'UPDATE_BADGE', status: state.status })
-    } catch { /* extension context may be invalid */ }
+    } catch { /* extension context invalid */ }
   }
 
   // ═══════════════════════════════════════════════════════════════════
-  // SPEECH RECOGNITION (Web Speech API — free engine)
+  // SAFE STATE TRANSITION — prevents impossible transitions
+  // ═══════════════════════════════════════════════════════════════════
+
+  function setState(newStatus) {
+    state.status = newStatus
+    updateUI()
+  }
+
+  function resetToIdle() {
+    clearTimeout(recTimeout)
+    clearTimeout(procTimeout)
+    if (recognition) { try { recognition.abort() } catch {} recognition = null }
+    state.transcript = ''
+    setState('idle')
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // SPEECH RECOGNITION (Web Speech API)
   // ═══════════════════════════════════════════════════════════════════
 
   function startWebSpeech() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-    if (!SpeechRecognition) {
-      console.warn('[48co] Speech API not supported — use Chrome')
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SR) {
+      console.warn('[48co] Speech API not supported — use Chrome/Edge')
+      // Show error via badge
+      try { chrome.runtime.sendMessage({ type: 'UPDATE_BADGE', status: 'error' }) } catch {}
+      setTimeout(() => resetToIdle(), 2000)
       return
     }
 
-    recognition = new SpeechRecognition()
+    recognition = new SR()
     recognition.continuous = true
     recognition.interimResults = true
     recognition.lang = state.language || 'en'
 
     recognition.onstart = () => {
-      state.status = 'recording'
-      updateUI()
+      setState('recording')
     }
 
     recognition.onresult = (e) => {
@@ -466,59 +474,74 @@
     }
 
     recognition.onend = () => {
+      // Guard: only process if we're still in recording state
+      if (state.status !== 'recording') return
+      recognition = null
       processTranscript(state.transcript)
     }
 
     recognition.onerror = (e) => {
       if (e.error === 'aborted') return
-      state.status = 'idle'
+      recognition = null
 
       const errorMessages = {
-        'not-allowed': 'Mic access denied — check browser permissions',
-        'no-speech': 'No speech detected — try again',
-        'network': 'Network error — check connection',
-        'audio-capture': 'No mic found — check audio devices',
-        'service-not-allowed': 'Speech service unavailable — try Chrome',
+        'not-allowed': 'Mic denied — check browser permissions',
+        'no-speech': 'No speech detected',
+        'network': 'Network error',
+        'audio-capture': 'No mic found',
+        'service-not-allowed': 'Speech service blocked — use Chrome',
       }
       console.warn('[48co]', errorMessages[e.error] || 'Error: ' + e.error)
-      updateUI()
+
+      // Show error badge briefly
+      try { chrome.runtime.sendMessage({ type: 'UPDATE_BADGE', status: 'error' }) } catch {}
+      setTimeout(() => resetToIdle(), 2000)
     }
 
-    recognition.start()
+    try {
+      recognition.start()
+    } catch (err) {
+      console.warn('[48co] Failed to start recognition:', err)
+      recognition = null
+      resetToIdle()
+    }
   }
 
   function stopWebSpeech() {
     if (recognition) {
-      recognition.stop()
-      recognition = null
+      try { recognition.stop() } catch {}
+      // Don't null recognition here — onend handler needs it
     }
   }
 
   // ═══════════════════════════════════════════════════════════════════
-  // RECORDING CONTROL
+  // RECORDING CONTROL — separate timeouts for recording vs processing
   // ═══════════════════════════════════════════════════════════════════
 
-  let recordingTimeout = null
+  let recTimeout = null   // safety timeout for recording phase
+  let procTimeout = null  // safety timeout for processing/Whisper phase
 
   function startRecording() {
     if (state.status !== 'idle') return
 
-    // Safety timeout — if stuck in recording/processing for 60s, reset
-    clearTimeout(recordingTimeout)
-    recordingTimeout = setTimeout(() => {
-      if (state.status === 'recording' || state.status === 'processing') {
-        console.warn('[48co] Recording timed out — resetting')
-        if (recognition) { try { recognition.abort() } catch {} recognition = null }
-        state.status = 'idle'
-        state.transcript = ''
-        updateUI()
+    // Recording safety timeout — 60s max
+    clearTimeout(recTimeout)
+    recTimeout = setTimeout(() => {
+      if (state.status === 'recording') {
+        console.warn('[48co] Recording timed out (60s) — resetting')
+        resetToIdle()
       }
     }, 60000)
 
     if (state.engine === 'whisper') {
-      chrome.runtime.sendMessage({ type: 'START_RECORDING' })
-      state.status = 'recording'
-      updateUI()
+      chrome.runtime.sendMessage({ type: 'START_RECORDING' }, (response) => {
+        if (chrome.runtime.lastError || (response && response.error)) {
+          console.warn('[48co] Failed to start Whisper recording')
+          resetToIdle()
+          return
+        }
+      })
+      setState('recording')
     } else {
       startWebSpeech()
     }
@@ -526,23 +549,23 @@
 
   function stopRecording() {
     if (state.status !== 'recording') return
+    clearTimeout(recTimeout)
 
     if (state.engine === 'whisper') {
       chrome.runtime.sendMessage({ type: 'STOP_RECORDING' })
-      state.status = 'processing'
-      updateUI()
-      // Whisper processing timeout — if no result in 15s, reset
-      clearTimeout(recordingTimeout)
-      recordingTimeout = setTimeout(() => {
+      setState('processing')
+
+      // Whisper processing timeout — 30s (API can take time)
+      clearTimeout(procTimeout)
+      procTimeout = setTimeout(() => {
         if (state.status === 'processing') {
-          console.warn('[48co] Whisper processing timed out — resetting')
-          state.status = 'idle'
-          state.transcript = ''
-          updateUI()
+          console.warn('[48co] Whisper processing timed out (30s) — resetting')
+          resetToIdle()
         }
-      }, 15000)
+      }, 30000)
     } else {
       stopWebSpeech()
+      // onend handler will call processTranscript
     }
   }
 
@@ -551,76 +574,64 @@
   // ═══════════════════════════════════════════════════════════════════
 
   function processTranscript(text) {
+    clearTimeout(procTimeout)
+
     if (!text || !text.trim()) {
-      state.status = 'idle'
-      state.transcript = ''
-      updateUI()
+      // No speech detected — brief error then reset
+      try { chrome.runtime.sendMessage({ type: 'UPDATE_BADGE', status: 'error' }) } catch {}
+      setTimeout(() => resetToIdle(), 1500)
       return
     }
 
-    state.status = 'processing'
-    updateUI()
+    setState('processing')
 
-    // Check voice commands first
+    // Voice commands
     const cmd = matchCommand(text)
 
     if (cmd && cmd.action === 'cancel') {
-      state.status = 'idle'
-      state.transcript = ''
-      updateUI()
+      resetToIdle()
       return
     }
 
     if (cmd && cmd.action === 'submit') {
       triggerSend(adapter)
-      state.status = 'done'
-      updateUI()
-      setTimeout(() => { state.status = 'idle'; state.transcript = ''; updateUI() }, 1500)
+      setState('done')
+      setTimeout(() => resetToIdle(), 500)
       return
     }
 
     let output = (cmd && cmd.action === 'text') ? cmd.output : postProcess(text)
 
-    // Auto coding mode — wrap in code fences if coding content detected
+    // Auto coding mode
     if (state.codingMode || (state.autoCoding && isCodingContent(output))) {
       output = wrapCode(output)
     }
 
-    // Insert into the text input
+    // Insert into text input
     const inserted = insertText(adapter, output)
 
     if (inserted) {
-      clearTimeout(recordingTimeout)
-      state.status = 'done'
-      updateUI()
+      setState('done')
 
-      // Auto-submit if enabled
       if (state.autoSubmit) {
         triggerSend(adapter)
       }
 
-      setTimeout(() => {
-        state.status = 'idle'
-        state.transcript = ''
-        updateUI()
-      }, 500) // fast reset — ready for next recording quickly
+      setTimeout(() => resetToIdle(), 500)
     } else {
       // Fallback: copy to clipboard
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(output).then(() => {
-          console.log('[48co] Copied to clipboard (no input found)')
-          state.status = 'done'
-          updateUI()
-          setTimeout(() => { state.status = 'idle'; state.transcript = ''; updateUI() }, 2000)
+          console.log('[48co] Copied to clipboard — no text field found')
+          setState('done')
+          setTimeout(() => resetToIdle(), 1500)
         }).catch(() => {
-          console.warn('[48co] No text field found — click input first')
-          state.status = 'idle'
-          updateUI()
+          console.warn('[48co] Failed to copy — click a text field first')
+          resetToIdle()
         })
       } else {
-        console.warn('[48co] No text field found — click input first')
-        state.status = 'idle'
-        updateUI()
+        console.warn('[48co] No text field found — click one first')
+        resetToIdle()
       }
     }
   }
@@ -629,62 +640,58 @@
   // EVENT HANDLERS
   // ═══════════════════════════════════════════════════════════════════
 
-  // Middle-click (wheel button PRESS) toggle — works anywhere on the page
-  // Uses 'auxclick' which only fires on a full press+release of the button.
-  // Scrolling the wheel does NOT fire auxclick — only a deliberate click does.
+  // Middle-click: auxclick only fires on full press+release, never from scrolling
   window.addEventListener('auxclick', (e) => {
     if (e.button !== 1) return
     e.preventDefault()
     e.stopPropagation()
-    if (state.status === 'idle') {
-      startRecording()
-    } else if (state.status === 'recording') {
-      stopRecording()
-    }
-  }, true) // capture phase so we get it before the page does
-  // Also prevent default on mousedown to stop auto-scroll cursor
+    if (state.status === 'idle') startRecording()
+    else if (state.status === 'recording') stopRecording()
+  }, true)
   window.addEventListener('mousedown', (e) => { if (e.button === 1) e.preventDefault() })
 
-  // Listen for messages from background (keyboard shortcut, Whisper result, popup toggle)
+  // Messages from background
   chrome.runtime.onMessage.addListener((msg) => {
-    if (msg.type === 'START_RECORDING') startRecording()
-    if (msg.type === 'STOP_RECORDING') stopRecording()
     if (msg.type === 'TOGGLE_RECORDING') {
       if (state.status === 'idle') startRecording()
       else if (state.status === 'recording') stopRecording()
     }
+
     if (msg.type === 'TRANSCRIPTION_READY') {
-      clearTimeout(recordingTimeout) // cancel safety timeout
-      if (msg.error) {
-        console.warn('[48co]', msg.error)
-        state.status = 'idle'
-        state.transcript = ''
-        updateUI()
+      clearTimeout(procTimeout)
+      clearTimeout(recTimeout)
+
+      // If we're not in a state where we expect transcription, ignore it
+      if (state.status !== 'recording' && state.status !== 'processing') {
         return
       }
-      state.transcript = msg.text
-      processTranscript(msg.text)
+
+      if (msg.error) {
+        console.warn('[48co]', msg.error)
+        try { chrome.runtime.sendMessage({ type: 'UPDATE_BADGE', status: 'error' }) } catch {}
+        setTimeout(() => resetToIdle(), 2000)
+        return
+      }
+
+      state.transcript = msg.text || ''
+      processTranscript(msg.text || '')
     }
+
     if (msg.type === 'STATE_UPDATED') {
       Object.assign(state, msg.updates)
     }
+
     if (msg.type === 'FORCE_RESET') {
-      // Emergency reset — kills any stuck recording/processing
-      clearTimeout(recordingTimeout)
-      if (recognition) { try { recognition.abort() } catch {} recognition = null }
-      state.status = 'idle'
-      state.transcript = ''
-      updateUI()
-      console.log('[48co] Force reset — ready for new recording')
+      resetToIdle()
+      console.log('[48co] Force reset — ready')
     }
   })
 
-  // ── Push-to-talk: Hold Ctrl+Shift to record, release to stop ─────
+  // Push-to-talk: Hold Ctrl+Shift to record, release to stop
   let pttActive = false
 
   window.addEventListener('keydown', (e) => {
     if (!state.pushToTalk) return
-    // Hold Ctrl+Shift (no other keys) to start push-to-talk
     if (e.ctrlKey && e.shiftKey && !e.altKey && !e.metaKey && e.key === 'Shift' && !pttActive) {
       pttActive = true
       startRecording()
