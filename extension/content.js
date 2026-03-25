@@ -136,16 +136,23 @@
     if (!el) return false
     el.focus()
 
+    // Try execCommand first (works on many sites)
     if (el.contentEditable === 'true') {
-      // Clear placeholder if present
       const placeholder = el.querySelector('p.is-empty, p.is-editor-empty')
       if (placeholder) placeholder.textContent = ''
-      document.execCommand('insertText', false, text)
-      el.dispatchEvent(new InputEvent('input', { bubbles: true, data: text }))
-      return true
+
+      // execCommand works on some editors
+      const ok = document.execCommand('insertText', false, text)
+      if (ok && el.textContent.includes(text.slice(0, 20))) {
+        el.dispatchEvent(new InputEvent('input', { bubbles: true, data: text }))
+        return true
+      }
+
+      // Fallback: clipboard-paste approach (reliable for ProseMirror/contentEditable)
+      return clipboardInsert(el, text)
     }
 
-    // Regular textarea/input fallback
+    // Regular textarea/input
     if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
       const proto = el.tagName === 'TEXTAREA' ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype
       const setter = Object.getOwnPropertyDescriptor(proto, 'value').set
@@ -155,6 +162,25 @@
     }
 
     return false
+  }
+
+  // Clipboard-paste insertion — most reliable method for ProseMirror editors
+  function clipboardInsert(el, text) {
+    try {
+      el.focus()
+      const dt = new DataTransfer()
+      dt.setData('text/plain', text)
+      const pasteEvent = new ClipboardEvent('paste', {
+        bubbles: true,
+        cancelable: true,
+        clipboardData: dt,
+      })
+      el.dispatchEvent(pasteEvent)
+      return true
+    } catch {
+      // Last resort: write to clipboard and simulate Ctrl+V
+      return false
+    }
   }
 
   function triggerSend(adapter) {
@@ -472,11 +498,24 @@
   // RECORDING CONTROL
   // ═══════════════════════════════════════════════════════════════════
 
+  let recordingTimeout = null
+
   function startRecording() {
     if (state.status !== 'idle') return
 
+    // Safety timeout — if stuck in recording/processing for 60s, reset
+    clearTimeout(recordingTimeout)
+    recordingTimeout = setTimeout(() => {
+      if (state.status === 'recording' || state.status === 'processing') {
+        console.warn('[48co] Recording timed out — resetting')
+        if (recognition) { try { recognition.abort() } catch {} recognition = null }
+        state.status = 'idle'
+        state.transcript = ''
+        updateUI()
+      }
+    }, 60000)
+
     if (state.engine === 'whisper') {
-      // Tell background to start offscreen recording
       chrome.runtime.sendMessage({ type: 'START_RECORDING' })
       state.status = 'recording'
       updateUI()
@@ -492,6 +531,16 @@
       chrome.runtime.sendMessage({ type: 'STOP_RECORDING' })
       state.status = 'processing'
       updateUI()
+      // Whisper processing timeout — if no result in 15s, reset
+      clearTimeout(recordingTimeout)
+      recordingTimeout = setTimeout(() => {
+        if (state.status === 'processing') {
+          console.warn('[48co] Whisper processing timed out — resetting')
+          state.status = 'idle'
+          state.transcript = ''
+          updateUI()
+        }
+      }, 15000)
     } else {
       stopWebSpeech()
     }
@@ -541,6 +590,7 @@
     const inserted = insertText(adapter, output)
 
     if (inserted) {
+      clearTimeout(recordingTimeout)
       state.status = 'done'
       updateUI()
 
@@ -553,7 +603,7 @@
         state.status = 'idle'
         state.transcript = ''
         updateUI()
-      }, 1500)
+      }, 500) // fast reset — ready for next recording quickly
     } else {
       // Fallback: copy to clipboard
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -579,10 +629,16 @@
   // EVENT HANDLERS
   // ═══════════════════════════════════════════════════════════════════
 
-  // Middle-click (wheel button press) toggle — works anywhere on the page
+  // Middle-click (wheel button PRESS) toggle — works anywhere on the page
+  // Guard: ignore middle-click if user was scrolling (wheel event in last 200ms)
+  let lastWheelTime = 0
+  window.addEventListener('wheel', () => { lastWheelTime = Date.now() }, { passive: true })
+
   window.addEventListener('mousedown', (e) => {
     if (e.button !== 1) return
     e.preventDefault()
+    // If a scroll wheel event happened in the last 200ms, this is scroll not click
+    if (Date.now() - lastWheelTime < 200) return
     if (state.status === 'idle') {
       startRecording()
     } else if (state.status === 'recording') {
@@ -600,6 +656,7 @@
       else if (state.status === 'recording') stopRecording()
     }
     if (msg.type === 'TRANSCRIPTION_READY') {
+      clearTimeout(recordingTimeout) // cancel safety timeout
       if (msg.error) {
         console.warn('[48co]', msg.error)
         state.status = 'idle'
