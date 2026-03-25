@@ -70,6 +70,15 @@ apiKeyInput.addEventListener('change', () => {
   chrome.storage.local.set({ whisperApiKey: apiKeyInput.value })
 })
 
+// Claude API key (for grammar + AI rewrite)
+const claudeKeyInput = $('#claude-key')
+chrome.storage.local.get('claudeApiKey', (data) => {
+  if (data.claudeApiKey) claudeKeyInput.value = data.claudeApiKey
+})
+claudeKeyInput.addEventListener('change', () => {
+  chrome.storage.local.set({ claudeApiKey: claudeKeyInput.value })
+})
+
 // ── Language selector ─────────────────────────────────────────────
 const langSelect = $('#language')
 chrome.storage.local.get('language', (data) => {
@@ -93,6 +102,7 @@ typeSpeedSlider.addEventListener('input', () => {
 })
 
 // ── Setup toggles ──────────────────────────────────────────────────
+setupToggle($('#grammar-toggle'), 'grammarEnabled')
 setupToggle($('#noise-toggle'), 'noiseSuppression')
 setupToggle($('#auto-coding-toggle'), 'autoCoding')
 setupToggle($('#coding-mode-toggle'), 'codingMode')

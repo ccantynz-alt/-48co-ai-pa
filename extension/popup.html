@@ -229,7 +229,18 @@
 
   <div class="header">
     <span class="logo">&equiv; 48CO</span>
-    <span class="version">v1.0.0</span>
+    <span class="version">v1.1.0</span>
+  </div>
+
+  <!-- Grammar Mode -->
+  <div class="section" style="background:rgba(79,70,229,0.06);border-bottom:1px solid rgba(255,255,255,0.06)">
+    <div class="row">
+      <span class="label" style="color:rgba(255,255,255,0.7)">AI Grammar Check</span>
+      <button class="toggle" id="grammar-toggle"><span class="knob"></span></button>
+    </div>
+    <div style="font-size:9px;color:rgba(255,255,255,0.2);margin-top:4px">
+      Checks grammar in real-time on any text field. Requires Claude API key.
+    </div>
   </div>
 
   <!-- Mic toggle -->
@@ -264,8 +275,15 @@
       </select>
     </div>
     <div class="row" id="api-key-row" style="display:none">
-      <span class="label">API Key</span>
+      <span class="label">Whisper Key</span>
       <input type="password" id="api-key" placeholder="sk-..." />
+    </div>
+    <div class="row">
+      <span class="label">Claude Key</span>
+      <input type="password" id="claude-key" placeholder="sk-ant-..." />
+    </div>
+    <div style="font-size:9px;color:rgba(255,255,255,0.15);padding:0 16px 8px;margin-top:-4px">
+      Powers grammar check + AI rewrite. Get key at console.anthropic.com
     </div>
     <div class="row">
       <span class="label">Language</span>
