@@ -1,31 +1,45 @@
 /**
  * 48co Background Service Worker
- * Orchestrates messaging between content script and offscreen document.
- * Handles keyboard shortcuts, badge updates, and extension lifecycle.
+ * Routes messages between content script, popup, and offscreen document.
+ * Tracks which tab started recording so results go to the RIGHT tab.
  */
 
 // ── Offscreen document management ──────────────────────────────────
 let offscreenCreating = null
 
 async function ensureOffscreen() {
-  const contexts = await chrome.runtime.getContexts({
-    contextTypes: ['OFFSCREEN_DOCUMENT'],
-  })
-  if (contexts.length > 0) return
+  try {
+    const contexts = await chrome.runtime.getContexts({
+      contextTypes: ['OFFSCREEN_DOCUMENT'],
+    })
+    if (contexts.length > 0) return true
+  } catch {
+    // getContexts not available — try creating anyway
+  }
 
   if (offscreenCreating) {
     await offscreenCreating
-    return
+    return true
   }
 
-  offscreenCreating = chrome.offscreen.createDocument({
-    url: 'offscreen.html',
-    reasons: ['USER_MEDIA'],
-    justification: 'Microphone access for voice-to-text recording',
-  })
-  await offscreenCreating
-  offscreenCreating = null
+  try {
+    offscreenCreating = chrome.offscreen.createDocument({
+      url: 'offscreen.html',
+      reasons: ['USER_MEDIA'],
+      justification: 'Microphone access for voice-to-text recording',
+    })
+    await offscreenCreating
+    offscreenCreating = null
+    return true
+  } catch (err) {
+    offscreenCreating = null
+    console.error('[48co bg] Failed to create offscreen:', err)
+    return false
+  }
 }
+
+// ── Recording state — track which tab is recording ─────────────────
+let recordingTabId = null // the tab that STARTED recording
 
 // ── State persisted in chrome.storage ──────────────────────────────
 async function getState() {
@@ -37,7 +51,7 @@ async function getState() {
     typeSpeed: 30,
     autoSubmit: false,
     whisperApiKey: '',
-    engine: 'web-speech', // 'web-speech' | 'whisper'
+    engine: 'web-speech',
     language: 'en',
     pushToTalk: false,
     vocabulary: [],
@@ -58,16 +72,39 @@ function updateBadge(status) {
     recording:  { text: 'REC', color: '#ff3b5c' },
     processing: { text: '...', color: '#ffb800' },
     done:       { text: '\u2713',   color: '#00ff88' },
+    error:      { text: '!',  color: '#ff3b5c' },
   }
   const { text, color } = config[status] || config.idle
   chrome.action.setBadgeText({ text })
   chrome.action.setBadgeBackgroundColor({ color })
 }
 
+// ── Send message to the recording tab (not just active tab) ────────
+async function sendToRecordingTab(message) {
+  // Always send to the tab that STARTED recording, not whatever's active now
+  const tabId = recordingTabId
+  if (tabId) {
+    try {
+      await chrome.tabs.sendMessage(tabId, message)
+      return true
+    } catch {
+      // Tab may have been closed — fall through to active tab
+    }
+  }
+  // Fallback: try active tab
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+    if (tab?.id) {
+      await chrome.tabs.sendMessage(tab.id, message)
+      return true
+    }
+  } catch {}
+  return false
+}
+
 // ── Keyboard shortcut handler ──────────────────────────────────────
 chrome.commands.onCommand.addListener(async (command) => {
   if (command === 'toggle-recording') {
-    // Forward toggle to the active tab's content script
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
     if (tab?.id) {
       chrome.tabs.sendMessage(tab.id, { type: 'TOGGLE_RECORDING' })
@@ -81,16 +118,34 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     console.error('[48co bg] Error:', err)
     sendResponse({ error: err.message })
   })
-  return true // keep channel open for async response
+  return true
 })
 
 async function handleMessage(msg, sender) {
   switch (msg.type) {
     case 'START_RECORDING': {
       const state = await getState()
+
+      // Track which tab started recording
+      if (sender.tab?.id) {
+        recordingTabId = sender.tab.id
+      } else {
+        // Message from popup — get active tab
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+        if (tab?.id) recordingTabId = tab.id
+      }
+
       if (state.engine === 'whisper') {
-        // Use offscreen document for Whisper API recording
-        await ensureOffscreen()
+        const ok = await ensureOffscreen()
+        if (!ok) {
+          // Tell content script offscreen failed
+          await sendToRecordingTab({
+            type: 'TRANSCRIPTION_READY',
+            text: '',
+            error: 'Failed to start recorder. Try reloading the extension.',
+          })
+          return { ok: false, error: 'offscreen failed' }
+        }
         chrome.runtime.sendMessage({
           type: 'OFFSCREEN_START',
           apiKey: state.whisperApiKey,
@@ -113,7 +168,15 @@ async function handleMessage(msg, sender) {
     }
 
     case 'TOGGLE_RECORDING': {
-      // From popup — forward to active tab
+      // From popup — forward to the right tab
+      const tabId = recordingTabId
+      if (tabId) {
+        try {
+          await chrome.tabs.sendMessage(tabId, { type: 'TOGGLE_RECORDING' })
+          return { ok: true }
+        } catch {}
+      }
+      // Fallback to active tab
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
       if (tab?.id) {
         chrome.tabs.sendMessage(tab.id, { type: 'TOGGLE_RECORDING' })
@@ -126,18 +189,32 @@ async function handleMessage(msg, sender) {
       return { ok: true }
     }
 
+    case 'OFFSCREEN_STARTED': {
+      // Offscreen confirmed it's recording — update badge
+      updateBadge('recording')
+      return { ok: true }
+    }
+
     case 'TRANSCRIPTION_READY': {
-      // Forward transcription from offscreen → content script
+      // From offscreen → forward to the RECORDING tab (not active tab)
       await setState({ isRecording: false })
-      updateBadge('done')
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
-      if (tab?.id) {
-        chrome.tabs.sendMessage(tab.id, {
-          type: 'TRANSCRIPTION_READY',
-          text: msg.text,
-          error: msg.error,
-        })
+
+      if (msg.error) {
+        updateBadge('error')
+        // Clear error badge after 3s
+        setTimeout(() => updateBadge('idle'), 3000)
+      } else {
+        updateBadge(msg.text ? 'done' : 'idle')
       }
+
+      await sendToRecordingTab({
+        type: 'TRANSCRIPTION_READY',
+        text: msg.text || '',
+        error: msg.error || '',
+      })
+
+      // Clear recording tab after delivery
+      recordingTabId = null
       return { ok: true }
     }
 
@@ -147,12 +224,21 @@ async function handleMessage(msg, sender) {
 
     case 'SET_STATE': {
       await setState(msg.updates)
-      // Broadcast state change to all tabs
+      // Broadcast to all tabs
       const tabs = await chrome.tabs.query({})
       for (const tab of tabs) {
         chrome.tabs.sendMessage(tab.id, { type: 'STATE_UPDATED', updates: msg.updates }).catch(() => {})
       }
       return { ok: true }
+    }
+
+    case 'GET_RECORDING_STATE': {
+      // For popup to check current state
+      const state = await getState()
+      return {
+        isRecording: state.isRecording,
+        recordingTabId,
+      }
     }
 
     default:
@@ -163,7 +249,6 @@ async function handleMessage(msg, sender) {
 // ── Extension install / update ─────────────────────────────────────
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install') {
-    // Set defaults on first install
     setState({
       isRecording: false,
       codingMode: false,
@@ -177,11 +262,7 @@ chrome.runtime.onInstalled.addListener((details) => {
       vocabulary: [],
       replacements: [],
     })
-
-    // Open welcome page so user knows what to do next
     chrome.tabs.create({ url: chrome.runtime.getURL('welcome.html') })
   }
-
-  // Clear badge on install/update
   updateBadge('idle')
 })

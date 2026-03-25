@@ -1,7 +1,7 @@
 /**
  * 48co Popup Script
- * Settings UI that persists to chrome.storage.local.
- * Shows real-time recording state and allows force-reset.
+ * Settings UI. Shows real recording state. Force-reset if stuck.
+ * No optimistic updates — waits for actual state confirmation.
  */
 
 const $ = (sel) => document.querySelector(sel)
@@ -39,7 +39,8 @@ async function detectSite() {
         return
       }
     }
-    badge.textContent = 'Any site'
+    // Works on any site
+    badge.textContent = 'Ready'
     badge.className = 'status-badge connected'
   } catch {
     badge.textContent = 'Unknown'
@@ -98,7 +99,6 @@ setupToggle($('#coding-mode-toggle'), 'codingMode')
 setupToggle($('#auto-submit-toggle'), 'autoSubmit')
 setupToggle($('#ptt-toggle'), 'pushToTalk')
 
-// Set initial toggle states from stored defaults
 chrome.storage.local.get(['noiseSuppression', 'autoCoding'], (data) => {
   if (data.noiseSuppression !== false) $('#noise-toggle').classList.add('on')
   if (data.autoCoding !== false) $('#auto-coding-toggle').classList.add('on')
@@ -122,7 +122,6 @@ function renderList(containerId, storageKey, items) {
   })
 }
 
-// Vocabulary
 let vocabItems = []
 chrome.storage.local.get('vocabulary', (data) => {
   vocabItems = data.vocabulary || []
@@ -141,7 +140,6 @@ $('#vocab-add').addEventListener('click', () => {
   }
 })
 
-// Text replacements
 let replaceItems = []
 chrome.storage.local.get('replacements', (data) => {
   replaceItems = data.replacements || []
@@ -160,85 +158,91 @@ $('#replace-add').addEventListener('click', () => {
   }
 })
 
-// ── Mic toggle button — with live state tracking ──────────────────
+// ── Mic toggle — real state, no guessing ───────────────────────────
 const micToggleBtn = $('#mic-toggle-btn')
 const micStatus = $('#mic-status')
-let currentRecState = 'idle' // idle | recording | processing | done
+let currentRecState = 'idle'
 
 function updateMicUI(newState) {
   currentRecState = newState
-  const btn = micToggleBtn
-  const svg = btn.querySelector('svg')
+  const svg = micToggleBtn.querySelector('svg')
 
-  if (newState === 'recording') {
-    btn.classList.add('recording')
-    svg.setAttribute('stroke', '#ff3b5c')
-    micStatus.textContent = 'Recording... click to stop'
-    micStatus.className = 'mic-status recording'
-  } else if (newState === 'processing') {
-    btn.classList.remove('recording')
-    svg.setAttribute('stroke', '#ffb800')
-    micStatus.textContent = 'Transcribing...'
-    micStatus.className = 'mic-status'
-    micStatus.style.color = '#ffb800'
-  } else if (newState === 'done') {
-    btn.classList.remove('recording')
-    svg.setAttribute('stroke', '#00ff88')
-    micStatus.textContent = 'Done!'
-    micStatus.className = 'mic-status'
-    micStatus.style.color = '#00ff88'
-  } else {
-    btn.classList.remove('recording')
-    svg.setAttribute('stroke', 'rgba(255,255,255,0.5)')
-    micStatus.textContent = 'Click to record'
-    micStatus.className = 'mic-status'
-    micStatus.style.color = ''
+  switch (newState) {
+    case 'recording':
+      micToggleBtn.classList.add('recording')
+      svg.setAttribute('stroke', '#ff3b5c')
+      micStatus.textContent = 'Recording... click to stop'
+      micStatus.className = 'mic-status recording'
+      micStatus.style.color = ''
+      break
+    case 'processing':
+      micToggleBtn.classList.remove('recording')
+      svg.setAttribute('stroke', '#ffb800')
+      micStatus.textContent = 'Transcribing... click to force-reset'
+      micStatus.className = 'mic-status'
+      micStatus.style.color = '#ffb800'
+      break
+    case 'done':
+      micToggleBtn.classList.remove('recording')
+      svg.setAttribute('stroke', '#00ff88')
+      micStatus.textContent = 'Typed!'
+      micStatus.className = 'mic-status'
+      micStatus.style.color = '#00ff88'
+      break
+    case 'error':
+      micToggleBtn.classList.remove('recording')
+      svg.setAttribute('stroke', '#ff3b5c')
+      micStatus.textContent = 'Error — click to retry'
+      micStatus.className = 'mic-status'
+      micStatus.style.color = '#ff3b5c'
+      break
+    default: // idle
+      micToggleBtn.classList.remove('recording')
+      svg.setAttribute('stroke', 'rgba(255,255,255,0.5)')
+      micStatus.textContent = 'Click to record'
+      micStatus.className = 'mic-status'
+      micStatus.style.color = ''
   }
 }
 
 micToggleBtn.addEventListener('click', () => {
-  if (currentRecState === 'processing') {
-    // Force reset if stuck in processing — send reset to content script
+  if (currentRecState === 'processing' || currentRecState === 'error') {
+    // Force reset — unstick everything
     forceReset()
     return
   }
-  // Send toggle to active tab content script
+
+  // Toggle recording on the active tab
   chrome.runtime.sendMessage({ type: 'TOGGLE_RECORDING' })
-  // Update UI immediately for responsiveness
-  if (currentRecState === 'idle') {
-    updateMicUI('recording')
-  } else if (currentRecState === 'recording') {
-    updateMicUI('processing')
-  }
-  // DON'T close popup — let user see state changes
+
+  // DON'T update UI here — wait for badge update from content script
+  // This prevents the popup from showing wrong state
 })
 
 function forceReset() {
-  // Force reset recording state everywhere
   chrome.storage.local.set({ isRecording: false })
   chrome.runtime.sendMessage({ type: 'UPDATE_BADGE', status: 'idle' })
-  // Tell content script to reset
+
   chrome.tabs.query({ active: true, currentWindow: true }).then(([tab]) => {
     if (tab?.id) {
-      chrome.tabs.sendMessage(tab.id, { type: 'FORCE_RESET' })
+      chrome.tabs.sendMessage(tab.id, { type: 'FORCE_RESET' }).catch(() => {})
     }
   })
+
   updateMicUI('idle')
 }
 
-// Listen for state updates from background/content script
+// Listen for badge updates from background to reflect real state
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.type === 'UPDATE_BADGE') {
     updateMicUI(msg.status || 'idle')
   }
-  if (msg.type === 'STATE_UPDATED') {
-    // Reflect any state changes
-  }
 })
 
-// Check current state on popup open
-chrome.storage.local.get('isRecording', (data) => {
-  if (data.isRecording) {
+// Check actual state when popup opens
+chrome.runtime.sendMessage({ type: 'GET_RECORDING_STATE' }, (response) => {
+  if (chrome.runtime.lastError) return
+  if (response && response.isRecording) {
     updateMicUI('recording')
   }
 })
