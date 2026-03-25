@@ -1,6 +1,7 @@
 /**
  * 48co Popup Script
  * Settings UI that persists to chrome.storage.local.
+ * Shows real-time recording state and allows force-reset.
  */
 
 const $ = (sel) => document.querySelector(sel)
@@ -38,8 +39,8 @@ async function detectSite() {
         return
       }
     }
-    badge.textContent = 'Not on AI chat'
-    badge.className = 'status-badge disconnected'
+    badge.textContent = 'Any site'
+    badge.className = 'status-badge connected'
   } catch {
     badge.textContent = 'Unknown'
     badge.className = 'status-badge disconnected'
@@ -159,15 +160,87 @@ $('#replace-add').addEventListener('click', () => {
   }
 })
 
-// ── Mic toggle button ──────────────────────────────────────────────
+// ── Mic toggle button — with live state tracking ──────────────────
 const micToggleBtn = $('#mic-toggle-btn')
 const micStatus = $('#mic-status')
+let currentRecState = 'idle' // idle | recording | processing | done
+
+function updateMicUI(newState) {
+  currentRecState = newState
+  const btn = micToggleBtn
+  const svg = btn.querySelector('svg')
+
+  if (newState === 'recording') {
+    btn.classList.add('recording')
+    svg.setAttribute('stroke', '#ff3b5c')
+    micStatus.textContent = 'Recording... click to stop'
+    micStatus.className = 'mic-status recording'
+  } else if (newState === 'processing') {
+    btn.classList.remove('recording')
+    svg.setAttribute('stroke', '#ffb800')
+    micStatus.textContent = 'Transcribing...'
+    micStatus.className = 'mic-status'
+    micStatus.style.color = '#ffb800'
+  } else if (newState === 'done') {
+    btn.classList.remove('recording')
+    svg.setAttribute('stroke', '#00ff88')
+    micStatus.textContent = 'Done!'
+    micStatus.className = 'mic-status'
+    micStatus.style.color = '#00ff88'
+  } else {
+    btn.classList.remove('recording')
+    svg.setAttribute('stroke', 'rgba(255,255,255,0.5)')
+    micStatus.textContent = 'Click to record'
+    micStatus.className = 'mic-status'
+    micStatus.style.color = ''
+  }
+}
 
 micToggleBtn.addEventListener('click', () => {
-  // Send toggle to background, which forwards to active tab content script
+  if (currentRecState === 'processing') {
+    // Force reset if stuck in processing — send reset to content script
+    forceReset()
+    return
+  }
+  // Send toggle to active tab content script
   chrome.runtime.sendMessage({ type: 'TOGGLE_RECORDING' })
-  // Close popup so it doesn't block the page
-  window.close()
+  // Update UI immediately for responsiveness
+  if (currentRecState === 'idle') {
+    updateMicUI('recording')
+  } else if (currentRecState === 'recording') {
+    updateMicUI('processing')
+  }
+  // DON'T close popup — let user see state changes
+})
+
+function forceReset() {
+  // Force reset recording state everywhere
+  chrome.storage.local.set({ isRecording: false })
+  chrome.runtime.sendMessage({ type: 'UPDATE_BADGE', status: 'idle' })
+  // Tell content script to reset
+  chrome.tabs.query({ active: true, currentWindow: true }).then(([tab]) => {
+    if (tab?.id) {
+      chrome.tabs.sendMessage(tab.id, { type: 'FORCE_RESET' })
+    }
+  })
+  updateMicUI('idle')
+}
+
+// Listen for state updates from background/content script
+chrome.runtime.onMessage.addListener((msg) => {
+  if (msg.type === 'UPDATE_BADGE') {
+    updateMicUI(msg.status || 'idle')
+  }
+  if (msg.type === 'STATE_UPDATED') {
+    // Reflect any state changes
+  }
+})
+
+// Check current state on popup open
+chrome.storage.local.get('isRecording', (data) => {
+  if (data.isRecording) {
+    updateMicUI('recording')
+  }
 })
 
 // ── Init ───────────────────────────────────────────────────────────

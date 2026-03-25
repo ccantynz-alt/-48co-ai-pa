@@ -670,6 +670,15 @@
     if (msg.type === 'STATE_UPDATED') {
       Object.assign(state, msg.updates)
     }
+    if (msg.type === 'FORCE_RESET') {
+      // Emergency reset — kills any stuck recording/processing
+      clearTimeout(recordingTimeout)
+      if (recognition) { try { recognition.abort() } catch {} recognition = null }
+      state.status = 'idle'
+      state.transcript = ''
+      updateUI()
+      console.log('[48co] Force reset — ready for new recording')
+    }
   })
 
   // ── Push-to-talk: Hold Ctrl+Shift to record, release to stop ─────
