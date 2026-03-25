@@ -281,6 +281,35 @@
     </div>
   </div>
 
+  <!-- AI Rewrite Mode -->
+  <div class="section">
+    <div class="section-title">AI Rewrite Mode</div>
+
+    <div class="toggle-row">
+      <div>
+        <span class="toggle-label">Enable AI Rewrite</span>
+        <div class="desc">Polishes your dictated text using Claude AI. Removes filler words, fixes grammar, adjusts tone automatically based on which app you're in.</div>
+      </div>
+      <button class="toggle" id="aiRewrite"></button>
+    </div>
+
+    <div class="input-row" id="claude-key-row" style="display:none">
+      <span class="input-label">Claude API Key</span>
+      <input type="password" id="claudeApiKey" placeholder="sk-ant-..." />
+      <div class="desc">Get your key at <a href="https://console.anthropic.com/settings/keys" style="color:#00f0ff" target="_blank">console.anthropic.com</a>. Costs ~$0.003 per rewrite.</div>
+    </div>
+
+    <div class="input-row" id="rewrite-mode-row" style="display:none">
+      <span class="input-label">Default Mode</span>
+      <select id="aiRewriteMode">
+        <option value="professional">Professional</option>
+        <option value="casual">Casual</option>
+        <option value="concise">Concise</option>
+      </select>
+      <div class="desc">Auto-overridden when app context is detected (Email → Professional, Slack → Casual, Code → Technical)</div>
+    </div>
+  </div>
+
   <!-- Behaviour -->
   <div class="section">
     <div class="section-title">Behaviour</div>
@@ -392,6 +421,32 @@
       // Language
       $('language').addEventListener('change', async (e) => {
         await window.foureightco.setSetting('language', e.target.value)
+      })
+
+      // AI Rewrite settings
+      const aiRewriteToggle = $('aiRewrite')
+      if (settings.aiRewrite) aiRewriteToggle.classList.add('on')
+      function updateAIRewriteVisibility() {
+        const show = aiRewriteToggle.classList.contains('on') ? 'block' : 'none'
+        $('claude-key-row').style.display = show
+        $('rewrite-mode-row').style.display = show
+      }
+      updateAIRewriteVisibility()
+
+      aiRewriteToggle.addEventListener('click', async () => {
+        aiRewriteToggle.classList.toggle('on')
+        await window.foureightco.setSetting('aiRewrite', aiRewriteToggle.classList.contains('on'))
+        updateAIRewriteVisibility()
+      })
+
+      $('claudeApiKey').value = settings.claudeApiKey || ''
+      $('claudeApiKey').addEventListener('change', async (e) => {
+        await window.foureightco.setSetting('claudeApiKey', e.target.value)
+      })
+
+      $('aiRewriteMode').value = settings.aiRewriteMode || 'professional'
+      $('aiRewriteMode').addEventListener('change', async (e) => {
+        await window.foureightco.setSetting('aiRewriteMode', e.target.value)
       })
 
       // Vocabulary
