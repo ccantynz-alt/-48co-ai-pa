@@ -1,88 +1,83 @@
 export const metadata = {
-  title: '48co vs Wispr Flow vs SuperWhisper vs WhisperTyping — 2026 Comparison',
-  description: 'Honest comparison of the best voice-to-text apps in 2026. See how 48co compares to Wispr Flow, SuperWhisper, and WhisperTyping on price, features, privacy, and accuracy.',
+  title: '48co vs Grammarly vs Wispr Flow vs SuperWhisper — 2026 Comparison',
+  description: 'Honest comparison of AI grammar and voice-to-text tools in 2026. See how 48co compares on price, features, privacy, and AI quality.',
   openGraph: {
-    title: 'Best Voice-to-Text Software 2026 — Full Comparison',
-    description: '48co vs Wispr Flow vs SuperWhisper vs WhisperTyping. Privacy, pricing, AI features, offline mode compared.',
+    title: 'Best AI Grammar & Voice-to-Text 2026 — Full Comparison',
+    description: '48co vs Grammarly vs Wispr Flow vs SuperWhisper. Price, features, privacy compared honestly.',
   },
 }
 
 export default function ComparePage() {
   const features = [
-    { name: 'Price (monthly)', fortyeight: '$12/mo', wispr: '$15/mo', superwhisper: '$7/mo', whispertyping: 'Subscription' },
-    { name: 'Lifetime deal', fortyeight: '$89', wispr: 'No', superwhisper: '$249', whispertyping: 'No' },
-    { name: 'AI Rewrite Mode', fortyeight: true, wispr: 'Basic', superwhisper: 'Basic', whispertyping: false, highlight: true },
-    { name: 'Context-Aware Formatting', fortyeight: true, wispr: false, superwhisper: false, whispertyping: false, highlight: true },
-    { name: 'Offline Mode', fortyeight: true, wispr: false, superwhisper: true, whispertyping: false },
-    { name: 'Privacy (local-first)', fortyeight: true, wispr: false, superwhisper: true, whispertyping: false },
-    { name: 'Windows Support', fortyeight: true, wispr: true, superwhisper: true, whispertyping: true },
-    { name: 'macOS Support', fortyeight: true, wispr: true, superwhisper: true, whispertyping: false },
-    { name: 'Works in ANY App', fortyeight: true, wispr: true, superwhisper: true, whispertyping: true },
-    { name: 'Global Hotkey', fortyeight: true, wispr: true, superwhisper: true, whispertyping: true },
-    { name: 'Whisper API', fortyeight: true, wispr: true, superwhisper: true, whispertyping: true },
-    { name: '50+ Languages', fortyeight: true, wispr: true, superwhisper: true, whispertyping: true },
-    { name: 'Voice Commands', fortyeight: true, wispr: true, superwhisper: 'Limited', whispertyping: false },
-    { name: 'Custom Vocabulary', fortyeight: true, wispr: true, superwhisper: true, whispertyping: false },
-    { name: 'Auto Code Detection', fortyeight: true, wispr: false, superwhisper: false, whispertyping: false, highlight: true },
-    { name: 'Meeting Transcription', fortyeight: 'Coming Q2', wispr: false, superwhisper: false, whispertyping: false },
-    { name: 'Speaker ID', fortyeight: 'Coming Q2', wispr: false, superwhisper: false, whispertyping: false },
-    { name: 'Real-time Streaming', fortyeight: 'Coming Q2', wispr: true, superwhisper: false, whispertyping: false },
-    { name: 'Chrome Extension', fortyeight: true, wispr: false, superwhisper: false, whispertyping: false },
-    { name: 'Open Source', fortyeight: 'Partial', wispr: false, superwhisper: false, whispertyping: false },
+    { name: 'Price (monthly)', co: '$12/mo', gram: '$30/mo', wispr: '$15/mo', sw: '$7/mo' },
+    { name: 'Lifetime deal', co: '$89', gram: 'No', wispr: 'No', sw: '$249' },
+    { name: 'AI Grammar Check', co: true, gram: true, wispr: false, sw: false, highlight: true },
+    { name: 'AI Rewrite / Polish', co: true, gram: 'Limited', wispr: 'Basic', sw: 'Basic' },
+    { name: 'Context-Aware Tone', co: true, gram: false, wispr: false, sw: false, highlight: true },
+    { name: 'Voice-to-Text', co: true, gram: false, wispr: true, sw: true, highlight: true },
+    { name: 'Desktop App (any app)', co: true, gram: false, wispr: true, sw: true },
+    { name: 'Chrome Extension', co: true, gram: true, wispr: false, sw: false },
+    { name: 'iPhone / iPad', co: 'Coming Q2', gram: true, wispr: true, sw: true },
+    { name: 'Android', co: 'Coming Q2', gram: true, wispr: true, sw: false },
+    { name: 'Offline Mode', co: true, gram: false, wispr: false, sw: true },
+    { name: 'Privacy (local-first)', co: true, gram: false, wispr: false, sw: true },
+    { name: 'Windows + Mac', co: true, gram: true, wispr: true, sw: true },
+    { name: '50+ Languages', co: true, gram: true, wispr: true, sw: true },
+    { name: 'Custom Vocabulary', co: true, gram: false, wispr: true, sw: true },
+    { name: 'Developer Mode', co: true, gram: false, wispr: false, sw: false, highlight: true },
+    { name: 'AI Engine', co: 'Claude', gram: 'Proprietary', wispr: 'Mixed', sw: 'Whisper' },
+    { name: 'Meeting Transcription', co: 'Coming Q2', gram: false, wispr: false, sw: false },
   ]
 
   function renderCell(val) {
-    if (val === true) return <span className="text-[#00ff88]">Yes</span>
-    if (val === false) return <span className="text-white/20">No</span>
-    return <span className="text-white/50">{val}</span>
+    if (val === true) return <span className="text-green-600 font-medium">Yes</span>
+    if (val === false) return <span className="text-gray-300">No</span>
+    return <span className="text-gray-500">{val}</span>
   }
 
   return (
-    <main className="min-h-screen bg-[#0a0a0e] text-white font-mono">
-      <nav className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
-        <a href="/" className="text-sm font-bold tracking-[0.2em]">
-          <span className="text-white/80">48</span><span className="text-[#00f0ff]">co</span>
-        </a>
-        <div className="flex gap-4">
-          <a href="/download" className="text-[11px] text-white/30 hover:text-white/60 transition-colors">Download</a>
-          <a href="/pricing" className="text-[11px] text-white/30 hover:text-white/60 transition-colors">Pricing</a>
-          <a href="/live" className="text-[11px] text-white/30 hover:text-white/60 transition-colors">Try Live</a>
+    <main className="min-h-screen bg-white">
+      <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-black/[0.04]">
+        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-3">
+          <a href="/" className="text-base font-bold tracking-tight">48<span className="text-indigo-600">co</span></a>
+          <div className="hidden sm:flex items-center gap-6">
+            <a href="/pricing" className="text-[13px] text-gray-400 hover:text-gray-700 transition-colors">Pricing</a>
+            <a href="/live" className="text-[13px] text-gray-400 hover:text-gray-700 transition-colors">Try Live</a>
+            <a href="/download" className="text-[13px] px-4 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition-all">Download</a>
+          </div>
         </div>
       </nav>
 
-      <div className="max-w-5xl mx-auto px-4 py-16">
+      <div className="max-w-5xl mx-auto px-4 pt-28 pb-16">
         <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold mb-3">
-            <span className="text-[#00f0ff]">48co</span> vs the competition
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            How <span className="text-indigo-600">48co</span> compares
           </h1>
-          <p className="text-white/35 text-sm max-w-lg mx-auto">
-            An honest, side-by-side comparison. We highlight where competitors beat us too — because you deserve the truth before choosing.
+          <p className="text-gray-400 text-base max-w-lg mx-auto">
+            An honest comparison. We highlight where competitors beat us too.
           </p>
         </div>
 
         {/* Comparison Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-[11px]">
+        <div className="border border-gray-200 rounded-2xl overflow-hidden overflow-x-auto">
+          <table className="w-full text-[13px]">
             <thead>
-              <tr className="border-b border-white/[0.08]">
-                <th className="text-left py-3 px-3 text-white/30 font-normal w-[200px]">Feature</th>
-                <th className="text-center py-3 px-3 text-[#00f0ff] font-bold">48co</th>
-                <th className="text-center py-3 px-3 text-white/40 font-normal">Wispr Flow</th>
-                <th className="text-center py-3 px-3 text-white/40 font-normal">SuperWhisper</th>
-                <th className="text-center py-3 px-3 text-white/40 font-normal">WhisperTyping</th>
+              <tr className="border-b border-gray-100 bg-gray-50">
+                <th className="text-left py-3 px-4 text-gray-400 font-normal w-[180px]">Feature</th>
+                <th className="text-center py-3 px-4 text-indigo-600 font-bold">48co</th>
+                <th className="text-center py-3 px-4 text-gray-400 font-normal">Grammarly</th>
+                <th className="text-center py-3 px-4 text-gray-400 font-normal">Wispr Flow</th>
+                <th className="text-center py-3 px-4 text-gray-400 font-normal">SuperWhisper</th>
               </tr>
             </thead>
             <tbody>
               {features.map((f) => (
-                <tr
-                  key={f.name}
-                  className={`border-b border-white/[0.04] ${f.highlight ? 'bg-[#00f0ff]/[0.03]' : ''}`}
-                >
-                  <td className="py-2.5 px-3 text-white/50">{f.name}</td>
-                  <td className="py-2.5 px-3 text-center font-bold">{renderCell(f.fortyeight)}</td>
-                  <td className="py-2.5 px-3 text-center">{renderCell(f.wispr)}</td>
-                  <td className="py-2.5 px-3 text-center">{renderCell(f.superwhisper)}</td>
-                  <td className="py-2.5 px-3 text-center">{renderCell(f.whispertyping)}</td>
+                <tr key={f.name} className={`border-b border-gray-50 ${f.highlight ? 'bg-indigo-50/40' : ''}`}>
+                  <td className="py-2.5 px-4 text-gray-500">{f.name}</td>
+                  <td className="py-2.5 px-4 text-center font-medium">{renderCell(f.co)}</td>
+                  <td className="py-2.5 px-4 text-center">{renderCell(f.gram)}</td>
+                  <td className="py-2.5 px-4 text-center">{renderCell(f.wispr)}</td>
+                  <td className="py-2.5 px-4 text-center">{renderCell(f.sw)}</td>
                 </tr>
               ))}
             </tbody>
@@ -91,41 +86,46 @@ export default function ComparePage() {
 
         {/* Honest Takes */}
         <div className="mt-16 grid md:grid-cols-2 gap-6">
-          <div className="rounded-2xl p-6 bg-white/[0.02] border border-white/[0.06]">
-            <h2 className="text-sm font-bold text-white/80 mb-3">Where Wispr Flow beats us (for now)</h2>
-            <ul className="space-y-2 text-[11px] text-white/40">
-              <li>+ iOS/Android mobile app (we&apos;re desktop-only for now)</li>
-              <li>+ 200+ app integrations (we do 30+)</li>
-              <li>+ Real-time streaming already shipped (ours is coming Q2)</li>
-              <li>+ $81M in VC funding = faster dev speed</li>
+          <div className="rounded-2xl p-6 border border-gray-200">
+            <h2 className="text-[15px] font-bold text-gray-800 mb-3">Where Grammarly beats us (for now)</h2>
+            <ul className="space-y-2 text-[13px] text-gray-400">
+              <li>+ Mobile keyboard already shipped (ours is coming Q2)</li>
+              <li>+ Microsoft Office plugin (Word, Outlook)</li>
+              <li>+ 15+ years of user data training their models</li>
+              <li>+ Brand recognition — everyone knows Grammarly</li>
             </ul>
-            <p className="mt-3 text-[10px] text-white/25">But: They send all audio to the cloud. $15/mo. No lifetime deal.</p>
+            <p className="mt-3 text-[11px] text-gray-300">But: $30/mo, no voice-to-text, no desktop typing, rules-based not AI-native.</p>
           </div>
 
-          <div className="rounded-2xl p-6 bg-white/[0.02] border border-white/[0.06]">
-            <h2 className="text-sm font-bold text-white/80 mb-3">Where SuperWhisper beats us (for now)</h2>
-            <ul className="space-y-2 text-[11px] text-white/40">
-              <li>+ Mature offline model (been local-first from day 1)</li>
-              <li>+ iOS companion app</li>
-              <li>+ Slightly lower monthly price ($7/mo annual)</li>
+          <div className="rounded-2xl p-6 border border-gray-200">
+            <h2 className="text-[15px] font-bold text-gray-800 mb-3">Where Wispr Flow beats us (for now)</h2>
+            <ul className="space-y-2 text-[13px] text-gray-400">
+              <li>+ iOS/Android app already shipped</li>
+              <li>+ 200+ app integrations</li>
+              <li>+ Real-time streaming transcription</li>
+              <li>+ $81M in VC funding = fast development</li>
             </ul>
-            <p className="mt-3 text-[10px] text-white/25">But: No AI rewrite, no context-aware formatting, no auto code detection.</p>
+            <p className="mt-3 text-[11px] text-gray-300">But: No grammar checking, cloud-only (no privacy), $15/mo, no lifetime deal.</p>
           </div>
 
-          <div className="rounded-2xl p-6 bg-[#00f0ff]/[0.03] border border-[#00f0ff]/20 md:col-span-2">
-            <h2 className="text-sm font-bold text-[#00f0ff] mb-3">Where 48co wins</h2>
-            <div className="grid md:grid-cols-3 gap-4">
+          <div className="rounded-2xl p-6 border-2 border-indigo-200 bg-indigo-50/30 md:col-span-2">
+            <h2 className="text-[15px] font-bold text-indigo-700 mb-4">Where 48co wins</h2>
+            <div className="grid md:grid-cols-4 gap-4">
               <div>
-                <h3 className="text-[11px] text-white/60 font-bold mb-1">AI Rewrite Mode</h3>
-                <p className="text-[10px] text-white/35">You ramble, it writes professionally. Auto-adjusts tone for email, Slack, code. Nobody else does this.</p>
+                <h3 className="text-[13px] text-gray-700 font-semibold mb-1">Grammar + Voice</h3>
+                <p className="text-[12px] text-gray-400">Only tool that does AI grammar AND voice-to-text. Grammarly can&apos;t dictate. Wispr can&apos;t grammar check.</p>
               </div>
               <div>
-                <h3 className="text-[11px] text-white/60 font-bold mb-1">Context-Aware</h3>
-                <p className="text-[10px] text-white/35">Detects which app you&apos;re in and formats accordingly. Zero configuration needed.</p>
+                <h3 className="text-[13px] text-gray-700 font-semibold mb-1">Context-Aware</h3>
+                <p className="text-[12px] text-gray-400">Auto-detects which app you&apos;re in. Professional for email, casual for Slack, technical for code.</p>
               </div>
               <div>
-                <h3 className="text-[11px] text-white/60 font-bold mb-1">$89 Lifetime</h3>
-                <p className="text-[10px] text-white/35">Pay once, use forever. Wispr charges $180/year. SuperWhisper&apos;s lifetime is $249. Ours is $89.</p>
+                <h3 className="text-[13px] text-gray-700 font-semibold mb-1">$89 Lifetime</h3>
+                <p className="text-[12px] text-gray-400">Pay once, use forever. Grammarly: $360/year. Wispr: $180/year. We: $89 total.</p>
+              </div>
+              <div>
+                <h3 className="text-[13px] text-gray-700 font-semibold mb-1">Claude AI</h3>
+                <p className="text-[12px] text-gray-400">Powered by the latest Claude model. Smarter corrections, better tone detection, more natural rewrites.</p>
               </div>
             </div>
           </div>
@@ -133,18 +133,23 @@ export default function ComparePage() {
 
         {/* CTA */}
         <div className="mt-16 text-center">
-          <a
-            href="/download"
-            className="inline-block px-8 py-3 rounded-2xl bg-[#00f0ff]/10 border border-[#00f0ff]/30 text-[#00f0ff] text-sm tracking-wider hover:bg-[#00f0ff]/20 transition-all"
-          >
+          <a href="/download" className="inline-block px-8 py-3 rounded-xl bg-indigo-600 text-white text-[15px] font-medium hover:bg-indigo-500 transition-all shadow-sm">
             Download 48co Free
           </a>
-          <p className="text-[10px] text-white/20 mt-3">Mac + Windows. Free tier available. No credit card needed.</p>
+          <p className="text-[12px] text-gray-300 mt-3">Mac + Windows + Chrome. Free tier available. No credit card.</p>
         </div>
       </div>
 
-      <footer className="border-t border-white/[0.06] py-6 text-center">
-        <p className="text-[10px] text-white/15 tracking-wider">48co &middot; Built in NZ &middot; Privacy-first voice-to-text</p>
+      <footer className="border-t border-black/[0.06] py-8">
+        <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <span className="text-[14px] font-bold text-gray-400">48<span className="text-indigo-500">co</span></span>
+          <div className="flex gap-6 text-[12px] text-gray-400">
+            <a href="/download" className="hover:text-gray-700 transition-colors">Download</a>
+            <a href="/pricing" className="hover:text-gray-700 transition-colors">Pricing</a>
+            <a href="/live" className="hover:text-gray-700 transition-colors">Try Live</a>
+          </div>
+          <p className="text-[11px] text-gray-300">Built in New Zealand</p>
+        </div>
       </footer>
     </main>
   )

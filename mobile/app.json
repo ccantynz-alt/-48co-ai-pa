@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "48co Grammar",
+    "slug": "48co-grammar",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "bundleIdentifier": "nz.co.48co.grammar",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "48co needs microphone access for voice-to-text dictation.",
+        "NSSpeechRecognitionUsageDescription": "48co uses speech recognition for voice-to-text."
+      }
+    },
+    "android": {
+      "package": "nz.co.fortyeightco.grammar",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "RECORD_AUDIO",
+        "INTERNET"
+      ]
+    },
+    "extra": {
+      "eas": {
+        "projectId": "48co-grammar"
+      }
+    }
+  }
+}

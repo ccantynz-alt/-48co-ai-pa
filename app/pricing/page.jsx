@@ -1,9 +1,9 @@
 export const metadata = {
-  title: '48co Pricing — Voice-to-Text Plans | Free, Pro & Teams',
-  description: 'Choose your 48co plan. Free basic dictation, Pro with AI rewrite and offline mode for $12/mo, or Teams with meeting transcription. Lifetime deal available.',
+  title: '48co Pricing — AI Grammar & Voice Plans | Free, Pro & Teams',
+  description: 'AI grammar correction + voice-to-text on every device. Free to start, Pro at $12/mo with unlimited AI corrections, or $89 lifetime deal.',
   openGraph: {
-    title: '48co Pricing — AI Voice-to-Text That Works Everywhere',
-    description: 'Free tier, $12/mo Pro with AI rewrite, $89 lifetime deal. Cheaper than Wispr Flow, more features than SuperWhisper.',
+    title: '48co Pricing — AI Grammar That Works Everywhere',
+    description: 'Free grammar checks, $12/mo Pro with unlimited AI, $89 lifetime. Cheaper than Grammarly Premium.',
   },
 }
 
@@ -15,13 +15,13 @@ export default function PricingPage() {
       period: 'forever',
       highlight: false,
       features: [
-        'Basic voice dictation',
-        '60 minutes per month',
-        'Web Speech API (Chrome/Edge)',
-        'Works in any app',
-        'Voice punctuation commands',
+        '10 AI grammar corrections per day',
+        'Basic voice dictation (60 min/mo)',
+        'Chrome extension',
+        'Works on any website',
+        'Spelling + punctuation fixes',
       ],
-      cta: 'Download Free',
+      cta: 'Get Started Free',
       ctaHref: '/download',
     },
     {
@@ -31,17 +31,19 @@ export default function PricingPage() {
       highlight: true,
       badge: 'MOST POPULAR',
       features: [
-        'Unlimited dictation',
-        'Whisper API (99%+ accuracy)',
-        'AI Rewrite Mode (Claude)',
-        'Context-aware formatting',
-        'Offline mode (whisper.cpp)',
+        'Unlimited AI grammar corrections',
+        'Unlimited voice-to-text',
+        'AI Rewrite Mode (tone + polish)',
+        'Context-aware (email, Slack, code)',
+        'Desktop app (Mac + Windows)',
+        'Chrome extension (all websites)',
+        'iPhone + Android keyboard (coming)',
+        'Offline mode (privacy-first)',
         '50+ languages',
-        'Custom vocabulary',
-        'Voice macros & templates',
+        'Custom vocabulary + macros',
         'Priority support',
       ],
-      cta: 'Start Free Trial',
+      cta: 'Start 7-Day Free Trial',
       ctaHref: '/download',
     },
     {
@@ -53,11 +55,11 @@ export default function PricingPage() {
         'Everything in Pro',
         'Meeting transcription',
         'Speaker identification',
-        'Shared team macros',
-        'Admin dashboard',
-        'Usage analytics',
-        'Priority support',
-        'Custom onboarding',
+        'Team style guide enforcement',
+        'Shared vocabulary + macros',
+        'Admin dashboard + analytics',
+        'Priority support + onboarding',
+        'Invoice billing',
       ],
       cta: 'Contact Us',
       ctaHref: 'mailto:team@48co.nz',
@@ -65,37 +67,34 @@ export default function PricingPage() {
   ]
 
   return (
-    <main className="min-h-screen bg-[#0a0a0e] text-white font-mono">
+    <main className="min-h-screen bg-white">
       {/* Nav */}
-      <nav className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
-        <a href="/" className="text-sm font-bold tracking-[0.2em]">
-          <span className="text-white/80">48</span><span className="text-[#00f0ff]">co</span>
-        </a>
-        <div className="flex gap-4">
-          <a href="/download" className="text-[11px] text-white/30 hover:text-white/60 transition-colors">Download</a>
-          <a href="/compare" className="text-[11px] text-white/30 hover:text-white/60 transition-colors">Compare</a>
-          <a href="/live" className="text-[11px] text-white/30 hover:text-white/60 transition-colors">Try Live</a>
+      <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-black/[0.04]">
+        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-3">
+          <a href="/" className="text-base font-bold tracking-tight">48<span className="text-indigo-600">co</span></a>
+          <div className="hidden sm:flex items-center gap-6">
+            <a href="/compare" className="text-[13px] text-gray-400 hover:text-gray-700 transition-colors">Compare</a>
+            <a href="/live" className="text-[13px] text-gray-400 hover:text-gray-700 transition-colors">Try Live</a>
+            <a href="/download" className="text-[13px] px-4 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition-all">Download</a>
+          </div>
         </div>
       </nav>
 
-      <div className="max-w-5xl mx-auto px-4 py-16">
+      <div className="max-w-5xl mx-auto px-4 pt-28 pb-16">
         <div className="text-center mb-16">
-          <h1 className="text-3xl font-bold mb-3">
-            Simple, honest pricing
-          </h1>
-          <p className="text-white/35 text-sm max-w-md mx-auto">
-            No hidden fees. No per-minute charges on Pro. Cancel anytime.
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">Simple, honest pricing</h1>
+          <p className="text-gray-400 text-base max-w-md mx-auto">
+            Free to start. No credit card needed. Upgrade when you&apos;re ready.
           </p>
         </div>
 
         {/* Lifetime Deal Banner */}
-        <div className="mb-12 p-4 rounded-2xl bg-[#00ff88]/[0.05] border border-[#00ff88]/20 text-center">
-          <p className="text-[#00ff88] text-sm font-bold mb-1">Launch Special: Lifetime Deal</p>
-          <p className="text-white/50 text-xs">
-            Get Pro features forever for <span className="text-[#00ff88] font-bold">$89 one-time</span>.
-            Limited to first 1,000 users. No subscription, no renewals, ever.
+        <div className="mb-12 p-5 rounded-2xl bg-indigo-50 border border-indigo-100 text-center">
+          <p className="text-indigo-700 text-[15px] font-semibold mb-1">Launch Special: Lifetime Deal — $89</p>
+          <p className="text-gray-500 text-[13px]">
+            Get Pro features forever. One payment, no subscription, no renewals. Limited to first 1,000 users.
           </p>
-          <a href="/download" className="inline-block mt-3 px-6 py-2 rounded-xl bg-[#00ff88]/10 border border-[#00ff88]/30 text-[#00ff88] text-[11px] tracking-wider hover:bg-[#00ff88]/20 transition-all">
+          <a href="/download" className="inline-block mt-3 px-6 py-2 rounded-lg bg-indigo-600 text-white text-[13px] font-medium hover:bg-indigo-500 transition-all">
             Claim Lifetime Deal
           </a>
         </div>
@@ -103,90 +102,117 @@ export default function PricingPage() {
         {/* Plans */}
         <div className="grid md:grid-cols-3 gap-6">
           {plans.map((plan) => (
-            <div
-              key={plan.name}
-              className={`rounded-2xl p-6 flex flex-col ${
-                plan.highlight
-                  ? 'bg-[#00f0ff]/[0.05] border-2 border-[#00f0ff]/30 relative'
-                  : 'bg-white/[0.02] border border-white/[0.06]'
-              }`}
-            >
+            <div key={plan.name} className={`rounded-2xl p-6 flex flex-col border ${
+              plan.highlight ? 'border-indigo-200 bg-indigo-50/30 shadow-lg shadow-indigo-500/5 relative' : 'border-gray-200'
+            }`}>
               {plan.badge && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#00f0ff] text-[#0a0a0e] text-[9px] font-bold tracking-wider px-3 py-1 rounded-full">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-[10px] font-bold tracking-wider px-3 py-1 rounded-full">
                   {plan.badge}
                 </span>
               )}
-
-              <h2 className="text-lg font-bold text-white/90 mb-1">{plan.name}</h2>
-              <div className="mb-4">
-                <span className="text-3xl font-bold text-white">{plan.price}</span>
-                <span className="text-[11px] text-white/30 ml-1">{plan.period}</span>
+              <h2 className="text-lg font-bold text-gray-800 mb-1">{plan.name}</h2>
+              <div className="mb-5">
+                <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                <span className="text-[13px] text-gray-400 ml-1">{plan.period}</span>
               </div>
-
-              <ul className="flex-1 space-y-2 mb-6">
+              <ul className="flex-1 space-y-2.5 mb-6">
                 {plan.features.map((f, i) => (
-                  <li key={i} className="text-[11px] text-white/50 flex items-start gap-2">
-                    <span className="text-[#00f0ff] mt-0.5 flex-shrink-0">+</span>
+                  <li key={i} className="text-[13px] text-gray-500 flex items-start gap-2">
+                    <svg className="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     {f}
                   </li>
                 ))}
               </ul>
-
-              <a
-                href={plan.ctaHref}
-                className={`block text-center py-2.5 rounded-xl text-[11px] tracking-wider transition-all ${
-                  plan.highlight
-                    ? 'bg-[#00f0ff]/20 border border-[#00f0ff]/40 text-[#00f0ff] hover:bg-[#00f0ff]/30'
-                    : 'bg-white/[0.04] border border-white/[0.08] text-white/50 hover:text-white/80'
-                }`}
-              >
+              <a href={plan.ctaHref} className={`block text-center py-2.5 rounded-xl text-[13px] font-medium transition-all ${
+                plan.highlight ? 'bg-indigo-600 text-white hover:bg-indigo-500' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}>
                 {plan.cta}
               </a>
             </div>
           ))}
         </div>
 
+        {/* vs Grammarly */}
+        <div className="mt-20 max-w-3xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">48co Pro vs Grammarly Premium</h2>
+            <p className="text-[14px] text-gray-400">Same job, better AI, lower price.</p>
+          </div>
+
+          <div className="border border-gray-200 rounded-2xl overflow-hidden">
+            <table className="w-full text-[13px]">
+              <thead>
+                <tr className="border-b border-gray-100 bg-gray-50">
+                  <th className="text-left py-3 px-5 text-gray-400 font-normal">Feature</th>
+                  <th className="text-center py-3 px-5 text-indigo-600 font-semibold">48co Pro</th>
+                  <th className="text-center py-3 px-5 text-gray-400 font-normal">Grammarly Premium</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { f: 'Monthly price', us: '$12/mo', them: '$30/mo' },
+                  { f: 'Annual price', us: '$99/year', them: '$144/year' },
+                  { f: 'Lifetime option', us: '$89', them: 'No' },
+                  { f: 'AI grammar correction', us: true, them: true },
+                  { f: 'Tone adjustment', us: true, them: true },
+                  { f: 'Voice-to-text', us: true, them: false },
+                  { f: 'AI Rewrite Mode', us: true, them: 'Limited' },
+                  { f: 'Context-aware (app detection)', us: true, them: false },
+                  { f: 'Desktop app (types into any app)', us: true, them: false },
+                  { f: 'Offline mode', us: true, them: false },
+                  { f: 'AI engine', us: 'Claude (latest)', them: 'Proprietary' },
+                  { f: 'Developer mode (code fences)', us: true, them: false },
+                ].map((row) => (
+                  <tr key={row.f} className="border-b border-gray-50">
+                    <td className="py-2.5 px-5 text-gray-500">{row.f}</td>
+                    <td className="py-2.5 px-5 text-center font-medium">
+                      {row.us === true ? <span className="text-green-600">Yes</span> :
+                       row.us === false ? <span className="text-gray-300">No</span> :
+                       <span className="text-gray-700">{row.us}</span>}
+                    </td>
+                    <td className="py-2.5 px-5 text-center">
+                      {row.them === true ? <span className="text-green-600">Yes</span> :
+                       row.them === false ? <span className="text-gray-300">No</span> :
+                       <span className="text-gray-400">{row.them}</span>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         {/* FAQ */}
         <div className="mt-20 max-w-2xl mx-auto">
-          <h2 className="text-lg font-bold text-white/80 mb-8 text-center">Frequently Asked Questions</h2>
-
+          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">Frequently Asked Questions</h2>
           <div className="space-y-6">
-            <div>
-              <h3 className="text-sm text-white/60 font-bold mb-1">Do I need an API key?</h3>
-              <p className="text-[11px] text-white/35 leading-relaxed">
-                The Free tier uses Web Speech API (no key needed, Chrome/Edge only). Pro uses OpenAI Whisper API for higher accuracy — you&apos;ll need an OpenAI key (~$0.006/min). AI Rewrite uses Claude API (~$0.003/rewrite).
-              </p>
-            </div>
-            <div>
-              <h3 className="text-sm text-white/60 font-bold mb-1">How is this different from Wispr Flow?</h3>
-              <p className="text-[11px] text-white/35 leading-relaxed">
-                Wispr Flow sends all audio to the cloud. 48co offers fully offline mode — your voice never leaves your computer. We also cost $3/mo less and offer a $89 lifetime deal that Wispr never will.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-sm text-white/60 font-bold mb-1">What about SuperWhisper?</h3>
-              <p className="text-[11px] text-white/35 leading-relaxed">
-                SuperWhisper is excellent but started Mac-only. 48co works on both Mac and Windows from day one, with AI rewrite and context-aware formatting that SuperWhisper doesn&apos;t offer.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-sm text-white/60 font-bold mb-1">Can I cancel anytime?</h3>
-              <p className="text-[11px] text-white/35 leading-relaxed">
-                Yes. No contracts, no penalties. Or grab the lifetime deal and never think about it again.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-sm text-white/60 font-bold mb-1">What&apos;s AI Rewrite Mode?</h3>
-              <p className="text-[11px] text-white/35 leading-relaxed">
-                You speak rough thoughts, and Claude AI polishes them before typing. It automatically adjusts tone based on which app you&apos;re in — professional for email, casual for Slack, technical for code editors. No other dictation tool does this.
-              </p>
-            </div>
+            {[
+              { q: 'How does the free tier work?', a: 'You get 10 AI grammar corrections per day in the Chrome extension, plus 60 minutes of voice dictation per month. No credit card required. The free tier never expires.' },
+              { q: 'What does Pro include that Free doesn\'t?', a: 'Unlimited corrections, unlimited voice, AI Rewrite Mode (polishes your tone), context-aware formatting, desktop app, offline mode, and the upcoming mobile keyboards.' },
+              { q: 'How is this better than Grammarly?', a: '48co uses Claude AI (the latest model) instead of rules-based checking. It also includes voice-to-text, works as a desktop app that types into ANY application (not just browsers), costs $12/mo vs $30/mo, and offers a $89 lifetime deal.' },
+              { q: 'Do I need an API key?', a: 'The free tier works out of the box. Pro uses Claude API for grammar and Whisper API for voice — you bring your own keys (costs ~$0.003 per correction). We\'re adding managed API access so you won\'t need keys soon.' },
+              { q: 'Will it work on my phone?', a: 'iPhone and Android keyboard apps are coming soon. They\'ll replace your default keyboard and correct everything you type — texts, emails, notes, everything.' },
+              { q: 'Can I cancel anytime?', a: 'Yes, instantly. Or grab the $89 lifetime deal and never think about it again.' },
+            ].map((faq) => (
+              <div key={faq.q}>
+                <h3 className="text-[14px] text-gray-800 font-semibold mb-1">{faq.q}</h3>
+                <p className="text-[13px] text-gray-400 leading-relaxed">{faq.a}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      <footer className="border-t border-white/[0.06] py-6 text-center">
-        <p className="text-[10px] text-white/15 tracking-wider">48co &middot; Built in NZ &middot; Privacy-first voice-to-text</p>
+      <footer className="border-t border-black/[0.06] py-8">
+        <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <span className="text-[14px] font-bold text-gray-400">48<span className="text-indigo-500">co</span></span>
+          <div className="flex gap-6 text-[12px] text-gray-400">
+            <a href="/download" className="hover:text-gray-700 transition-colors">Download</a>
+            <a href="/compare" className="hover:text-gray-700 transition-colors">Compare</a>
+            <a href="/live" className="hover:text-gray-700 transition-colors">Try Live</a>
+          </div>
+          <p className="text-[11px] text-gray-300">Built in New Zealand</p>
+        </div>
       </footer>
     </main>
   )

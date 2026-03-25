@@ -52,14 +52,34 @@ Once users try AI rewrite, raw dictation feels broken. That's the addiction.
 
 ---
 
-## Pricing
+## Pricing (Final)
 
-| Tier | Price | Features |
-|------|-------|----------|
-| Free | $0 | Basic dictation, 60 min/month, Web Speech API |
-| Pro | $12/mo or $99/year | Unlimited, AI rewrite, offline, context-aware |
-| Teams | $24.99/user/mo | Meeting transcription, speaker ID, shared macros |
-| Lifetime | $89 (launch only, 1000 units) | Pro features forever |
+| Tier | Price | What you get | Target |
+|------|-------|-------------|--------|
+| **Free** | $0 | 10 grammar corrections/day, 60 min voice/mo, Chrome extension | Get users in the door |
+| **Pro** | $12/mo or $99/year | Unlimited grammar, unlimited voice, AI rewrite, context-aware, desktop + Chrome + mobile, offline, 50+ languages | 70% of paying users |
+| **Teams** | $25/user/mo (min 3) | Everything in Pro + meetings + speaker ID + team style guide + admin | Enterprise/agencies |
+| **Lifetime** | $89 one-time | Pro features forever. Limited to 1,000 units. | Launch FOMO |
+
+### Why $12/mo works
+- Grammarly Premium: $30/mo — we're 60% cheaper with more features
+- Wispr Flow: $15/mo — we're cheaper AND we do grammar
+- SuperWhisper: $7/mo — but they don't do grammar at all
+- $12/mo = impulse buy territory, low enough to not cancel
+
+### API cost model (Pro users)
+- Grammar check (Claude Haiku): ~$0.001 per check → ~$0.50/mo per active user
+- Voice transcription (Whisper): ~$0.006/min → ~$1-2/mo per active user
+- AI Rewrite (Claude Sonnet): ~$0.003 per rewrite → ~$0.30/mo per active user
+- **Total API cost per user: ~$2-3/mo** → healthy margin on $12/mo
+
+### Revenue projections
+| Month | Paid users | MRR | Lifetime deals | Total |
+|-------|-----------|-----|----------------|-------|
+| 1 | 600 | $7.2K | 400 × $89 = $35.6K | $42.8K |
+| 3 | 2,500 | $30K | 800 × $89 = $71.2K | $101K |
+| 6 | 5,000 | $60K | 1,000 (sold out) | $60K/mo |
+| 12 | 12,000 | $144K | — | $1.7M ARR |
 
 ---
 
