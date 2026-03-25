@@ -43,6 +43,9 @@ const store = new Store({
     launchAtLogin: true,
     showOverlay: true,
     typingSpeed: 0,           // 0 = instant (paste), >0 = ms between chars
+    aiRewrite: false,         // AI rewrite mode — polishes dictated text
+    aiRewriteMode: 'professional', // professional | casual | concise | auto
+    claudeApiKey: '',         // Anthropic API key for AI rewrite
   },
 })
 
@@ -439,6 +442,104 @@ function wrapCode(text) {
   return '```' + detectLang(text) + '\n' + text + '\n```'
 }
 
+// ─── AI Rewrite Mode (Claude API) ─────────────────────────────
+// Takes rough dictated text and rewrites it into polished output.
+// The mode changes based on context (email=professional, slack=casual, code=technical).
+
+async function rewriteWithAI(text, settings) {
+  const apiKey = settings.claudeApiKey
+  if (!apiKey) return text
+
+  const mode = settings.aiRewriteMode || 'professional'
+  const appContext = detectAppContext()
+
+  const systemPrompts = {
+    professional: 'You are a writing assistant. Rewrite the user\'s dictated text into clean, professional prose. Fix grammar, remove filler words (um, uh, like, you know), improve clarity. Keep the original meaning and tone. Do NOT add information the user didn\'t say. Return ONLY the rewritten text, nothing else.',
+    casual: 'You are a writing assistant. Clean up the user\'s dictated text into natural, casual writing. Fix obvious errors but keep the conversational tone. Remove filler words. Return ONLY the cleaned text.',
+    concise: 'You are a writing assistant. Rewrite the user\'s dictated text to be as concise as possible. Remove all filler, redundancy, and unnecessary words. Make every word count. Return ONLY the rewritten text.',
+    email: 'You are a writing assistant. Rewrite this dictated text as a professional email. Add appropriate greeting and sign-off if not present. Fix grammar and tone. Return ONLY the email text.',
+    slack: 'You are a writing assistant. Clean up this dictated text for a Slack message. Keep it casual and brief. Use line breaks for readability. Return ONLY the message text.',
+    code: 'You are a coding assistant. The user dictated instructions about code. Convert their spoken description into a clear, well-formatted technical request or code comment. Return ONLY the formatted text.',
+  }
+
+  // Auto-select mode based on detected app context
+  let activeMode = mode
+  if (appContext === 'email') activeMode = 'email'
+  else if (appContext === 'slack' || appContext === 'discord') activeMode = 'slack'
+  else if (appContext === 'code') activeMode = 'code'
+
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 8000) // 8s max
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1024,
+        system: systemPrompts[activeMode] || systemPrompts.professional,
+        messages: [{ role: 'user', content: text }],
+      }),
+      signal: controller.signal,
+    })
+
+    clearTimeout(timeout)
+
+    if (!response.ok) {
+      const err = await response.text().catch(() => '')
+      if (response.status === 401) throw new Error('Invalid Claude API key')
+      throw new Error(`Claude API error (${response.status}): ${err}`)
+    }
+
+    const data = await response.json()
+    const rewritten = data.content?.[0]?.text?.trim()
+
+    // Safety: if AI returns empty or way too different, use original
+    if (!rewritten || rewritten.length < text.length * 0.2) {
+      return text
+    }
+
+    return rewritten
+  } catch (err) {
+    clearTimeout(timeout)
+    if (err.name === 'AbortError') {
+      console.warn('[48co] AI rewrite timed out (8s), using original text')
+      return text
+    }
+    throw err
+  }
+}
+
+// ─── App Context Detection ────────────────────────────────────
+// Detects which app is currently focused to auto-adjust AI rewrite mode.
+// Returns: 'email' | 'slack' | 'discord' | 'code' | 'terminal' | 'general'
+
+function detectAppContext() {
+  try {
+    // Try to detect focused window title/process
+    // This works cross-platform via BrowserWindow.getFocusedWindow fallback
+    const focused = BrowserWindow.getFocusedWindow()
+    const title = focused?.getTitle()?.toLowerCase() || ''
+
+    // Check window title for app hints
+    if (title.includes('gmail') || title.includes('outlook') || title.includes('mail') || title.includes('thunderbird')) return 'email'
+    if (title.includes('slack')) return 'slack'
+    if (title.includes('discord')) return 'discord'
+    if (title.includes('vs code') || title.includes('visual studio') || title.includes('intellij') || title.includes('webstorm') || title.includes('sublime') || title.includes('vim') || title.includes('neovim')) return 'code'
+    if (title.includes('terminal') || title.includes('iterm') || title.includes('powershell') || title.includes('cmd') || title.includes('warp')) return 'terminal'
+    if (title.includes('notion') || title.includes('google docs') || title.includes('word')) return 'general'
+
+    return 'general'
+  } catch {
+    return 'general'
+  }
+}
+
 // ─── IPC Handlers ──────────────────────────────────────────────
 ipcMain.handle('get-settings', () => {
   return store.store
@@ -480,6 +581,19 @@ ipcMain.on('transcription-ready', async (_, text) => {
   // Auto coding mode
   if (settings.codingMode || (settings.autoCoding && isCodingContent(output))) {
     output = wrapCode(output)
+  }
+
+  // AI Rewrite Mode — the killer feature
+  if (settings.aiRewrite && settings.claudeApiKey && !cmd) {
+    if (overlayWindow) {
+      overlayWindow.webContents.send('recording-state', { status: 'rewriting', text: output })
+    }
+    try {
+      output = await rewriteWithAI(output, settings)
+    } catch (err) {
+      console.error('[48co] AI rewrite failed, using original:', err.message)
+      // Fall through with original text — never lose the user's words
+    }
   }
 
   // Show typing state
