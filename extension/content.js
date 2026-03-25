@@ -1,7 +1,9 @@
 /**
  * 48co Content Script
- * Injected into AI chat pages. Creates a Shadow DOM widget for voice input.
- * Self-contained — no ES module imports (MV3 content scripts require bundling for imports).
+ * Injected into all pages. NO visible widget on the page.
+ * All controls are in the toolbar icon (extension popup).
+ * Triggers: middle-click, Ctrl+Shift+Space, push-to-talk, or click extension icon.
+ * Shows a brief toast notification for status changes, then disappears.
  */
 ;(function () {
   'use strict'
@@ -393,341 +395,118 @@
   })
 
   // ═══════════════════════════════════════════════════════════════════
-  // SHADOW DOM WIDGET
+  // TOAST NOTIFICATION (replaces the floating widget)
+  // Small, non-blocking status toast — appears briefly, then fades out.
+  // Positioned top-center so it never blocks any page UI.
   // ═══════════════════════════════════════════════════════════════════
 
-  const host = document.createElement('div')
-  host.id = 'foureightco-widget-host'
-  const shadow = host.attachShadow({ mode: 'closed' })
+  let toastHost = null
+  let toastShadow = null
+  let toastEl = null
+  let toastTimeout = null
 
-  // Prevent events from leaking to host page
-  host.addEventListener('click', (e) => e.stopPropagation(), true)
-  host.addEventListener('keydown', (e) => e.stopPropagation(), true)
-  host.addEventListener('keyup', (e) => e.stopPropagation(), true)
+  function createToast() {
+    if (toastHost) return
 
-  const style = document.createElement('style')
-  style.textContent = `
-    :host {
-      all: initial;
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 2147483647;
-      font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
-    }
+    toastHost = document.createElement('div')
+    toastHost.id = 'foureightco-toast'
+    toastHost.style.cssText = 'position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:2147483647;pointer-events:none;'
+    toastShadow = toastHost.attachShadow({ mode: 'closed' })
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    .widget {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 8px;
-      user-select: none;
-    }
-
-    /* ── Expanded panel ─────────────────────────────── */
-    .panel {
-      width: 320px;
-      background: rgba(10, 10, 14, 0.92);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      overflow: hidden;
-      display: none;
-      animation: slideUp 0.2s ease-out;
-    }
-    .panel.open { display: block; }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Title bar */
-    .panel-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    }
-    .panel-title {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      color: rgba(255, 255, 255, 0.8);
-    }
-    .panel-site {
-      font-size: 9px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: rgba(255, 255, 255, 0.3);
-    }
-    .panel-controls {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-
-    /* Code mode button */
-    .code-btn {
-      font-size: 9px;
-      padding: 2px 8px;
-      border-radius: 4px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: transparent;
-      color: rgba(255, 255, 255, 0.3);
-      cursor: pointer;
-      font-family: inherit;
-      transition: all 0.2s;
-    }
-    .code-btn:hover { border-color: rgba(255, 255, 255, 0.2); }
-    .code-btn.active {
-      border-color: #00f0ff;
-      color: #00f0ff;
-    }
-
-    /* Waveform */
-    .waveform {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      height: 40px;
-      padding: 8px 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    }
-    .bar {
-      width: 3px;
-      border-radius: 2px;
-      background: rgba(255, 255, 255, 0.15);
-      transition: all 0.3s ease;
-    }
-    .bar.active {
-      background: #00f0ff;
-      animation: barPulse var(--bar-speed, 0.8s) ease-in-out infinite;
-      animation-delay: var(--bar-delay, 0s);
-    }
-
-    @keyframes barPulse {
-      0%, 100% { height: var(--bar-min, 4px); }
-      50% { height: var(--bar-max, 28px); }
-    }
-
-    /* Transcript area */
-    .transcript {
-      padding: 10px 14px;
-      min-height: 24px;
-      max-height: 60px;
-      overflow: hidden;
-      font-size: 11px;
-      line-height: 1.5;
-      color: rgba(255, 255, 255, 0.4);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    }
-    .transcript:empty { display: none; }
-
-    /* Status label */
-    .status-label {
-      text-align: center;
-      padding: 6px 14px;
-      font-size: 10px;
-      letter-spacing: 0.1em;
-      color: rgba(255, 255, 255, 0.2);
-    }
-
-    /* ── Floating mic button ────────────────────────── */
-    .mic-btn {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: rgba(10, 10, 14, 0.92);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      position: relative;
-    }
-    .mic-btn:hover {
-      border-color: rgba(255, 255, 255, 0.15);
-      transform: scale(1.05);
-    }
-
-    .mic-btn svg { transition: all 0.3s; }
-
-    /* Ring states */
-    .mic-btn.idle {
-      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15), 0 4px 16px rgba(0, 0, 0, 0.4);
-    }
-    .mic-btn.recording {
-      box-shadow: 0 0 0 2px #ff3b5c, 0 0 20px rgba(255, 59, 92, 0.4);
-      animation: pulseRing 1.2s ease-in-out infinite;
-    }
-    .mic-btn.processing {
-      box-shadow: 0 0 0 2px #ffb800, 0 0 16px rgba(255, 184, 0, 0.3);
-    }
-    .mic-btn.done {
-      box-shadow: 0 0 0 2px #00ff88, 0 0 16px rgba(0, 255, 136, 0.3);
-    }
-
-    @keyframes pulseRing {
-      0%, 100% { box-shadow: 0 0 0 2px #ff3b5c, 0 0 20px rgba(255, 59, 92, 0.4); }
-      50% { box-shadow: 0 0 0 4px #ff3b5c, 0 0 32px rgba(255, 59, 92, 0.6); }
-    }
-
-    /* Spinner animation */
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    .spin { animation: spin 1s linear infinite; }
-
-    /* Drag handle */
-    .drag-zone {
-      position: absolute;
-      top: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 24px;
-      height: 4px;
-      border-radius: 2px;
-      background: rgba(255, 255, 255, 0.1);
-      cursor: grab;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-    .widget:hover .drag-zone { opacity: 1; }
-  `
-
-  // ── Build the widget HTML ────────────────────────────────────────
-  const container = document.createElement('div')
-  container.className = 'widget'
-  container.innerHTML = `
-    <div class="panel" id="panel">
-      <div class="panel-header">
-        <span class="panel-title">\u2261 48CO</span>
-        <div class="panel-controls">
-          <span class="panel-site">${adapter.name}</span>
-          <button class="code-btn" id="code-toggle">CODE</button>
-        </div>
-      </div>
-      <div class="waveform" id="waveform"></div>
-      <div class="transcript" id="transcript"></div>
-      <div class="status-label" id="status-label">SCROLL \u2191\u2193 \u00b7 CLICK \u00b7 CTRL+SHIFT+SPACE</div>
-    </div>
-    <div class="drag-zone"></div>
-    <button class="mic-btn idle" id="mic-btn">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5">
-        <rect x="9" y="2" width="6" height="11" rx="3"/>
-        <path d="M5 10a7 7 0 0014 0"/>
-        <line x1="12" y1="21" x2="12" y2="17"/>
-        <line x1="9" y1="21" x2="15" y2="21"/>
-      </svg>
-    </button>
-  `
-
-  // Build waveform bars
-  const waveformEl = container.querySelector('#waveform')
-  const barConfigs = [
-    { speed: '0.7s', delay: '0s', min: 6, max: 22 },
-    { speed: '0.9s', delay: '0.1s', min: 10, max: 30 },
-    { speed: '0.6s', delay: '0.2s', min: 4, max: 26 },
-    { speed: '1.0s', delay: '0.05s', min: 14, max: 36 },
-    { speed: '0.75s', delay: '0.15s', min: 8, max: 20 },
-  ]
-  for (let i = 0; i < 20; i++) {
-    const cfg = barConfigs[i % 5]
-    const bar = document.createElement('div')
-    bar.className = 'bar'
-    bar.style.setProperty('--bar-speed', cfg.speed)
-    bar.style.setProperty('--bar-delay', cfg.delay)
-    bar.style.setProperty('--bar-min', cfg.min + 'px')
-    bar.style.setProperty('--bar-max', cfg.max + 'px')
-    bar.style.height = (4 + (i % 5) * 3) + 'px'
-    waveformEl.appendChild(bar)
-  }
-
-  shadow.appendChild(style)
-  shadow.appendChild(container)
-
-  // ── Wait for page to be ready, then inject ───────────────────────
-  function inject() {
-    if (!document.body.contains(host)) {
-      document.body.appendChild(host)
-    }
-    return document.body.contains(host)
-  }
-
-  // Use MutationObserver to wait for page to be ready (SPA)
-  const observer = new MutationObserver(() => {
-    if (inject()) {
-      observer.disconnect() // Stop observing once widget is injected
-    }
-  })
-  observer.observe(document.body, { childList: true, subtree: true })
-
-  // Also try immediately
-  if (document.body && inject()) {
-    observer.disconnect()
-  }
-
-  // ── Widget element references ────────────────────────────────────
-  const micBtn = container.querySelector('#mic-btn')
-  const panel = container.querySelector('#panel')
-  const transcriptEl = container.querySelector('#transcript')
-  const statusLabel = container.querySelector('#status-label')
-  const codeToggle = container.querySelector('#code-toggle')
-  const bars = container.querySelectorAll('.bar')
-
-  // ═══════════════════════════════════════════════════════════════════
-  // UI UPDATE
-  // ═══════════════════════════════════════════════════════════════════
-
-  const ICONS = {
-    mic: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0014 0"/><line x1="12" y1="21" x2="12" y2="17"/><line x1="9" y1="21" x2="15" y2="21"/></svg>',
-    wave: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff3b5c" stroke-width="1.5"><path d="M2 12h2M6 8v8M10 5v14M14 9v6M18 7v10M22 12h-2"/></svg>',
-    spinner: '<svg class="spin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffb800" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"/></svg>',
-    check: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-  }
-
-  const STATUS_CONFIG = {
-    idle:       { icon: 'mic',     label: 'Middle-click to record',              ringClass: 'idle' },
-    recording:  { icon: 'wave',    label: 'Middle-click to stop \u00b7 Recording...', ringClass: 'recording' },
-    processing: { icon: 'spinner', label: 'Transcribing\u2026',                 ringClass: 'processing' },
-    done:       { icon: 'check',   label: 'Pasted \u2713',                      ringClass: 'done' },
-  }
-
-  function updateUI() {
-    const cfg = STATUS_CONFIG[state.status]
-    micBtn.innerHTML = ICONS[cfg.icon]
-    micBtn.className = 'mic-btn ' + cfg.ringClass
-    statusLabel.textContent = cfg.label
-    transcriptEl.textContent = state.transcript
-
-    // Waveform bars
-    bars.forEach((bar, i) => {
-      if (state.status === 'recording') {
-        bar.classList.add('active')
-      } else {
-        bar.classList.remove('active')
-        bar.style.height = (4 + (i % 5) * 3) + 'px'
+    const style = document.createElement('style')
+    style.textContent = `
+      .toast {
+        font-family: 'JetBrains Mono', 'SF Mono', monospace;
+        font-size: 11px;
+        padding: 6px 14px;
+        border-radius: 8px;
+        background: rgba(10, 10, 14, 0.92);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: rgba(255, 255, 255, 0.6);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        opacity: 0;
+        transform: translateY(-8px);
+        transition: opacity 0.25s ease, transform 0.25s ease;
+        white-space: nowrap;
       }
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .dot.idle { background: rgba(255,255,255,0.3); }
+      .dot.recording { background: #ff3b5c; box-shadow: 0 0 8px rgba(255,59,92,0.6); animation: pulse 1s ease-in-out infinite; }
+      .dot.processing { background: #ffb800; }
+      .dot.done { background: #00ff88; }
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+      }
+    `
+
+    toastEl = document.createElement('div')
+    toastEl.className = 'toast'
+    toastEl.innerHTML = '<span class="dot idle"></span><span class="text"></span>'
+
+    toastShadow.appendChild(style)
+    toastShadow.appendChild(toastEl)
+    document.body.appendChild(toastHost)
+  }
+
+  function showToast(message, statusClass, duration) {
+    createToast()
+    const dot = toastEl.querySelector('.dot')
+    const text = toastEl.querySelector('.text')
+
+    dot.className = 'dot ' + statusClass
+    text.textContent = message
+
+    // Show
+    requestAnimationFrame(() => {
+      toastEl.classList.add('show')
     })
 
-    // Code toggle
-    codeToggle.className = state.codingMode ? 'code-btn active' : 'code-btn'
-
-    // Auto-show panel when recording
-    if (state.status === 'recording' || state.status === 'processing') {
-      panel.classList.add('open')
+    // Auto-hide (except during recording)
+    clearTimeout(toastTimeout)
+    if (duration > 0) {
+      toastTimeout = setTimeout(() => {
+        toastEl.classList.remove('show')
+      }, duration)
     }
+  }
+
+  function hideToast() {
+    if (toastEl) toastEl.classList.remove('show')
+    clearTimeout(toastTimeout)
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // UI UPDATE (badge + toast, NO page widget)
+  // ═══════════════════════════════════════════════════════════════════
+
+  function updateUI() {
+    // Tell background to update the extension icon badge
+    try {
+      chrome.runtime.sendMessage({ type: 'UPDATE_BADGE', status: state.status })
+    } catch { /* extension context may be invalid */ }
+
+    if (state.status === 'recording') {
+      showToast('Recording...', 'recording', 0) // stays until stopped
+    } else if (state.status === 'processing') {
+      showToast('Transcribing...', 'processing', 0)
+    } else if (state.status === 'done') {
+      showToast('Typed \u2713', 'done', 1500)
+    }
+    // idle = hide toast (handled by done timeout)
   }
 
   // ═══════════════════════════════════════════════════════════════════
@@ -737,7 +516,7 @@
   function startWebSpeech() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     if (!SpeechRecognition) {
-      statusLabel.textContent = 'Speech API not supported — use Chrome'
+      showToast('Speech API not supported — use Chrome', 'idle', 3000)
       return
     }
 
@@ -757,7 +536,6 @@
         full += e.results[i][0].transcript
       }
       state.transcript = full
-      transcriptEl.textContent = full
     }
 
     recognition.onend = () => {
@@ -769,13 +547,13 @@
       state.status = 'idle'
 
       const errorMessages = {
-        'not-allowed': 'Microphone access denied — check browser permissions',
+        'not-allowed': 'Mic access denied — check browser permissions',
         'no-speech': 'No speech detected — try again',
-        'network': 'Network error — check your connection',
-        'audio-capture': 'No microphone found — check your audio devices',
-        'service-not-allowed': 'Speech service not available — try Chrome or Edge',
+        'network': 'Network error — check connection',
+        'audio-capture': 'No mic found — check audio devices',
+        'service-not-allowed': 'Speech service unavailable — try Chrome',
       }
-      statusLabel.textContent = errorMessages[e.error] || 'Error: ' + e.error
+      showToast(errorMessages[e.error] || 'Error: ' + e.error, 'idle', 3000)
       updateUI()
     }
 
@@ -826,6 +604,7 @@
     if (!text || !text.trim()) {
       state.status = 'idle'
       state.transcript = ''
+      hideToast()
       updateUI()
       return
     }
@@ -839,6 +618,7 @@
     if (cmd && cmd.action === 'cancel') {
       state.status = 'idle'
       state.transcript = ''
+      hideToast()
       updateUI()
       return
     }
@@ -858,7 +638,7 @@
       output = wrapCode(output)
     }
 
-    // Insert into the AI chat input
+    // Insert into the text input
     const inserted = insertText(adapter, output)
 
     if (inserted) {
@@ -879,17 +659,17 @@
       // Fallback: copy to clipboard
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(output).then(() => {
-          statusLabel.textContent = 'Copied to clipboard (no input found)'
+          showToast('Copied to clipboard (no input found)', 'done', 2000)
           state.status = 'done'
           updateUI()
           setTimeout(() => { state.status = 'idle'; state.transcript = ''; updateUI() }, 2000)
         }).catch(() => {
-          statusLabel.textContent = 'No text field found — click a chat input first'
+          showToast('No text field found — click input first', 'idle', 3000)
           state.status = 'idle'
           updateUI()
         })
       } else {
-        statusLabel.textContent = 'No text field found — click a chat input first'
+        showToast('No text field found — click input first', 'idle', 3000)
         state.status = 'idle'
         updateUI()
       }
@@ -900,46 +680,29 @@
   // EVENT HANDLERS
   // ═══════════════════════════════════════════════════════════════════
 
-  // Click mic button
-  micBtn.addEventListener('click', () => {
-    if (state.status === 'idle') {
-      panel.classList.add('open')
-      startRecording()
-    } else if (state.status === 'recording') {
-      stopRecording()
-    } else {
-      // Toggle panel visibility when not recording
-      panel.classList.toggle('open')
-    }
-  })
-
-  // Code mode toggle
-  codeToggle.addEventListener('click', () => {
-    state.codingMode = !state.codingMode
-    chrome.storage.local.set({ codingMode: state.codingMode })
-    updateUI()
-  })
-
   // Middle-click (wheel button press) toggle — works anywhere on the page
   window.addEventListener('mousedown', (e) => {
     if (e.button !== 1) return
     e.preventDefault()
     if (state.status === 'idle') {
       startRecording()
-      panel.classList.add('open')
     } else if (state.status === 'recording') {
       stopRecording()
     }
   })
   window.addEventListener('auxclick', (e) => { if (e.button === 1) e.preventDefault() })
 
-  // Listen for messages from background (keyboard shortcut, Whisper result)
+  // Listen for messages from background (keyboard shortcut, Whisper result, popup toggle)
   chrome.runtime.onMessage.addListener((msg) => {
     if (msg.type === 'START_RECORDING') startRecording()
     if (msg.type === 'STOP_RECORDING') stopRecording()
+    if (msg.type === 'TOGGLE_RECORDING') {
+      if (state.status === 'idle') startRecording()
+      else if (state.status === 'recording') stopRecording()
+    }
     if (msg.type === 'TRANSCRIPTION_READY') {
       if (msg.error) {
-        statusLabel.textContent = msg.error
+        showToast(msg.error, 'idle', 3000)
         state.status = 'idle'
         state.transcript = ''
         updateUI()
@@ -950,7 +713,6 @@
     }
     if (msg.type === 'STATE_UPDATED') {
       Object.assign(state, msg.updates)
-      updateUI()
     }
   })
 
@@ -960,11 +722,9 @@
   window.addEventListener('keydown', (e) => {
     if (!state.pushToTalk) return
     // Hold Ctrl+Shift (no other keys) to start push-to-talk
-    // Works even when focused on text inputs — that's the primary use case
     if (e.ctrlKey && e.shiftKey && !e.altKey && !e.metaKey && e.key === 'Shift' && !pttActive) {
       pttActive = true
       startRecording()
-      panel.classList.add('open')
       e.preventDefault()
     }
   })
@@ -977,36 +737,5 @@
       e.preventDefault()
     }
   })
-
-  // Draggable widget
-  let isDragging = false
-  let dragStartX, dragStartY, widgetStartX, widgetStartY
-
-  host.addEventListener('mousedown', (e) => {
-    if (e.target.closest('.drag-zone')) {
-      isDragging = true
-      dragStartX = e.clientX
-      dragStartY = e.clientY
-      const rect = host.getBoundingClientRect()
-      widgetStartX = rect.left
-      widgetStartY = rect.top
-      e.preventDefault()
-    }
-  })
-
-  document.addEventListener('mousemove', (e) => {
-    if (!isDragging) return
-    const dx = e.clientX - dragStartX
-    const dy = e.clientY - dragStartY
-    host.style.right = 'auto'
-    host.style.bottom = 'auto'
-    host.style.left = (widgetStartX + dx) + 'px'
-    host.style.top = (widgetStartY + dy) + 'px'
-  })
-
-  document.addEventListener('mouseup', () => { isDragging = false })
-
-  // Initial UI render
-  updateUI()
 
 })()

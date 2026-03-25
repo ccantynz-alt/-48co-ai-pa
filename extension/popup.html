@@ -181,6 +181,48 @@
       color: #ff3b5c;
       border: 1px solid rgba(255, 59, 92, 0.2);
     }
+
+    /* Mic toggle button in popup */
+    .mic-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .mic-toggle-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      border: 2px solid rgba(255,255,255,0.15);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+    .mic-toggle-btn:hover {
+      border-color: rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.06);
+    }
+    .mic-toggle-btn.recording {
+      border-color: #ff3b5c;
+      box-shadow: 0 0 16px rgba(255,59,92,0.4);
+      animation: popupPulse 1.2s ease-in-out infinite;
+    }
+    .mic-toggle-btn svg { transition: all 0.2s; }
+    .mic-status {
+      font-size: 9px;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.1em;
+    }
+    .mic-status.recording { color: #ff3b5c; }
+    @keyframes popupPulse {
+      0%, 100% { box-shadow: 0 0 16px rgba(255,59,92,0.4); }
+      50% { box-shadow: 0 0 24px rgba(255,59,92,0.6); }
+    }
   </style>
 </head>
 <body>
@@ -188,6 +230,19 @@
   <div class="header">
     <span class="logo">&equiv; 48CO</span>
     <span class="version">v1.0.0</span>
+  </div>
+
+  <!-- Mic toggle -->
+  <div class="mic-section">
+    <button class="mic-toggle-btn" id="mic-toggle-btn">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5">
+        <rect x="9" y="2" width="6" height="11" rx="3"/>
+        <path d="M5 10a7 7 0 0014 0"/>
+        <line x1="12" y1="21" x2="12" y2="17"/>
+        <line x1="9" y1="21" x2="15" y2="21"/>
+      </svg>
+    </button>
+    <span class="mic-status" id="mic-status">Click to record</span>
   </div>
 
   <!-- Status -->
@@ -346,16 +401,12 @@
       <span style="color:rgba(255,255,255,0.3)">Ctrl+Shift+Space</span>
     </div>
     <div class="row">
+      <span class="label">Middle-click</span>
+      <span style="color:rgba(255,255,255,0.3)">Toggle recording</span>
+    </div>
+    <div class="row">
       <span class="label">Push-to-talk</span>
       <span style="color:rgba(255,255,255,0.3)">Hold Ctrl+Shift</span>
-    </div>
-    <div class="row">
-      <span class="label">Scroll up</span>
-      <span style="color:rgba(255,255,255,0.3)">Start recording</span>
-    </div>
-    <div class="row">
-      <span class="label">Scroll down</span>
-      <span style="color:rgba(255,255,255,0.3)">Stop &amp; paste</span>
     </div>
   </div>
 

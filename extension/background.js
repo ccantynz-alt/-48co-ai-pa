@@ -1,7 +1,7 @@
 /**
  * 48co Background Service Worker
  * Orchestrates messaging between content script and offscreen document.
- * Handles keyboard shortcuts and extension lifecycle.
+ * Handles keyboard shortcuts, badge updates, and extension lifecycle.
  */
 
 // ── Offscreen document management ──────────────────────────────────
@@ -51,16 +51,26 @@ async function setState(updates) {
   await chrome.storage.local.set(updates)
 }
 
+// ── Badge / icon state ─────────────────────────────────────────────
+function updateBadge(status) {
+  const config = {
+    idle:       { text: '',    color: '#666666' },
+    recording:  { text: 'REC', color: '#ff3b5c' },
+    processing: { text: '...', color: '#ffb800' },
+    done:       { text: '\u2713',   color: '#00ff88' },
+  }
+  const { text, color } = config[status] || config.idle
+  chrome.action.setBadgeText({ text })
+  chrome.action.setBadgeBackgroundColor({ color })
+}
+
 // ── Keyboard shortcut handler ──────────────────────────────────────
 chrome.commands.onCommand.addListener(async (command) => {
   if (command === 'toggle-recording') {
-    const state = await getState()
     // Forward toggle to the active tab's content script
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
     if (tab?.id) {
-      chrome.tabs.sendMessage(tab.id, {
-        type: state.isRecording ? 'STOP_RECORDING' : 'START_RECORDING',
-      })
+      chrome.tabs.sendMessage(tab.id, { type: 'TOGGLE_RECORDING' })
     }
   }
 })
@@ -88,6 +98,7 @@ async function handleMessage(msg, sender) {
         })
       }
       await setState({ isRecording: true })
+      updateBadge('recording')
       return { ok: true, engine: state.engine }
     }
 
@@ -97,12 +108,28 @@ async function handleMessage(msg, sender) {
         chrome.runtime.sendMessage({ type: 'OFFSCREEN_STOP' })
       }
       await setState({ isRecording: false })
+      updateBadge('processing')
+      return { ok: true }
+    }
+
+    case 'TOGGLE_RECORDING': {
+      // From popup — forward to active tab
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+      if (tab?.id) {
+        chrome.tabs.sendMessage(tab.id, { type: 'TOGGLE_RECORDING' })
+      }
+      return { ok: true }
+    }
+
+    case 'UPDATE_BADGE': {
+      updateBadge(msg.status || 'idle')
       return { ok: true }
     }
 
     case 'TRANSCRIPTION_READY': {
       // Forward transcription from offscreen → content script
       await setState({ isRecording: false })
+      updateBadge('done')
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
       if (tab?.id) {
         chrome.tabs.sendMessage(tab.id, {
@@ -154,4 +181,7 @@ chrome.runtime.onInstalled.addListener((details) => {
     // Open welcome page so user knows what to do next
     chrome.tabs.create({ url: chrome.runtime.getURL('welcome.html') })
   }
+
+  // Clear badge on install/update
+  updateBadge('idle')
 })

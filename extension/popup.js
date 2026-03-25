@@ -159,5 +159,16 @@ $('#replace-add').addEventListener('click', () => {
   }
 })
 
+// ── Mic toggle button ──────────────────────────────────────────────
+const micToggleBtn = $('#mic-toggle-btn')
+const micStatus = $('#mic-status')
+
+micToggleBtn.addEventListener('click', () => {
+  // Send toggle to background, which forwards to active tab content script
+  chrome.runtime.sendMessage({ type: 'TOGGLE_RECORDING' })
+  // Close popup so it doesn't block the page
+  window.close()
+})
+
 // ── Init ───────────────────────────────────────────────────────────
 detectSite()
