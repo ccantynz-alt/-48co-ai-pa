@@ -377,18 +377,15 @@
   // ═══════════════════════════════════════════════════════════════
 
   // Middle-click (wheel button PRESS) toggle
-  // Guard: ignore if user was scrolling (wheel event in last 200ms)
-  let lastWheelTime = 0
-  window.addEventListener('wheel', () => { lastWheelTime = Date.now() }, { passive: true })
-
-  window.addEventListener('mousedown', (e) => {
+  // Uses 'auxclick' — only fires on full press+release, never from scrolling
+  window.addEventListener('auxclick', (e) => {
     if (e.button !== 1) return
     e.preventDefault()
-    if (Date.now() - lastWheelTime < 200) return // scroll, not click
+    e.stopPropagation()
     if (status === 'idle') startRecording()
     else if (status === 'recording') stopRecording()
-  })
-  window.addEventListener('auxclick', (e) => { if (e.button === 1) e.preventDefault() })
+  }, true)
+  window.addEventListener('mousedown', (e) => { if (e.button === 1) e.preventDefault() })
 
   // Keyboard shortcut: Ctrl+Shift+Space
   document.addEventListener('keydown', (e) => {
