@@ -3,19 +3,22 @@
 @tailwind utilities;
 
 :root {
-  --bg: #09090b;
-  --bg-subtle: #111113;
-  --border: rgba(255, 255, 255, 0.06);
-  --text-primary: rgba(255, 255, 255, 0.92);
-  --text-secondary: rgba(255, 255, 255, 0.55);
-  --text-muted: rgba(255, 255, 255, 0.3);
-  --text-faint: rgba(255, 255, 255, 0.12);
-  --accent: #6366f1;          /* indigo — modern, not neon */
-  --accent-light: #818cf8;
-  --accent-glow: rgba(99, 102, 241, 0.15);
-  --success: #22c55e;
-  --danger: #ef4444;
-  --warning: #eab308;
+  /* Light, clean palette */
+  --bg: #ffffff;
+  --bg-subtle: #f8f9fa;
+  --bg-muted: #f1f3f5;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.12);
+  --text-primary: #111111;
+  --text-secondary: #555555;
+  --text-muted: #888888;
+  --text-faint: #bbbbbb;
+  --accent: #4f46e5;          /* indigo */
+  --accent-light: #6366f1;
+  --accent-bg: rgba(79, 70, 229, 0.06);
+  --success: #16a34a;
+  --danger: #dc2626;
+  --warning: #ca8a04;
 }
 
 * {
@@ -26,12 +29,13 @@
 
 body {
   background: var(--bg);
+  color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── Extension ring states ────────────────────────────────── */
-.ring-idle    { box-shadow: 0 0 0 2px rgba(255,255,255,0.15); }
+/* ── Extension ring states (dark overlay context) ─────── */
+.ring-idle    { box-shadow: 0 0 0 2px rgba(0,0,0,0.15); }
 .ring-record  { box-shadow: 0 0 0 2px var(--danger), 0 0 16px var(--danger); animation: pulse_ring 1.2s ease-in-out infinite; }
 .ring-process { box-shadow: 0 0 0 2px var(--warning), 0 0 12px var(--warning); }
 .ring-done    { box-shadow: 0 0 0 2px var(--success), 0 0 12px var(--success); }
@@ -41,7 +45,7 @@ body {
   50%      { box-shadow: 0 0 0 4px var(--danger), 0 0 28px var(--danger); }
 }
 
-/* ── Waveform bars ────────────────────────────────────────── */
+/* ── Waveform bars ────────────────────────────────────── */
 @keyframes bar1 { 0%,100%{height:6px}  50%{height:22px} }
 @keyframes bar2 { 0%,100%{height:10px} 50%{height:30px} }
 @keyframes bar3 { 0%,100%{height:4px}  50%{height:26px} }
@@ -53,9 +57,9 @@ body {
 .bar4 { animation: bar4 1.0s ease-in-out infinite 0.05s; }
 .bar5 { animation: bar5 0.75s ease-in-out infinite 0.15s; }
 
-/* ── Animations ───────────────────────────────────────────── */
+/* ── Animations ───────────────────────────────────────── */
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -64,14 +68,14 @@ body {
   51%, 100% { border-right-color: transparent; }
 }
 
-.animate-fade-up { animation: fade-up 0.6s ease-out both; }
+.animate-fade-up { animation: fade-up 0.5s ease-out both; }
 .animate-typing-cursor { border-right: 2px solid var(--accent); animation: typing-cursor 1s step-end infinite; }
 
 /* Scroll reveal */
 .reveal {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
 .reveal.visible {
   opacity: 1;
@@ -80,24 +84,26 @@ body {
 
 /* Card */
 .card {
-  background: var(--bg-subtle);
+  background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 .card:hover {
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--border-strong);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 }
 
-/* Subtle gradient mesh (hero only) */
+/* Hero gradient — subtle warm */
 .hero-gradient {
   background:
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.12), transparent),
-    radial-gradient(ellipse 60% 40% at 80% 60%, rgba(34, 197, 94, 0.06), transparent),
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(79, 70, 229, 0.06), transparent),
+    radial-gradient(ellipse 50% 30% at 80% 20%, rgba(16, 163, 74, 0.04), transparent),
     var(--bg);
 }
 
 /* Clean scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
