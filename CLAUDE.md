@@ -6,76 +6,128 @@
 - If something can't be done, say WHY and offer the next-best alternative immediately.
 - Never present a half-solution without flagging what's missing.
 
-## Hard Rules — Non-Negotiable
+---
 
-### 1. Engineering Gap Detection (MANDATORY)
-Before writing ANY code or proposing ANY solution:
-- Research what competitors ship (WhisperTyping, Wispr Flow, SuperWhisper, Voicy)
-- Identify what technology they use and why
-- Flag EVERY gap between our product and theirs BEFORE building
-- If a browser security limitation blocks a feature, say so IMMEDIATELY — don't build a workaround and pretend it's equivalent
-- If an approach requires copy-paste, manual steps, or user friction — REJECT IT and find a better way
+## THE 10 MANDATORY RULES — Non-Negotiable
 
-### 2. Bug Prevention & Auto-Repair
-- Test every code path mentally before writing it
-- Handle ALL error states (mic permission denied, API failures, network loss, browser incompatibility)
-- Never ship code that fails silently — every failure must show a clear message to the user
-- If a bug is found during development, fix it BEFORE moving on
-- Run through the full user flow start-to-finish before marking anything as done
+These rules override everything. Every session. Every task. No exceptions.
 
-### 3. Technology Research (MANDATORY)
-Before implementing any feature:
-- Search for the best current technology/library for the job (2024-2026 state of the art)
+### Rule 1: Scan Before You Build
+Every session starts by checking for security issues, broken code, and problems BEFORE doing anything new.
+- Run through the user flow: install → configure → use → edge cases
+- Check if existing features actually work (don't assume they do)
+- If something is broken, fix it FIRST before building new things
+- Test on the actual platforms users will use (Claude.ai, ChatGPT, Gmail, etc.)
+
+### Rule 2: Auto-Repair
+If a bug is found while working on ANYTHING, fix it immediately.
+- No "that's out of scope" excuses
+- No "I'll fix that later" — fix it NOW
+- No asking permission to fix obvious bugs — just fix them
+- If a bug was reported before and not fixed, that's a failure — escalate priority
+
+### Rule 3: Proactive Research
+Before building anything significant, check if there's a better way.
+- Search for the best current technology/library for the job (2025-2026 state of the art)
 - Compare at least 2-3 approaches and pick the best one
-- Document WHY a technology was chosen over alternatives
-- If a better approach exists than what we're currently using, FLAG IT and recommend migration
+- Research what competitors ship (WhisperTyping, Wispr Flow, SuperWhisper, Grammarly)
+- If a better approach exists than what we're using, FLAG IT and recommend migration
+- Document WHY a technology was chosen
 
-### 4. Autonomous Operation
-- Don't wait for the user to find problems — find them yourself
-- Don't ask permission to fix obvious bugs — just fix them
-- Don't present options when one is clearly better — make the call and explain why
-- If a task requires 5 steps, do all 5 — don't stop at step 2 and wait for instructions
-- If something breaks during implementation, fix it before reporting back
+### Rule 4: Engineering Gap Detection
+Systematically check for features that promise something the code can't deliver.
+- Flag EVERY gap between our product and competitors BEFORE building
+- If a browser limitation blocks a feature, say so IMMEDIATELY
+- Check every feature actually works on the target platform (Claude.ai, ChatGPT, Gmail)
+- If an approach requires copy-paste or manual steps — REJECT IT
+- Missing error handling = gap. Silent failures = gap. Find them all.
 
-### 5. No Half-Measures
+### Rule 5: Technology Currency
+Check if our tools are up to date. If there's newer, faster, safer — upgrade.
+- Review npm dependencies for security vulnerabilities
+- Check if browser APIs have changed (SpeechRecognition, Clipboard, etc.)
+- If a library we're using has a better alternative, migrate
+- Stay on latest stable versions of Electron, React, Tailwind
+
+### Rule 6: Explain Like You're Not A Developer
+All communication in plain English.
+- "Your users were seeing X, now they see Y" — not tech jargon
+- Explain what changed, why, and what the user will experience
+- If something is technically complex, explain with an analogy
+- Never say "refactored the state machine" — say "fixed the recording getting stuck"
+
+### Rule 7: Never Leave It Worse
+Every file touched gets cleaned up. No leaving messes behind.
+- If you open a file to fix one thing and see other issues, fix them too
+- No commented-out code left behind
+- No TODO comments without a plan to address them
+- Code should be cleaner after every session, not messier
+
+### Rule 8: Autonomous Testing
+After changes, verify everything still works. No "it should be fine."
+- Mentally trace every code path
+- Check that error states are handled
+- Verify the feature works on the specific sites users care about (Claude.ai, ChatGPT, Gmail)
+- If a change could break something else, check that too
+
+### Rule 9: Mandatory Documentation
+Every change gets documented so the next session knows what happened.
+- Commit messages explain WHAT and WHY
+- STRATEGY.md stays updated with current state
+- Known issues are documented, not hidden
+- Architecture decisions are recorded with reasoning
+
+### Rule 10: Mandatory Session Protocol
+Every session must follow this protocol:
+1. **SCAN** — Check for broken features, bugs, security issues
+2. **DETECT** — Find engineering gaps vs competitors
+3. **FIX** — Repair everything found before building new
+4. **RESEARCH** — Check for better tech before implementing
+5. **BUILD** — Only then, build new features
+6. **TEST** — Verify everything works end-to-end
+7. **DOCUMENT** — Record what changed and why
+
+---
+
+## Hard Rules — Additional
+
+### No Half-Measures
 - Every feature must work end-to-end with zero user friction
 - "Copy to clipboard" is NOT a solution when auto-typing is possible
-- "Drag to bookmarks bar" is NOT zero-friction — find a better way or be honest about the tradeoff
-- If the web platform can't do something, the desktop app MUST, and vice versa
+- If the web platform can't do something, say so HONESTLY
 - Every user-facing flow must be tested: install → configure → use → edge cases
 
-### 6. Honest Communication
+### Honest Communication
 - If something is technically impossible in a browser, say so clearly
 - If a feature requires a download, don't dress it up as "web-based"
 - Separate WHAT WORKS from WHAT'S ASPIRATIONAL
-- Give time/effort estimates for complex features
 - Flag risks and blockers at the START, not when they become problems
+
+### Autonomous Operation
+- Don't wait for the user to find problems — find them yourself
+- Don't present options when one is clearly better — make the call and explain
+- If a task requires 5 steps, do all 5 — don't stop at step 2
+- If something breaks during implementation, fix it before reporting back
+
+---
 
 ## Architecture Decisions (Locked In)
 
-### Product Delivery — Two Modes:
-1. **Desktop App (PRIMARY)** — Electron app for Windows + Mac
-   - System tray with global hotkey (Ctrl+Shift+Space / Cmd+Shift+Space)
-   - Uses OS-level keyboard simulation to type into ANY focused text field
-   - Works in ANY app: browsers, Slack, Discord, VS Code, anything
-   - Uses @nut-tree/nut-js for cross-platform keyboard simulation
-   - Whisper API for transcription (high accuracy) + Web Speech API fallback
-   - Auto-updates via electron-updater
-   - This is how WhisperTyping/Wispr Flow/SuperWhisper do it — proven approach
+### Product = AI Grammar + Voice-to-Text Everywhere
 
-2. **Web Bookmarklet (SECONDARY)** — Zero-download option
-   - User clicks a button on 48co.nz → injects voice widget into current page
-   - Uses javascript: URI or hosted script injection
-   - Types DIRECTLY into the page's text fields (not clipboard)
-   - Limited to browser only, but zero friction for web-only users
-   - HONEST TRADEOFF: Only works in browser, only on the current page, must re-inject per page
-   - Chrome extension remains as the BEST browser-only experience
+### Product Delivery — Five Platforms:
+1. **Desktop App** (PRIMARY) — Electron, system tray, global hotkey, types into any app
+2. **Chrome Extension** (VIRAL ENGINE) — Grammar check on any website, free tier drives upgrades
+3. **iPhone Keyboard** — Custom keyboard extension, corrects as you type, voice button
+4. **Android Keyboard** — Same as iPhone, InputMethodService
+5. **Website** (48co.nz) — Marketing, live demo, SEO, downloads
 
-3. **Website (48co.nz)** — Marketing + Live Demo + Downloads
-   - Landing page with clear value prop
-   - Live demo that actually works (uses Web Speech API on the page itself)
-   - Download page with platform detection
-   - Bookmarklet activation page
+### Voice-to-Text Standard (Match WhisperTyping):
+- Text appears in the chat box WORD BY WORD as user speaks — NOT after they stop
+- Use Web Speech API with interimResults=true for real-time streaming
+- ZERO popups, overlays, or visible UI elements — just text appearing
+- Mouse wheel click as default trigger (customizable hotkey)
+- Must work on: Claude.ai, ChatGPT, Gemini, DeepSeek, Gmail, Slack, any site
 
 ### Tech Stack:
 - **Website**: Next.js 14, React 18, Tailwind CSS 3.4 (LIGHT THEME — white bg, indigo accent)
@@ -86,19 +138,14 @@ Before implementing any feature:
 - **Speech-to-Text**: OpenAI Whisper API (primary), Web Speech API (free fallback)
 - **Build/Package**: electron-builder for Win + Mac, EAS Build for iOS + Android
 
-### Product Delivery — Five Platforms:
-1. **Desktop App** (PRIMARY) — Electron, system tray, global hotkey, types into any app
-2. **Chrome Extension** (VIRAL ENGINE) — Grammar check on any website, free tier drives upgrades
-3. **iPhone Keyboard** — Custom keyboard extension, corrects as you type, voice button
-4. **Android Keyboard** — Same as iPhone, InputMethodService
-5. **Website** (48co.nz) — Marketing, live demo, SEO, downloads
-
 ### Quality Checklist (Run Before Every Commit):
 - [ ] Does every feature work end-to-end?
 - [ ] Are all error states handled with user-friendly messages?
 - [ ] Is there any copy-paste or manual friction that could be automated?
 - [ ] Would a competitor's user be impressed or disappointed switching to us?
 - [ ] Has every engineering gap been flagged and addressed?
+- [ ] Does voice-to-text stream into the chat box in real-time (not after stopping)?
+- [ ] Does text insertion work on Claude.ai, ChatGPT, and Gmail specifically?
 
 ## Known Limitations (Be Honest About These):
 - **Web bookmarklet** cannot type into other tabs — only the current page
@@ -107,6 +154,7 @@ Before implementing any feature:
 - **Whisper API requires an API key** — costs ~$0.006/minute
 - **Electron apps are large** (~150MB) — this is a known Electron tradeoff
 - **macOS requires accessibility permissions** for keyboard simulation
+- **Chrome extension cannot type into other apps** — only browser text fields
 
 ## File Structure Convention:
 ```
@@ -117,5 +165,6 @@ Before implementing any feature:
 /desktop/main/     → Electron main process
 /desktop/renderer/ → Electron renderer (UI)
 /desktop/assets/   → Icons, images for desktop app
+/mobile/           → Mobile keyboard app (React Native + native extensions)
 /public/           → Static web assets
 ```
