@@ -10,6 +10,10 @@ on:
     paths:
       - 'desktop/**'
       - '.github/workflows/build-desktop.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'desktop/**'
   workflow_dispatch: # Manual trigger from GitHub UI
 
 # Only one build at a time
@@ -26,8 +30,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: desktop/package-lock.json
 
       - name: Install dependencies
         working-directory: desktop
@@ -58,8 +60,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: desktop/package-lock.json
 
       - name: Install dependencies
         working-directory: desktop
