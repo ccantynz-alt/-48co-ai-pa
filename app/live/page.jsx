@@ -99,6 +99,22 @@ export default function LivePage() {
     else if (status === 'recording') stopRecording()
   }
 
+  // Middle-click (wheel button) toggle — works anywhere on the page
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.button !== 1) return
+      e.preventDefault()
+      handleMicClick()
+    }
+    const preventAux = (e) => { if (e.button === 1) e.preventDefault() }
+    window.addEventListener('mousedown', handler)
+    window.addEventListener('auxclick', preventAux)
+    return () => {
+      window.removeEventListener('mousedown', handler)
+      window.removeEventListener('auxclick', preventAux)
+    }
+  })
+
   const processedText = transcript ? postProcess(transcript) : ''
 
   function copyProcessedText() {
@@ -230,7 +246,7 @@ export default function LivePage() {
               status === 'done' ? 'text-[#00ff88]' :
               'text-white/30'
             }`}>
-              {status === 'idle' ? 'Click to record' :
+              {status === 'idle' ? 'Click or middle-click to record' :
                status === 'recording' ? 'Click to stop' :
                status === 'processing' ? 'Processing...' :
                'Done'}

@@ -698,8 +698,8 @@
   }
 
   const STATUS_CONFIG = {
-    idle:       { icon: 'mic',     label: 'Scroll \u2191 to record',            ringClass: 'idle' },
-    recording:  { icon: 'wave',    label: 'Scroll \u2193 to stop \u00b7 Recording...', ringClass: 'recording' },
+    idle:       { icon: 'mic',     label: 'Middle-click to record',              ringClass: 'idle' },
+    recording:  { icon: 'wave',    label: 'Middle-click to stop \u00b7 Recording...', ringClass: 'recording' },
     processing: { icon: 'spinner', label: 'Transcribing\u2026',                 ringClass: 'processing' },
     done:       { icon: 'check',   label: 'Pasted \u2713',                      ringClass: 'done' },
   }
@@ -920,26 +920,18 @@
     updateUI()
   })
 
-  // Scroll wheel — only near the widget to avoid hijacking normal page scrolling
-  // Check if the scroll event target is within 200px of the widget
-  window.addEventListener('wheel', (e) => {
-    const widgetRect = host.getBoundingClientRect()
-    const nearWidget = (
-      e.clientX >= widgetRect.left - 200 &&
-      e.clientX <= widgetRect.right + 200 &&
-      e.clientY >= widgetRect.top - 200 &&
-      e.clientY <= widgetRect.bottom + 200
-    )
-    if (!nearWidget) return
-
-    if (e.deltaY < -30 && state.status === 'idle') {
+  // Middle-click (wheel button press) toggle — works anywhere on the page
+  window.addEventListener('mousedown', (e) => {
+    if (e.button !== 1) return
+    e.preventDefault()
+    if (state.status === 'idle') {
       startRecording()
       panel.classList.add('open')
-    }
-    if (e.deltaY > 30 && state.status === 'recording') {
+    } else if (state.status === 'recording') {
       stopRecording()
     }
-  }, { passive: true })
+  })
+  window.addEventListener('auxclick', (e) => { if (e.button === 1) e.preventDefault() })
 
   // Listen for messages from background (keyboard shortcut, Whisper result)
   chrome.runtime.onMessage.addListener((msg) => {
