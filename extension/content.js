@@ -630,22 +630,20 @@
   // ═══════════════════════════════════════════════════════════════════
 
   // Middle-click (wheel button PRESS) toggle — works anywhere on the page
-  // Guard: ignore middle-click if user was scrolling (wheel event in last 200ms)
-  let lastWheelTime = 0
-  window.addEventListener('wheel', () => { lastWheelTime = Date.now() }, { passive: true })
-
-  window.addEventListener('mousedown', (e) => {
+  // Uses 'auxclick' which only fires on a full press+release of the button.
+  // Scrolling the wheel does NOT fire auxclick — only a deliberate click does.
+  window.addEventListener('auxclick', (e) => {
     if (e.button !== 1) return
     e.preventDefault()
-    // If a scroll wheel event happened in the last 200ms, this is scroll not click
-    if (Date.now() - lastWheelTime < 200) return
+    e.stopPropagation()
     if (state.status === 'idle') {
       startRecording()
     } else if (state.status === 'recording') {
       stopRecording()
     }
-  })
-  window.addEventListener('auxclick', (e) => { if (e.button === 1) e.preventDefault() })
+  }, true) // capture phase so we get it before the page does
+  // Also prevent default on mousedown to stop auto-scroll cursor
+  window.addEventListener('mousedown', (e) => { if (e.button === 1) e.preventDefault() })
 
   // Listen for messages from background (keyboard shortcut, Whisper result, popup toggle)
   chrome.runtime.onMessage.addListener((msg) => {
