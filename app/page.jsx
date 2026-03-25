@@ -1,56 +1,62 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Waveform from '../components/Waveform'
 
-// ── Typing simulator for hero ────────────────────────────────
+// ── Typing demo ──────────────────────────────────────────
 function useTypingDemo() {
   const phrases = [
-    { spoken: 'Hey Claude comma can you refactor this function to use async await question mark', typed: 'Hey Claude, can you refactor this function to use async/await?' },
-    { spoken: 'Send an email to the team new line we ship tomorrow exclamation point', typed: 'Send an email to the team\nWe ship tomorrow!' },
-    { spoken: 'Create a React component called dashboard with a dark theme', typed: 'Create a React component called Dashboard with a dark theme' },
-    { spoken: 'The meeting is at 3 PM period Please send the agenda beforehand period', typed: 'The meeting is at 3 PM. Please send the agenda beforehand.' },
+    {
+      before: 'uh so like I think we should maybe redo the the dashboard because users are confused',
+      after: 'I recommend redesigning the dashboard to improve user clarity and navigation.',
+      label: 'AI Rewrite',
+    },
+    {
+      before: 'Hey Claude comma can you refactor this function to use async await question mark',
+      after: 'Hey Claude, can you refactor this function to use async/await?',
+      label: 'Voice Punctuation',
+    },
+    {
+      before: 'send an email to the team new line we ship tomorrow exclamation point',
+      after: 'Send an email to the team\nWe ship tomorrow!',
+      label: 'Natural Commands',
+    },
   ]
 
-  const [phraseIdx, setPhraseIdx] = useState(0)
+  const [idx, setIdx] = useState(0)
   const [charIdx, setCharIdx] = useState(0)
-  const [isTyping, setIsTyping] = useState(true)
-  const [paused, setPaused] = useState(false)
+  const [phase, setPhase] = useState('typing') // typing | pause | next
 
-  const phrase = phrases[phraseIdx]
+  const phrase = phrases[idx]
 
   useEffect(() => {
-    if (paused) return
-
-    if (isTyping && charIdx < phrase.typed.length) {
-      const timeout = setTimeout(() => setCharIdx(c => c + 1), 35 + Math.random() * 25)
-      return () => clearTimeout(timeout)
+    if (phase === 'typing' && charIdx < phrase.after.length) {
+      const t = setTimeout(() => setCharIdx(c => c + 1), 30 + Math.random() * 20)
+      return () => clearTimeout(t)
     }
-
-    if (isTyping && charIdx >= phrase.typed.length) {
-      setIsTyping(false)
-      const timeout = setTimeout(() => {
-        setPaused(true)
+    if (phase === 'typing' && charIdx >= phrase.after.length) {
+      setPhase('pause')
+      const t = setTimeout(() => {
+        setPhase('next')
         setTimeout(() => {
-          setPhraseIdx(i => (i + 1) % phrases.length)
+          setIdx(i => (i + 1) % phrases.length)
           setCharIdx(0)
-          setIsTyping(true)
-          setPaused(false)
-        }, 1200)
-      }, 2000)
-      return () => clearTimeout(timeout)
+          setPhase('typing')
+        }, 400)
+      }, 2500)
+      return () => clearTimeout(t)
     }
-  }, [charIdx, isTyping, paused, phrase.typed.length, phraseIdx, phrases.length])
+  }, [charIdx, phase, phrase.after.length, idx, phrases.length])
 
   return {
-    spoken: phrase.spoken,
-    typed: phrase.typed.slice(0, charIdx),
-    isTyping: isTyping && charIdx < phrase.typed.length,
-    progress: charIdx / phrase.typed.length,
+    before: phrase.before,
+    after: phrase.after.slice(0, charIdx),
+    label: phrase.label,
+    isTyping: phase === 'typing' && charIdx < phrase.after.length,
   }
 }
 
-// ── Scroll reveal hook ───────────────────────────────────────
+// ── Scroll reveal ────────────────────────────────────────
 function useReveal() {
   const ref = useRef(null)
   useEffect(() => {
@@ -58,7 +64,7 @@ function useReveal() {
     if (!el) return
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) el.classList.add('visible') },
-      { threshold: 0.15 }
+      { threshold: 0.1 }
     )
     observer.observe(el)
     return () => observer.disconnect()
@@ -66,64 +72,16 @@ function useReveal() {
   return ref
 }
 
-// ── Stats counter ────────────────────────────────────────────
-function AnimatedNumber({ target, suffix = '', duration = 2000 }) {
-  const [value, setValue] = useState(0)
-  const ref = useRef(null)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        const start = performance.now()
-        const animate = (now) => {
-          const elapsed = now - start
-          const progress = Math.min(elapsed / duration, 1)
-          const eased = 1 - Math.pow(1 - progress, 3)
-          setValue(Math.round(target * eased))
-          if (progress < 1) requestAnimationFrame(animate)
-        }
-        requestAnimationFrame(animate)
-        observer.disconnect()
-      }
-    }, { threshold: 0.5 })
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [target, duration])
-
-  return <span ref={ref}>{value}{suffix}</span>
-}
-
-const FEATURES = [
-  { icon: '\u{26A1}', title: 'Types Automatically', desc: 'Text appears directly in the focused field. No copy-paste. No clipboard. Just speak and it types.', color: '#00ff88' },
-  { icon: '\u{1F3AF}', title: 'Whisper Accuracy', desc: 'Desktop app uses OpenAI Whisper for near-perfect transcription. Web tools use free browser speech API.', color: '#00f0ff' },
-  { icon: '\u{2328}\u{FE0F}', title: 'Global Hotkey', desc: 'Ctrl+Shift+Space from anywhere. Works system-wide in the desktop app, per-page in browser.', color: '#00f0ff' },
-  { icon: '\u{1F399}\u{FE0F}', title: 'Voice Commands', desc: 'Say punctuation naturally. Developer prompts like \u201Crefactor this\u201D. Emoji by voice.', color: '#ff3b5c' },
-  { icon: '\u{27E8}/\u{27E9}', title: 'Auto Code Fences', desc: 'Detects coding keywords and wraps in markdown fences with language detection.', color: '#ffb800' },
-  { icon: '\u{1F6E1}\u{FE0F}', title: 'Privacy First', desc: 'Audio goes direct to the speech API. Nothing stored on our servers. Your key, your data.', color: '#00f0ff' },
-]
-
-const COMPETITORS = [
-  { name: 'WhisperTyping', type: 'Desktop', price: '$5/mo', anyApp: true, codeFence: false, voiceCmd: false, free: false },
-  { name: 'Wispr Flow', type: 'Desktop', price: '$15/mo', anyApp: true, codeFence: false, voiceCmd: false, free: false },
-  { name: 'Voicy', type: 'Extension', price: '$8.49/mo', anyApp: false, codeFence: false, voiceCmd: false, free: false },
-  { name: 'Superwhisper', type: 'Mac Only', price: '$8.49/mo', anyApp: true, codeFence: false, voiceCmd: false, free: false },
-  { name: '48co', type: 'All 3', price: 'Free*', anyApp: true, codeFence: true, voiceCmd: true, free: true },
-]
-
 export default function LandingPage() {
+  const typing = useTypingDemo()
   const [demoStatus, setDemoStatus] = useState('idle')
   const [demoTranscript, setDemoTranscript] = useState('')
   const recognitionRef = useRef(null)
-  const typing = useTypingDemo()
 
   const r1 = useReveal()
   const r2 = useReveal()
   const r3 = useReveal()
   const r4 = useReveal()
-  const r5 = useReveal()
-  const r6 = useReveal()
 
   useEffect(() => {
     return () => { if (recognitionRef.current) { recognitionRef.current.abort(); recognitionRef.current = null } }
@@ -135,223 +93,202 @@ export default function LandingPage() {
       return
     }
     const SR = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition)
-    if (!SR) {
-      setDemoTranscript('Speech Recognition requires Chrome or Edge.')
-      setDemoStatus('done')
-      setTimeout(() => setDemoStatus('idle'), 3000)
-      return
-    }
+    if (!SR) { setDemoTranscript('Requires Chrome or Edge.'); setDemoStatus('done'); setTimeout(() => setDemoStatus('idle'), 3000); return }
     const rec = new SR()
-    rec.continuous = true
-    rec.interimResults = true
-    rec.lang = 'en'
+    rec.continuous = true; rec.interimResults = true; rec.lang = 'en'
     rec.onstart = () => { setDemoStatus('recording'); setDemoTranscript('') }
     rec.onresult = (e) => { let f = ''; for (let i = 0; i < e.results.length; i++) f += e.results[i][0].transcript; setDemoTranscript(f) }
     rec.onend = () => { setDemoStatus('done'); setTimeout(() => setDemoStatus('idle'), 2500) }
     rec.onerror = (e) => {
       if (e.error === 'not-allowed') setDemoTranscript('Microphone access denied.')
-      else if (e.error === 'no-speech') setDemoTranscript('No speech detected. Try again.')
-      setDemoStatus('done')
-      setTimeout(() => setDemoStatus('idle'), 3000)
+      else if (e.error === 'no-speech') setDemoTranscript('No speech detected.')
+      setDemoStatus('done'); setTimeout(() => setDemoStatus('idle'), 3000)
     }
-    recognitionRef.current = rec
-    rec.start()
+    recognitionRef.current = rec; rec.start()
   }
 
   return (
-    <main className="min-h-screen bg-[#0a0a0e] text-white font-mono overflow-x-hidden">
+    <main className="min-h-screen bg-[#09090b] text-white overflow-x-hidden">
 
-      {/* ── HERO ─────────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center px-4 text-center grid-bg">
-        {/* Animated glow orbs */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] pointer-events-none">
-          <div className="absolute inset-0 bg-[#00f0ff]/[0.04] rounded-full blur-[150px] animate-glow-pulse" />
-          <div className="absolute top-20 -left-20 w-[300px] h-[300px] bg-[#ff3b5c]/[0.03] rounded-full blur-[100px] animate-glow-pulse" style={{ animationDelay: '1s' }} />
-          <div className="absolute -bottom-10 -right-10 w-[250px] h-[250px] bg-[#00ff88]/[0.03] rounded-full blur-[100px] animate-glow-pulse" style={{ animationDelay: '2s' }} />
+      {/* ── NAV ───────────────────────────────────────────── */}
+      <nav className="fixed top-0 w-full z-50 bg-[#09090b]/80 backdrop-blur-xl border-b border-white/[0.04]">
+        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-3">
+          <a href="/" className="text-base font-semibold tracking-tight">
+            <span className="text-white/90">48</span><span className="text-indigo-400">co</span>
+          </a>
+          <div className="flex items-center gap-6">
+            <a href="/compare" className="text-[13px] text-white/40 hover:text-white/70 transition-colors">Compare</a>
+            <a href="/pricing" className="text-[13px] text-white/40 hover:text-white/70 transition-colors">Pricing</a>
+            <a href="/live" className="text-[13px] text-white/40 hover:text-white/70 transition-colors">Try Live</a>
+            <a href="/download" className="text-[13px] px-4 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/20 transition-all">
+              Download
+            </a>
+          </div>
         </div>
+      </nav>
 
-        {/* Floating orbit dots */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 pointer-events-none">
-          <div className="absolute w-1.5 h-1.5 rounded-full bg-[#00f0ff]/30" style={{ animation: 'orbit 20s linear infinite' }} />
-          <div className="absolute w-1 h-1 rounded-full bg-[#ff3b5c]/20" style={{ animation: 'orbit 28s linear infinite reverse' }} />
-          <div className="absolute w-1 h-1 rounded-full bg-[#00ff88]/20" style={{ animation: 'orbit 35s linear infinite', animationDelay: '-10s' }} />
-        </div>
+      {/* ── HERO ──────────────────────────────────────────── */}
+      <section className="hero-gradient pt-32 pb-24 px-4">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/15 mb-8 animate-fade-up">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+            <span className="text-[12px] text-indigo-300/70">Now with AI Rewrite Mode</span>
+          </div>
 
-        <div className="relative z-10 max-w-4xl mx-auto">
-          <p className="text-[11px] tracking-[0.4em] text-[#00f0ff]/50 mb-6 uppercase animate-fade-up">
-            Voice-to-text for everything
-          </p>
-
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter mb-6 animate-fade-up" style={{ animationDelay: '0.1s' }}>
-            <span className="text-white">48</span>
-            <span className="bg-gradient-to-r from-[#00f0ff] to-[#00ff88] bg-clip-text text-transparent">co</span>
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 animate-fade-up" style={{ animationDelay: '0.1s' }}>
+            Speak naturally.
+            <br />
+            <span className="bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent">Get perfect text.</span>
           </h1>
 
-          <p className="text-white/30 text-base md:text-lg max-w-xl mx-auto leading-relaxed mb-12 animate-fade-up" style={{ animationDelay: '0.2s' }}>
-            Speak and it types. Into any app, any website, any text field. Free and open source.
+          <p className="text-lg text-white/45 max-w-xl mx-auto leading-relaxed mb-10 animate-fade-up" style={{ animationDelay: '0.2s' }}>
+            Voice-to-text that types into any app. AI polishes your words automatically. Works on Mac and Windows.
           </p>
 
-          {/* ── Typing Demo ─────────────────────────────────────── */}
-          <div className="animate-fade-up" style={{ animationDelay: '0.3s' }}>
-            <div className="glass gradient-border rounded-2xl w-full max-w-[540px] mx-auto overflow-hidden mb-10 animate-float" style={{ animationDuration: '6s' }}>
-              {/* Header bar */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-16 animate-fade-up" style={{ animationDelay: '0.3s' }}>
+            <a href="/download" className="px-8 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white text-sm font-medium transition-all">
+              Download Free
+            </a>
+            <a href="/live" className="px-8 py-3 rounded-xl border border-white/10 text-white/50 text-sm font-medium hover:border-white/20 hover:text-white/70 transition-all">
+              Try in Browser
+            </a>
+          </div>
+
+          {/* ── Demo Card ──────────────────────────────── */}
+          <div className="max-w-lg mx-auto animate-fade-up" style={{ animationDelay: '0.4s' }}>
+            <div className="card overflow-hidden">
               <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.04]">
                 <div className="flex items-center gap-2">
                   <div className="flex gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#ff3b5c]/60" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#ffb800]/60" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#00ff88]/60" />
+                    <div className="w-2 h-2 rounded-full bg-white/10" />
+                    <div className="w-2 h-2 rounded-full bg-white/10" />
+                    <div className="w-2 h-2 rounded-full bg-white/10" />
                   </div>
-                  <span className="text-[10px] text-white/20 ml-2">Any App</span>
+                  <span className="text-[11px] text-white/20 ml-2 font-mono">{typing.label}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className={`inline-block w-1.5 h-1.5 rounded-full ${typing.isTyping ? 'bg-[#ff3b5c] shadow-[0_0_6px_rgba(255,59,92,0.6)]' : 'bg-[#00ff88] shadow-[0_0_6px_rgba(0,255,136,0.4)]'}`} />
-                  <span className="text-[9px] text-white/25">{typing.isTyping ? 'LISTENING' : 'DONE'}</span>
-                </div>
+                <span className={`w-2 h-2 rounded-full ${typing.isTyping ? 'bg-red-400 shadow-[0_0_6px_rgba(239,68,68,0.5)]' : 'bg-green-400'}`} />
               </div>
 
-              {/* Waveform */}
-              <div className="py-3 border-b border-white/[0.04]">
-                <Waveform isRecording={typing.isTyping} />
-              </div>
-
-              {/* Spoken text (faded) */}
               <div className="px-5 py-3 border-b border-white/[0.04]">
-                <p className="text-[9px] text-white/15 tracking-wider mb-1">YOU SAID</p>
-                <p className="text-[11px] text-white/25 leading-relaxed">{typing.spoken}</p>
+                <p className="text-[10px] text-white/20 uppercase tracking-wider mb-1">You said</p>
+                <p className="text-[13px] text-white/25 leading-relaxed">{typing.before}</p>
               </div>
 
-              {/* Typed result */}
-              <div className="px-5 py-4 bg-[#00f0ff]/[0.02]">
-                <p className="text-[9px] text-[#00f0ff]/30 tracking-wider mb-1">48CO TYPES</p>
-                <p className={`text-[13px] text-white/70 leading-relaxed whitespace-pre-wrap min-h-[40px] ${typing.isTyping ? 'animate-typing-cursor pr-0.5' : ''}`}>
-                  {typing.typed || <span className="text-white/10">|</span>}
+              <div className="px-5 py-4 bg-indigo-500/[0.03]">
+                <p className="text-[10px] text-indigo-400/40 uppercase tracking-wider mb-1">48co types</p>
+                <p className={`text-[14px] text-white/75 leading-relaxed whitespace-pre-wrap min-h-[44px] ${typing.isTyping ? 'animate-typing-cursor pr-0.5' : ''}`}>
+                  {typing.after || <span className="text-white/10">|</span>}
                 </p>
               </div>
-
-              {/* Progress bar */}
-              <div className="h-[2px] bg-white/[0.03]">
-                <div
-                  className="h-full bg-gradient-to-r from-[#00f0ff] to-[#00ff88] transition-all duration-100"
-                  style={{ width: `${typing.progress * 100}%` }}
-                />
-              </div>
             </div>
           </div>
 
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6 animate-fade-up" style={{ animationDelay: '0.4s' }}>
-            <a href="/download" className="group relative px-8 py-3.5 rounded-xl text-sm tracking-wider transition-all overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-[#00f0ff]/20 to-[#00ff88]/10 group-hover:from-[#00f0ff]/30 group-hover:to-[#00ff88]/20 transition-all" />
-              <div className="absolute inset-0 border border-[#00f0ff]/30 group-hover:border-[#00f0ff]/50 rounded-xl transition-all" />
-              <span className="relative text-[#00f0ff]">DOWNLOAD FOR FREE</span>
-            </a>
-            <a href="/live" className="px-8 py-3.5 rounded-xl border border-white/10 text-white/40 text-sm tracking-wider hover:border-white/20 hover:text-white/60 transition-all">
-              TRY IN BROWSER
-            </a>
-          </div>
-
-          <p className="text-[10px] text-white/10 animate-fade-up" style={{ animationDelay: '0.5s' }}>
-            Windows + Mac + Web &middot; No account needed &middot; Open source
+          <p className="text-[11px] text-white/15 mt-6 animate-fade-up" style={{ animationDelay: '0.5s' }}>
+            Mac + Windows &middot; Free tier available &middot; No account required
           </p>
         </div>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-fade-up" style={{ animationDelay: '1s' }}>
-          <span className="text-[9px] text-white/15 tracking-wider">SCROLL</span>
-          <div className="w-[1px] h-8 bg-gradient-to-b from-white/15 to-transparent" />
-        </div>
       </section>
 
-      {/* ── STATS BAR ────────────────────────────────────────────── */}
-      <section ref={r1} className="reveal border-y border-white/[0.04] py-12 bg-[#0a0a0e]">
-        <div className="max-w-5xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          {[
-            { n: 50, s: '+', label: 'Languages' },
-            { n: 3, s: '', label: 'Delivery Modes' },
-            { n: 40, s: '+', label: 'Voice Commands' },
-            { n: 0, s: '', label: 'Monthly Cost', prefix: '$' },
-          ].map((stat, i) => (
-            <div key={stat.label}>
-              <p className="text-3xl md:text-4xl font-bold text-white/90 mb-1">
-                {stat.prefix || ''}<AnimatedNumber target={stat.n} suffix={stat.s} />
-              </p>
-              <p className="text-[10px] text-white/25 tracking-wider uppercase">{stat.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* ── HOW IT WORKS ─────────────────────────────────── */}
+      <section ref={r1} className="reveal py-24 px-4">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-white/90 mb-3">How it works</h2>
+            <p className="text-sm text-white/35">Three steps. No configuration.</p>
+          </div>
 
-      {/* ── HOW IT WORKS ─────────────────────────────────────────── */}
-      <section ref={r2} className="reveal max-w-5xl mx-auto px-4 py-28">
-        <div className="text-center mb-16">
-          <p className="text-[10px] tracking-[0.4em] text-[#00ff88]/40 mb-3 uppercase">How it works</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-white/90">Three ways to use 48co</h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[
-            {
-              num: '01',
-              title: 'Desktop App',
-              desc: 'Download for Windows or Mac. Lives in your system tray. Press the hotkey, speak, and text appears in whatever app you\u2019re using \u2014 browsers, Slack, VS Code, email, anything.',
-              badge: 'Best experience',
-              badgeColor: 'text-[#00ff88] border-[#00ff88]/30 bg-[#00ff88]/5',
-              accent: '#00f0ff',
-              href: '/download',
-            },
-            {
-              num: '02',
-              title: 'Web Bookmarklet',
-              desc: 'Zero download. Visit the live page, drag a bookmark, and click it on any website. Injects a voice widget that types directly into text fields.',
-              badge: 'Zero friction',
-              badgeColor: 'text-white/40 border-white/10 bg-white/[0.03]',
-              accent: '#ffb800',
-              href: '/live',
-            },
-            {
-              num: '03',
-              title: 'Chrome Extension',
-              desc: 'Always-on voice widget with developer commands. Optimized for AI chat sites: Claude, ChatGPT, Gemini, DeepSeek. Works on other sites too.',
-              badge: 'Power users',
-              badgeColor: 'text-white/40 border-white/10 bg-white/[0.03]',
-              accent: '#ff3b5c',
-              href: '/install',
-            },
-          ].map((mode) => (
-            <a key={mode.num} href={mode.href} className="group glass rounded-2xl p-6 hover:border-white/15 transition-all relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity" style={{ backgroundImage: `linear-gradient(to right, ${mode.accent}, transparent)` }} />
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-[32px] font-bold text-white/[0.04]">{mode.num}</span>
-                <span className={`text-[9px] px-2 py-0.5 rounded border ${mode.badgeColor}`}>{mode.badge}</span>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { step: '1', title: 'Press the hotkey', desc: 'Ctrl+Shift+Space (Cmd on Mac). Works from any app — browser, Slack, email, code editor, anything.' },
+              { step: '2', title: 'Speak naturally', desc: 'Talk like you normally would. Say punctuation out loud or let AI figure it out. Supports 50+ languages.' },
+              { step: '3', title: 'Text appears instantly', desc: 'AI rewrites your words into clean, professional text and types it directly into the focused field.' },
+            ].map((s) => (
+              <div key={s.step} className="card p-6">
+                <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-sm font-semibold mb-4">
+                  {s.step}
+                </div>
+                <h3 className="text-[15px] font-semibold text-white/85 mb-2">{s.title}</h3>
+                <p className="text-[13px] text-white/35 leading-relaxed">{s.desc}</p>
               </div>
-              <h3 className="text-lg font-bold text-white/80 mb-3" style={{ color: mode.accent + 'cc' }}>{mode.title}</h3>
-              <p className="text-[11px] text-white/35 leading-relaxed">{mode.desc}</p>
-              <div className="mt-4 flex items-center gap-1 text-[10px] text-white/20 group-hover:text-white/40 transition-colors">
-                <span>Learn more</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </div>
-            </a>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ── LIVE DEMO ────────────────────────────────────────────── */}
-      <section ref={r3} className="reveal py-28 bg-gradient-to-b from-transparent via-[#00f0ff]/[0.02] to-transparent">
-        <div className="max-w-2xl mx-auto px-4 text-center">
-          <p className="text-[10px] tracking-[0.4em] text-[#00f0ff]/40 mb-3 uppercase">Try it now</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-white/90 mb-4">Live Demo</h2>
-          <p className="text-[12px] text-white/30 mb-10 max-w-md mx-auto">Click the microphone, speak, and see your words appear. This runs entirely in your browser &mdash; no download needed.</p>
+      {/* ── KEY FEATURES ──────────────────────────────────── */}
+      <section ref={r2} className="reveal py-24 px-4 bg-[#0c0c0f]">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-white/90 mb-3">What makes 48co different</h2>
+            <p className="text-sm text-white/35">Features no other dictation tool has.</p>
+          </div>
 
-          <div className="glass gradient-border rounded-2xl max-w-md mx-auto overflow-hidden">
+          <div className="grid md:grid-cols-2 gap-5">
+            {[
+              {
+                title: 'AI Rewrite Mode',
+                desc: 'You ramble, it writes professionally. Claude AI removes filler words, fixes grammar, and adjusts tone automatically. No other dictation tool does this.',
+                tag: 'Exclusive',
+                tagColor: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20',
+              },
+              {
+                title: 'Context-Aware',
+                desc: 'Automatically detects which app you\'re in. Professional tone for email, casual for Slack, technical for code editors. Zero configuration.',
+                tag: 'Exclusive',
+                tagColor: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20',
+              },
+              {
+                title: 'Works Everywhere',
+                desc: 'Types into any focused text field on your computer. Browsers, Slack, Discord, VS Code, Word, email — anything. Not limited to the browser.',
+                tag: 'Desktop',
+                tagColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+              },
+              {
+                title: 'Privacy First',
+                desc: 'Offline mode coming soon with local Whisper. Your voice never has to leave your computer. No data stored on our servers.',
+                tag: 'Local-first',
+                tagColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+              },
+              {
+                title: 'Auto Code Detection',
+                desc: 'Detects coding keywords and wraps in markdown fences with language detection. Perfect for ChatGPT, Claude, and GitHub.',
+                tag: 'Developers',
+                tagColor: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
+              },
+              {
+                title: '50+ Languages',
+                desc: 'Powered by OpenAI Whisper for near-perfect accuracy in over 50 languages. English, Spanish, French, German, Japanese, and many more.',
+                tag: 'Global',
+                tagColor: 'text-white/40 bg-white/5 border-white/10',
+              },
+            ].map((f) => (
+              <div key={f.title} className="card p-6 transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-[15px] font-semibold text-white/85">{f.title}</h3>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full border ${f.tagColor}`}>{f.tag}</span>
+                </div>
+                <p className="text-[13px] text-white/35 leading-relaxed">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── LIVE DEMO ─────────────────────────────────────── */}
+      <section ref={r3} className="reveal py-24 px-4">
+        <div className="max-w-lg mx-auto text-center">
+          <h2 className="text-3xl font-bold text-white/90 mb-3">Try it now</h2>
+          <p className="text-sm text-white/35 mb-10">Click the mic, speak, see your words. Runs in your browser — no download needed.</p>
+
+          <div className="card overflow-hidden">
             <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.04]">
-              <span className="text-[11px] font-bold tracking-[0.2em] text-white/50">&equiv; 48CO</span>
-              <span className={`text-[9px] px-2 py-0.5 rounded border transition-all ${
-                demoStatus === 'recording' ? 'border-[#ff3b5c]/40 text-[#ff3b5c] bg-[#ff3b5c]/10' :
-                demoStatus === 'done' ? 'border-[#00ff88]/40 text-[#00ff88] bg-[#00ff88]/10' :
+              <span className="text-[12px] font-medium text-white/40">Live Demo</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full border transition-all ${
+                demoStatus === 'recording' ? 'border-red-500/30 text-red-400 bg-red-500/10' :
+                demoStatus === 'done' ? 'border-green-500/30 text-green-400 bg-green-500/10' :
                 'border-white/10 text-white/25'
               }`}>
-                {demoStatus === 'recording' ? 'LISTENING' : demoStatus === 'done' ? 'DONE' : 'LIVE DEMO'}
+                {demoStatus === 'recording' ? 'Listening' : demoStatus === 'done' ? 'Done' : 'Ready'}
               </span>
             </div>
 
@@ -360,30 +297,30 @@ export default function LandingPage() {
             </div>
 
             {demoTranscript && (
-              <div className="px-5 py-3 border-b border-white/[0.04] bg-white/[0.01]">
-                <p className="text-[11px] text-white/50 leading-relaxed">{demoTranscript}</p>
+              <div className="px-5 py-3 border-b border-white/[0.04]">
+                <p className="text-[13px] text-white/50 leading-relaxed">{demoTranscript}</p>
               </div>
             )}
 
             <div className="py-8 flex flex-col items-center gap-3">
               <button
                 onClick={handleDemoClick}
-                className={`w-16 h-16 rounded-full glass flex items-center justify-center transition-all duration-300 cursor-pointer ${
-                  demoStatus === 'recording' ? 'ring-2 ring-[#ff3b5c] shadow-[0_0_24px_rgba(255,59,92,0.4)]' :
-                  demoStatus === 'done' ? 'ring-2 ring-[#00ff88] shadow-[0_0_20px_rgba(0,255,136,0.3)]' :
-                  'ring-2 ring-white/15 hover:ring-white/25 hover:shadow-[0_0_20px_rgba(0,240,255,0.15)]'
+                className={`w-14 h-14 rounded-full flex items-center justify-center transition-all cursor-pointer border-2 ${
+                  demoStatus === 'recording' ? 'border-red-500 bg-red-500/10 shadow-[0_0_20px_rgba(239,68,68,0.3)]' :
+                  demoStatus === 'done' ? 'border-green-500 bg-green-500/10' :
+                  'border-white/15 bg-white/[0.03] hover:border-white/25'
                 }`}
               >
                 {demoStatus === 'recording' ? (
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ff3b5c" strokeWidth="1.5"><path d="M2 12h2M6 8v8M10 5v14M14 9v6M18 7v10M22 12h-2"/></svg>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.5"><path d="M2 12h2M6 8v8M10 5v14M14 9v6M18 7v10M22 12h-2"/></svg>
                 ) : demoStatus === 'done' ? (
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00ff88" strokeWidth="2"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 ) : (
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0014 0"/><line x1="12" y1="21" x2="12" y2="17"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0014 0"/><line x1="12" y1="21" x2="12" y2="17"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
                 )}
               </button>
-              <span className={`text-[11px] tracking-wider ${
-                demoStatus === 'recording' ? 'text-[#ff3b5c]' : demoStatus === 'done' ? 'text-[#00ff88]' : 'text-white/25'
+              <span className={`text-[12px] ${
+                demoStatus === 'recording' ? 'text-red-400' : demoStatus === 'done' ? 'text-green-400' : 'text-white/25'
               }`}>
                 {demoStatus === 'recording' ? 'Click to stop' : demoStatus === 'done' ? 'Done' : 'Click to try'}
               </span>
@@ -392,109 +329,63 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── FEATURES ─────────────────────────────────────────────── */}
-      <section ref={r4} className="reveal max-w-5xl mx-auto px-4 py-28">
-        <div className="text-center mb-16">
-          <p className="text-[10px] tracking-[0.4em] text-[#00f0ff]/40 mb-3 uppercase">Features</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-white/90">Everything you need</h2>
-        </div>
+      {/* ── PRICING TEASER ─────────────────────────────────── */}
+      <section ref={r4} className="reveal py-24 px-4 bg-[#0c0c0f]">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-white/90 mb-3">Simple pricing</h2>
+          <p className="text-sm text-white/35 mb-10">Free tier to get started. Pro when you need AI rewrite.</p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {FEATURES.map((f, i) => (
-            <div key={f.title} className="glass rounded-2xl p-6 hover:border-white/10 transition-all group">
-              <div className="flex items-center gap-3 mb-3">
-                <span className="text-2xl">{f.icon}</span>
-                <div className="h-[1px] flex-1 bg-gradient-to-r from-white/[0.06] to-transparent" />
-              </div>
-              <h3 className="text-sm font-bold mb-2" style={{ color: f.color + 'cc' }}>{f.title}</h3>
-              <p className="text-[11px] text-white/30 leading-relaxed">{f.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── VS COMPETITORS ───────────────────────────────────────── */}
-      <section ref={r5} className="reveal max-w-4xl mx-auto px-4 py-28">
-        <div className="text-center mb-16">
-          <p className="text-[10px] tracking-[0.4em] text-[#00ff88]/40 mb-3 uppercase">Comparison</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-white/90">vs the competition</h2>
-        </div>
-
-        <div className="glass gradient-border rounded-2xl overflow-hidden overflow-x-auto">
-          <table className="w-full text-[11px]">
-            <thead>
-              <tr className="border-b border-white/[0.06]">
-                {['Tool', 'Type', 'Price', 'Any App', 'Code Fences', 'Voice Cmds', 'Free'].map(h => (
-                  <th key={h} className="text-left px-4 py-3.5 text-white/25 font-normal text-[10px] tracking-wider uppercase">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {COMPETITORS.map((c) => {
-                const is48 = c.name === '48co'
-                const Check = () => <span className="text-[#00ff88]">{'\u2713'}</span>
-                const Cross = () => <span className="text-white/10">{'\u2014'}</span>
-                return (
-                  <tr key={c.name} className={`border-b border-white/[0.03] ${is48 ? 'bg-[#00f0ff]/[0.04]' : 'hover:bg-white/[0.01]'} transition-colors`}>
-                    <td className={`px-4 py-3.5 font-bold ${is48 ? 'text-[#00f0ff]' : 'text-white/50'}`}>{c.name}</td>
-                    <td className="px-4 py-3.5 text-white/25">{c.type}</td>
-                    <td className={`px-4 py-3.5 ${c.price.includes('Free') ? 'text-[#00ff88]' : 'text-white/25'}`}>{c.price}</td>
-                    <td className="px-4 py-3.5">{c.anyApp ? <Check /> : <Cross />}</td>
-                    <td className="px-4 py-3.5">{c.codeFence ? <Check /> : <Cross />}</td>
-                    <td className="px-4 py-3.5">{c.voiceCmd ? <Check /> : <Cross />}</td>
-                    <td className="px-4 py-3.5">{c.free ? <Check /> : <Cross />}</td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
-        <p className="text-[9px] text-white/10 text-center mt-4">*Web tools use free browser speech. Desktop uses Whisper API (~$0.006/min, your own key).</p>
-      </section>
-
-      {/* ── CTA ──────────────────────────────────────────────────── */}
-      <section ref={r6} className="reveal py-28 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00f0ff]/[0.02] to-transparent pointer-events-none" />
-
-        <div className="max-w-3xl mx-auto px-4 text-center relative z-10">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="text-white/90">Get </span>
-            <span className="bg-gradient-to-r from-[#00f0ff] to-[#00ff88] bg-clip-text text-transparent">48co</span>
-          </h2>
-          <p className="text-white/30 text-sm mb-12 max-w-md mx-auto">
-            Pick what works for you. All options are free. No account required.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+          <div className="grid md:grid-cols-3 gap-4 mb-10">
             {[
-              { title: 'Desktop App', desc: 'Windows + Mac. Types into any app.', badge: 'Recommended', color: '#00f0ff', href: '/download' },
-              { title: 'Web Bookmarklet', desc: 'Zero download. Any website.', badge: 'Instant', color: '#ffb800', href: '/live' },
-              { title: 'Chrome Extension', desc: 'AI chat sites + more.', badge: 'Always on', color: '#ff3b5c', href: '/install' },
-            ].map((opt) => (
-              <a key={opt.title} href={opt.href} className="group glass rounded-2xl p-6 text-left hover:border-white/15 transition-all">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-bold" style={{ color: opt.color }}>{opt.title}</span>
-                  <span className="text-[8px] px-1.5 py-0.5 rounded border border-white/[0.06] text-white/20">{opt.badge}</span>
-                </div>
-                <p className="text-[10px] text-white/25">{opt.desc}</p>
-                <div className="mt-4 h-[1px] w-0 group-hover:w-full transition-all duration-500" style={{ background: `linear-gradient(to right, ${opt.color}40, transparent)` }} />
-              </a>
+              { name: 'Free', price: '$0', desc: 'Basic dictation, 60 min/mo', highlight: false },
+              { name: 'Pro', price: '$12/mo', desc: 'Unlimited + AI Rewrite + Offline', highlight: true },
+              { name: 'Lifetime', price: '$89', desc: 'Pro features forever. Limited.', highlight: false },
+            ].map((p) => (
+              <div key={p.name} className={`card p-6 ${p.highlight ? 'border-indigo-500/30 bg-indigo-500/[0.03]' : ''}`}>
+                <p className="text-sm font-semibold text-white/70 mb-1">{p.name}</p>
+                <p className="text-2xl font-bold text-white/90 mb-2">{p.price}</p>
+                <p className="text-[12px] text-white/30">{p.desc}</p>
+              </div>
             ))}
           </div>
 
-          <a href="https://github.com/ccantynz-alt/-48co-ai-pa" target="_blank" className="text-[11px] text-white/15 hover:text-white/30 transition-colors">
-            View source on GitHub
+          <a href="/pricing" className="text-[13px] text-indigo-400 hover:text-indigo-300 transition-colors">
+            See full pricing details &rarr;
           </a>
         </div>
       </section>
 
-      {/* ── FOOTER ───────────────────────────────────────────────── */}
-      <footer className="border-t border-white/[0.04] py-10 text-center">
-        <div className="flex items-center justify-center gap-2 mb-3">
-          <span className="text-sm font-bold text-white/40">48</span>
-          <span className="text-sm font-bold text-[#00f0ff]/40">co</span>
+      {/* ── CTA ───────────────────────────────────────────── */}
+      <section className="py-24 px-4">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-4xl font-bold text-white/90 mb-4">
+            Stop typing. Start talking.
+          </h2>
+          <p className="text-white/35 text-base mb-10">
+            Join thousands of writers, developers, and professionals who type 3x faster with their voice.
+          </p>
+          <a href="/download" className="inline-block px-10 py-3.5 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white text-sm font-medium transition-all">
+            Download 48co Free
+          </a>
+          <p className="text-[11px] text-white/15 mt-4">Mac + Windows. Free tier. No credit card.</p>
         </div>
-        <p className="text-[10px] text-white/10 tracking-wider">Built in New Zealand &middot; Open Source &middot; Free Forever</p>
+      </section>
+
+      {/* ── FOOTER ────────────────────────────────────────── */}
+      <footer className="border-t border-white/[0.04] py-10">
+        <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold text-white/40">48</span>
+            <span className="text-sm font-semibold text-indigo-400/60">co</span>
+          </div>
+          <div className="flex gap-6 text-[12px] text-white/20">
+            <a href="/download" className="hover:text-white/50 transition-colors">Download</a>
+            <a href="/compare" className="hover:text-white/50 transition-colors">Compare</a>
+            <a href="/pricing" className="hover:text-white/50 transition-colors">Pricing</a>
+            <a href="/live" className="hover:text-white/50 transition-colors">Try Live</a>
+          </div>
+          <p className="text-[11px] text-white/10">Built in New Zealand</p>
+        </div>
       </footer>
     </main>
   )
