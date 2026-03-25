@@ -185,9 +185,23 @@
     if (el.contentEditable === 'true') {
       const placeholder = el.querySelector('p.is-empty, p.is-editor-empty')
       if (placeholder) placeholder.textContent = ''
-      document.execCommand('insertText', false, text)
-      el.dispatchEvent(new InputEvent('input', { bubbles: true, data: text }))
-      return true
+
+      // Try execCommand first
+      const ok = document.execCommand('insertText', false, text)
+      if (ok && el.textContent.includes(text.slice(0, 20))) {
+        el.dispatchEvent(new InputEvent('input', { bubbles: true, data: text }))
+        return true
+      }
+
+      // Fallback: synthetic paste event (works on ProseMirror editors like Claude/ChatGPT)
+      try {
+        const dt = new DataTransfer()
+        dt.setData('text/plain', text)
+        el.dispatchEvent(new ClipboardEvent('paste', {
+          bubbles: true, cancelable: true, clipboardData: dt,
+        }))
+        return true
+      } catch { return false }
     }
 
     if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
@@ -362,10 +376,15 @@
   // EVENT HANDLERS (no widget — just global triggers)
   // ═══════════════════════════════════════════════════════════════
 
-  // Middle-click (wheel button press) toggle
+  // Middle-click (wheel button PRESS) toggle
+  // Guard: ignore if user was scrolling (wheel event in last 200ms)
+  let lastWheelTime = 0
+  window.addEventListener('wheel', () => { lastWheelTime = Date.now() }, { passive: true })
+
   window.addEventListener('mousedown', (e) => {
     if (e.button !== 1) return
     e.preventDefault()
+    if (Date.now() - lastWheelTime < 200) return // scroll, not click
     if (status === 'idle') startRecording()
     else if (status === 'recording') stopRecording()
   })
