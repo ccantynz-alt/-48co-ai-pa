@@ -5,9 +5,19 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd /home/user/-48co-ai-pa && node -e \"const fs=require('fs'),path=require('path');let errors=[];const check=(dir,exts)=>{if(!fs.existsSync(dir))return;fs.readdirSync(dir,{recursive:true}).forEach(f=>{const fp=path.join(dir,f);if(!fs.statSync(fp).isFile())return;if(!exts.some(e=>f.endsWith(e)))return;const c=fs.readFileSync(fp,'utf8');const lines=c.split('\\n');lines.forEach((l,i)=>{if(l.match(/import.*from\\s+['\\\"]\\.\\.?\\//)){const m=l.match(/from\\s+['\\\"](.+?)['\\\"]/);if(m){const imp=m[1];const resolved=path.resolve(path.dirname(fp),imp);const exists=[resolved,resolved+'.js',resolved+'.jsx',resolved+'.ts',resolved+'.tsx',resolved+'/index.js',resolved+'/index.jsx'].some(p=>fs.existsSync(p));if(!exists)errors.push(fp+':'+(i+1)+' broken import: '+imp)}}});if(f.endsWith('.js')&&!fp.includes('node_modules')){if(c.includes('console.error')&&c.includes('TODO'))errors.push(fp+' has TODO with console.error')}})};check('app',['.jsx','.tsx','.js']);check('components',['.jsx','.tsx','.js']);check('extension',['.js']);check('api',['.js']);['extension/manifest.json'].forEach(f=>{if(fs.existsSync(f)){const m=JSON.parse(fs.readFileSync(f,'utf8'));if(m.content_scripts)m.content_scripts.forEach(cs=>cs.js.forEach(j=>{if(!fs.existsSync(path.join('extension',j)))errors.push('manifest references missing: extension/'+j)}))}});if(errors.length>0){console.log(JSON.stringify({systemMessage:'CRAWL FOUND '+errors.length+' ERROR(S):\\n'+errors.join('\\n')}));}else{console.log(JSON.stringify({systemMessage:'Crawl clean — 0 errors found.'}))}\"",
+            "command": "cd /home/user/-48co-ai-pa && node -e \"const fs=require('fs'),path=require('path');let errors=[];const check=(dir,exts)=>{if(!fs.existsSync(dir))return;fs.readdirSync(dir,{recursive:true}).forEach(f=>{const fp=path.join(dir,f);if(!fs.statSync(fp).isFile())return;if(!exts.some(e=>f.endsWith(e)))return;const c=fs.readFileSync(fp,'utf8');const lines=c.split('\\n');lines.forEach((l,i)=>{if(l.match(/import.*from\\s+['\\\"]\\.\\.?\\//)){const m=l.match(/from\\s+['\\\"](.+?)['\\\"]/);if(m){const imp=m[1];const resolved=path.resolve(path.dirname(fp),imp);const exists=[resolved,resolved+'.js',resolved+'.jsx',resolved+'.ts',resolved+'.tsx',resolved+'/index.js',resolved+'/index.jsx'].some(p=>fs.existsSync(p));if(!exists)errors.push(fp+':'+(i+1)+' broken import: '+imp)}}})})};check('app',['.jsx','.tsx','.js']);check('components',['.jsx','.tsx','.js']);check('tauri-app/src',['.jsx','.tsx','.js']);check('extension',['.js']);check('lib',['.js']);['extension/manifest.json'].forEach(f=>{if(fs.existsSync(f)){const m=JSON.parse(fs.readFileSync(f,'utf8'));if(m.content_scripts)m.content_scripts.forEach(cs=>cs.js.forEach(j=>{if(!fs.existsSync(path.join('extension',j)))errors.push('manifest references missing: extension/'+j)}))}});['tauri-app/src-tauri/Cargo.toml','tauri-app/src-tauri/tauri.conf.json','tauri-app/package.json'].forEach(f=>{if(!fs.existsSync(f))errors.push('Missing critical file: '+f)});const rsFiles=['lib.rs','audio.rs','transcribe.rs','keyboard.rs','grammar.rs','main.rs'];rsFiles.forEach(f=>{if(!fs.existsSync('tauri-app/src-tauri/src/'+f))errors.push('Missing Rust source: src-tauri/src/'+f)});if(errors.length>0){console.log(JSON.stringify({systemMessage:'CRAWL FOUND '+errors.length+' ERROR(S):\\n'+errors.join('\\n')}));}else{console.log(JSON.stringify({systemMessage:'Crawl clean — 0 errors found.'}))}\"",
             "timeout": 15,
             "statusMessage": "Running error crawl..."
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/user/-48co-ai-pa && git status --porcelain | head -5 | { read -r line; if [ -n \"$line\" ]; then echo '{\"systemMessage\":\"WARNING: Uncommitted changes detected. Commit and push before ending session.\"}'; fi; }",
+            "timeout": 5,
+            "statusMessage": "Checking git status..."
           }
         ]
       }
@@ -17,9 +27,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '{\"systemMessage\":\"REMINDER: Rule 1 — Scan before you build. Check for broken features and bugs BEFORE doing anything new. Run a full crawl if this is a new session.\"}'",
+            "command": "echo '{\"systemMessage\":\"48co SESSION START — Built by Claude. Rule 1: Scan before you build. Architecture: Tauri 2.0 (Rust + React). FULLY AUTONOMOUS — do not ask permission, just build and fix.\"}'",
             "timeout": 5,
-            "statusMessage": "Loading session protocol..."
+            "statusMessage": "Loading 48co protocol..."
           }
         ]
       }
