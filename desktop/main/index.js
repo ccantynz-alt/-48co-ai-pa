@@ -197,8 +197,23 @@ async function toggleRecording() {
 
 async function startRecording() {
   if (isRecording) return
-  isRecording = true
 
+  // Check API key BEFORE recording — don't waste user's time
+  const engine = store.get('engine', 'whisper')
+  if (engine === 'whisper' && !store.get('whisperApiKey')) {
+    dialog.showMessageBox({
+      type: 'warning',
+      title: '48co — API Key Needed',
+      message: 'You need an OpenAI API key for voice transcription.',
+      detail: 'Right-click the tray icon → Settings → enter your API key.\n\nGet one at: platform.openai.com/api-keys\nCosts about $0.006 per minute of speech.',
+      buttons: ['Open Settings', 'OK'],
+    }).then(({ response }) => {
+      if (response === 0) createSettingsWindow()
+    })
+    return
+  }
+
+  isRecording = true
   updateTrayMenu()
 
   // Tell renderer to start capturing audio (overlay handles mic access)
@@ -231,67 +246,74 @@ async function stopRecording() {
 }
 
 // ─── Keyboard Simulation (type into focused app) ──────────────
+// Uses nut-tree for keyboard simulation. If nut-tree isn't available,
+// falls back to clipboard copy + user notification.
+let nutTree = null
+try {
+  nutTree = require('@nut-tree-fork/nut-js')
+} catch {
+  console.warn('[48co] @nut-tree-fork/nut-js not available — will use clipboard fallback')
+}
+
 async function typeText(text) {
-  try {
-    const { keyboard, Key } = require('@nut-tree-fork/nut-js')
-    const { clipboard } = require('electron')
+  const { clipboard } = require('electron')
 
-    // Hide overlay BEFORE typing so it doesn't interfere with focus
-    if (overlayWindow && overlayWindow.isVisible()) {
-      overlayWindow.hide()
-    }
+  // Hide overlay BEFORE typing so it doesn't interfere with focus
+  if (overlayWindow && overlayWindow.isVisible()) {
+    overlayWindow.hide()
+  }
 
-    // Give the user's app a moment to regain focus
-    await new Promise(r => setTimeout(r, 150))
+  // Give the user's app a moment to regain focus
+  await new Promise(r => setTimeout(r, 150))
 
-    const speed = store.get('typingSpeed', 0)
+  // Method 1: nut-tree keyboard simulation (preferred)
+  if (nutTree) {
+    try {
+      const { keyboard, Key } = nutTree
+      const speed = store.get('typingSpeed', 0)
 
-    if (speed === 0) {
-      // Instant mode: clipboard paste (fastest, most reliable)
-      const originalClipboard = clipboard.readText()
-      clipboard.writeText(text)
+      if (speed === 0) {
+        // Instant mode: clipboard paste (fastest, most reliable)
+        const originalClipboard = clipboard.readText()
+        clipboard.writeText(text)
+        await new Promise(r => setTimeout(r, 100))
 
-      // Ensure clipboard is ready
-      await new Promise(r => setTimeout(r, 100))
+        if (process.platform === 'darwin') {
+          await keyboard.pressKey(Key.LeftSuper)
+          await keyboard.pressKey(Key.V)
+          await keyboard.releaseKey(Key.V)
+          await keyboard.releaseKey(Key.LeftSuper)
+        } else {
+          await keyboard.pressKey(Key.LeftControl)
+          await keyboard.pressKey(Key.V)
+          await keyboard.releaseKey(Key.V)
+          await keyboard.releaseKey(Key.LeftControl)
+        }
 
-      // Simulate Ctrl+V / Cmd+V
-      if (process.platform === 'darwin') {
-        await keyboard.pressKey(Key.LeftSuper)
-        await keyboard.pressKey(Key.V)
-        await keyboard.releaseKey(Key.V)
-        await keyboard.releaseKey(Key.LeftSuper)
+        setTimeout(() => {
+          try { clipboard.writeText(originalClipboard) } catch {}
+        }, 500)
       } else {
-        await keyboard.pressKey(Key.LeftControl)
-        await keyboard.pressKey(Key.V)
-        await keyboard.releaseKey(Key.V)
-        await keyboard.releaseKey(Key.LeftControl)
+        await keyboard.type(text)
       }
 
-      // Restore original clipboard after paste completes
-      setTimeout(() => {
-        try { clipboard.writeText(originalClipboard) } catch {}
-      }, 500)
-    } else {
-      // Character-by-character typing mode
-      await keyboard.type(text)
+      console.log('[48co] Typed', text.length, 'chars into focused app')
+      return true
+    } catch (err) {
+      console.error('[48co] nut-tree failed:', err.message)
+      // Fall through to clipboard fallback
     }
+  }
 
-    console.log('[48co] Typed', text.length, 'chars into focused app')
+  // Method 2: Clipboard fallback (always works, but user needs to Ctrl+V)
+  try {
+    clipboard.writeText(text)
+    tray?.setToolTip('48co — Text copied! Press Ctrl+V to paste')
+    setTimeout(() => tray?.setToolTip('48co — Voice to Text'), 5000)
+    console.log('[48co] Copied', text.length, 'chars to clipboard (fallback)')
     return true
-  } catch (err) {
-    console.error('[48co] Keyboard simulation failed:', err.message)
-
-    // Fallback: copy to clipboard and tell user
-    try {
-      const { clipboard } = require('electron')
-      clipboard.writeText(text)
-      // Don't show a dialog — just notify via tray
-      tray?.setToolTip('48co — Text copied to clipboard (Ctrl+V to paste)')
-      setTimeout(() => tray?.setToolTip('48co — Voice to Text'), 5000)
-    } catch (clipErr) {
-      console.error('[48co] Clipboard fallback failed:', clipErr.message)
-    }
-
+  } catch (clipErr) {
+    console.error('[48co] Clipboard fallback failed:', clipErr.message)
     return false
   }
 }
