@@ -66,7 +66,17 @@ db.exec(`
     FOREIGN KEY (user_id) REFERENCES users(id)
   );
 
+  CREATE TABLE IF NOT EXISTS voice_samples (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id TEXT NOT NULL,
+    content TEXT NOT NULL,
+    source TEXT DEFAULT 'manual',
+    created_at TEXT DEFAULT (datetime('now')),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+  );
+
   CREATE INDEX IF NOT EXISTS idx_usage_user_date ON usage(user_id, created_at);
+  CREATE INDEX IF NOT EXISTS idx_voice_samples_user ON voice_samples(user_id);
   CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token);
 `)
 
@@ -282,6 +292,63 @@ app.post('/grammar', async (req, res) => {
 
 // ── AI Rewrite (Claude Sonnet — higher quality) ─────────
 
+// ── "Preserve My Voice" — Upload Writing Samples ─────────
+
+app.post('/voice-samples', (req, res) => {
+  const user = authenticate(req)
+  if (!user) return res.status(401).json({ error: 'Please sign in' })
+  if (user.plan === 'free') return res.status(403).json({ error: 'Voice learning is a Pro feature', upgrade: true })
+
+  const { samples } = req.body // array of text strings
+  if (!samples || !Array.isArray(samples) || samples.length === 0) {
+    return res.status(400).json({ error: 'Provide an array of writing samples' })
+  }
+
+  const insert = db.prepare('INSERT INTO voice_samples (user_id, content, source) VALUES (?, ?, ?)')
+  const insertMany = db.transaction((items) => {
+    for (const text of items) {
+      if (text && text.length > 20) { // min 20 chars per sample
+        insert.run(user.id, text.substring(0, 5000), 'upload') // max 5000 chars each
+      }
+    }
+  })
+
+  insertMany(samples.slice(0, 50)) // max 50 samples
+  const count = db.prepare('SELECT COUNT(*) as n FROM voice_samples WHERE user_id = ?').get(user.id)
+
+  res.json({ stored: count.n, message: `${count.n} writing samples stored. AI will now preserve your voice.` })
+})
+
+app.get('/voice-samples', (req, res) => {
+  const user = authenticate(req)
+  if (!user) return res.status(401).json({ error: 'Please sign in' })
+
+  const count = db.prepare('SELECT COUNT(*) as n FROM voice_samples WHERE user_id = ?').get(user.id)
+  res.json({ count: count.n })
+})
+
+app.delete('/voice-samples', (req, res) => {
+  const user = authenticate(req)
+  if (!user) return res.status(401).json({ error: 'Please sign in' })
+
+  db.prepare('DELETE FROM voice_samples WHERE user_id = ?').run(user.id)
+  res.json({ message: 'All writing samples deleted.' })
+})
+
+// Helper: build voice context from user's samples
+function getVoiceContext(userId) {
+  const samples = db.prepare(
+    'SELECT content FROM voice_samples WHERE user_id = ? ORDER BY created_at DESC LIMIT 10'
+  ).all(userId)
+
+  if (samples.length === 0) return ''
+
+  const excerpts = samples.map(s => s.content.substring(0, 300)).join('\n---\n')
+  return `\n\nIMPORTANT: The user has a specific writing voice. Here are examples of how they naturally write. Preserve their tone, word choice, sentence structure, and personality. Do NOT make it sound generic or corporate:\n\n${excerpts}`
+}
+
+// ── AI Rewrite (Claude Sonnet — now with voice preservation) ──
+
 app.post('/rewrite', async (req, res) => {
   const user = authenticate(req)
   if (!user) return res.status(401).json({ error: 'Please sign in' })
@@ -289,8 +356,11 @@ app.post('/rewrite', async (req, res) => {
     return res.status(429).json({ error: 'Daily rewrite limit reached', upgrade: user.plan === 'free' })
   }
 
-  const { text, mode = 'professional' } = req.body
+  const { text, mode = 'professional', preserveVoice = true } = req.body
   if (!text) return res.status(400).json({ error: 'No text provided' })
+
+  // Get user's voice context if they have samples and want to preserve voice
+  const voiceContext = (preserveVoice && user.plan !== 'free') ? getVoiceContext(user.id) : ''
 
   const prompts = {
     professional: 'Rewrite this dictated text into clean, professional prose. Fix grammar, remove filler words. Keep original meaning. Return ONLY the rewritten text.',
@@ -300,6 +370,8 @@ app.post('/rewrite', async (req, res) => {
     slack: 'Clean up for a Slack message. Keep it casual and brief. Return ONLY the message.',
     code: 'Convert this spoken description into a clear technical request or code comment. Return ONLY the formatted text.',
   }
+
+  const systemPrompt = (prompts[mode] || prompts.professional) + voiceContext
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
