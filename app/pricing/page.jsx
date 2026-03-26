@@ -1,9 +1,9 @@
 export const metadata = {
   title: '48co Pricing — AI Grammar & Voice Plans | Free, Pro & Teams',
-  description: 'AI grammar correction + voice-to-text on every device. Free to start, Pro at $12/mo with unlimited AI corrections, or $89 lifetime deal.',
+  description: 'AI grammar correction + voice-to-text on every device. Free to start, Pro at $12/mo, Business $29/mo for 10 users. 60% cheaper than Grammarly.',
   openGraph: {
     title: '48co Pricing — AI Grammar That Works Everywhere',
-    description: 'Free grammar checks, $12/mo Pro with unlimited AI, $89 lifetime. Cheaper than Grammarly Premium.',
+    description: 'Free grammar checks, $12/mo Pro, $29/mo Business for 10 users. 60% cheaper than Grammarly Premium.',
   },
 }
 
@@ -34,6 +34,7 @@ export default function PricingPage() {
         'Unlimited AI grammar corrections',
         'Unlimited voice-to-text',
         'AI Rewrite Mode (tone + polish)',
+        'Preserve My Voice (learns your style)',
         'Context-aware (email, Slack, code)',
         'Desktop app (Mac + Windows)',
         'Chrome extension (all websites)',
@@ -41,27 +42,26 @@ export default function PricingPage() {
         'Offline mode (privacy-first)',
         '50+ languages',
         'Custom vocabulary + macros',
-        'Priority support',
       ],
       cta: 'Start 7-Day Free Trial',
       ctaHref: '/download',
     },
     {
-      name: 'Teams',
-      price: '$25',
-      period: '/user/month (min 3)',
+      name: 'Business',
+      price: '$29',
+      period: '/month — up to 10 users',
       highlight: false,
+      badge: 'BEST VALUE',
       features: [
-        'Everything in Pro',
-        'Meeting transcription',
-        'Speaker identification',
+        'Everything in Pro for up to 10 users',
         'Team style guide enforcement',
-        'Shared vocabulary + macros',
-        'Admin dashboard + analytics',
-        'Priority support + onboarding',
+        'Shared vocabulary across team',
+        'Admin dashboard + usage analytics',
+        'Priority support',
         'Invoice billing',
+        'That\u2019s just $2.90 per user',
       ],
-      cta: 'Contact Us',
+      cta: 'Start Business Trial',
       ctaHref: 'mailto:team@48co.nz',
     },
   ]
@@ -88,15 +88,12 @@ export default function PricingPage() {
           </p>
         </div>
 
-        {/* Lifetime Deal Banner */}
+        {/* Business Highlight */}
         <div className="mb-12 p-5 rounded-2xl bg-indigo-50 border border-indigo-100 text-center">
-          <p className="text-indigo-700 text-[15px] font-semibold mb-1">Launch Special: Lifetime Deal — $89</p>
+          <p className="text-indigo-700 text-[15px] font-semibold mb-1">Business: $29/mo for your whole team (up to 10)</p>
           <p className="text-gray-500 text-[13px]">
-            Get Pro features forever. One payment, no subscription, no renewals. Limited to first 1,000 users.
+            That&apos;s just $2.90 per user. Grammarly Business charges $15/user/mo — 5x more.
           </p>
-          <a href="/download" className="inline-block mt-3 px-6 py-2 rounded-lg bg-indigo-600 text-white text-[13px] font-medium hover:bg-indigo-500 transition-all">
-            Claim Lifetime Deal
-          </a>
         </div>
 
         {/* Plans */}
@@ -152,7 +149,7 @@ export default function PricingPage() {
                 {[
                   { f: 'Monthly price', us: '$12/mo', them: '$30/mo' },
                   { f: 'Annual price', us: '$99/year', them: '$144/year' },
-                  { f: 'Lifetime option', us: '$89', them: 'No' },
+                  { f: 'Business (10 users)', us: '$29/mo', them: '$150/mo' },
                   { f: 'AI grammar correction', us: true, them: true },
                   { f: 'Tone adjustment', us: true, them: true },
                   { f: 'Voice-to-text', us: true, them: false },
@@ -189,10 +186,10 @@ export default function PricingPage() {
             {[
               { q: 'How does the free tier work?', a: 'You get 10 AI grammar corrections per day in the Chrome extension, plus 60 minutes of voice dictation per month. No credit card required. The free tier never expires.' },
               { q: 'What does Pro include that Free doesn\'t?', a: 'Unlimited corrections, unlimited voice, AI Rewrite Mode (polishes your tone), context-aware formatting, desktop app, offline mode, and the upcoming mobile keyboards.' },
-              { q: 'How is this better than Grammarly?', a: '48co uses Claude AI (the latest model) instead of rules-based checking. It also includes voice-to-text, works as a desktop app that types into ANY application (not just browsers), costs $12/mo vs $30/mo, and offers a $89 lifetime deal.' },
+              { q: 'How is this better than Grammarly?', a: '48co uses Claude AI (the latest model) instead of rules-based checking. It also includes voice-to-text, works as a desktop app that types into ANY application (not just browsers), costs $12/mo vs $30/mo, and our Business plan is $29/mo for 10 users vs Grammarly\'s $150/mo.' },
               { q: 'Do I need an API key?', a: 'The free tier works out of the box. Pro uses Claude API for grammar and Whisper API for voice — you bring your own keys (costs ~$0.003 per correction). We\'re adding managed API access so you won\'t need keys soon.' },
               { q: 'Will it work on my phone?', a: 'iPhone and Android keyboard apps are coming soon. They\'ll replace your default keyboard and correct everything you type — texts, emails, notes, everything.' },
-              { q: 'Can I cancel anytime?', a: 'Yes, instantly. Or grab the $89 lifetime deal and never think about it again.' },
+              { q: 'Can I cancel anytime?', a: 'Yes, instantly. No contracts, no cancellation fees, no questions asked. Monthly plans cancel at the end of the billing period. Annual plans can be refunded within 14 days.' },
             ].map((faq) => (
               <div key={faq.q}>
                 <h3 className="text-[14px] text-gray-800 font-semibold mb-1">{faq.q}</h3>

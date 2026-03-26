@@ -74,34 +74,36 @@ Grammarly is rules-based, English-only, $30/mo, cloud-only. We use Claude AI, su
 
 ---
 
-## Pricing (Final)
+## Pricing (Final — No Lifetime Deals)
 
-| Tier | Price | What you get | Target |
-|------|-------|-------------|--------|
-| **Free** | $0 | 10 grammar corrections/day, 60 min voice/mo, Chrome extension | Get users in the door |
-| **Pro** | $12/mo or $99/year | Unlimited grammar, unlimited voice, AI rewrite, context-aware, desktop + Chrome + mobile, offline, 50+ languages | 70% of paying users |
-| **Teams** | $25/user/mo (min 3) | Everything in Pro + meetings + speaker ID + team style guide + admin | Enterprise/agencies |
-| **Lifetime** | $89 one-time | Pro features forever. Limited to 1,000 units. | Launch FOMO |
+| Tier | Price | Users | What you get | Target |
+|------|-------|-------|-------------|--------|
+| **Free** | $0 | 1 | 10 grammar corrections/day, 60 min voice/mo, Chrome extension only | Get users hooked |
+| **Pro** | $12/mo or $99/year | 1 | Unlimited grammar, voice, AI rewrite, context-aware, all platforms, offline, 50+ languages, Preserve My Voice | 70% of revenue |
+| **Business** | $29/mo | Up to 10 users | Everything in Pro + team style guide enforcement, shared vocabulary, admin dashboard, usage analytics, priority support | Agencies, small teams |
+| **Enterprise** | Custom pricing | Unlimited | Everything in Business + SSO/SAML, dedicated account manager, SLA, on-premise/private cloud option, custom integrations | Large orgs |
 
-### Why $12/mo works
-- Grammarly Premium: $30/mo — we're 60% cheaper with more features
-- Wispr Flow: $15/mo — we're cheaper AND we do grammar
-- SuperWhisper: $7/mo — but they don't do grammar at all
-- $12/mo = impulse buy territory, low enough to not cancel
+### Why this structure works
+- **No lifetime deals** — recurring revenue only, no legal liability
+- **Free → Pro** is the main conversion path (10 free checks/day is enough to see value)
+- **Business at $29/mo for 10 users** = $2.90/user = incredibly cheap for teams (Grammarly Business is $15/user/mo = $150/mo for 10 users)
+- **Enterprise** is custom because large orgs expect to negotiate
+- $12/mo Pro is impulse-buy territory — cheaper than a Netflix subscription
 
-### API cost model (Pro users)
-- Grammar check (Claude Haiku): ~$0.001 per check → ~$0.50/mo per active user
+### API cost model
+- Grammar check (Claude Haiku): ~$0.001/check → ~$0.50/mo per active user
 - Voice transcription (Whisper): ~$0.006/min → ~$1-2/mo per active user
-- AI Rewrite (Claude Sonnet): ~$0.003 per rewrite → ~$0.30/mo per active user
-- **Total API cost per user: ~$2-3/mo** → healthy margin on $12/mo
+- AI Rewrite (Claude Sonnet): ~$0.003/rewrite → ~$0.30/mo per active user
+- **Total API cost per user: ~$2-3/mo** → healthy margin on $12/mo Pro
+- **Business tier:** 10 users × $2-3/mo cost = $20-30/mo cost on $29/mo revenue (tight but works with scale)
 
 ### Revenue projections
-| Month | Paid users | MRR | Lifetime deals | Total |
-|-------|-----------|-----|----------------|-------|
-| 1 | 600 | $7.2K | 400 × $89 = $35.6K | $42.8K |
-| 3 | 2,500 | $30K | 800 × $89 = $71.2K | $101K |
-| 6 | 5,000 | $60K | 1,000 (sold out) | $60K/mo |
-| 12 | 12,000 | $144K | — | $1.7M ARR |
+| Month | Free | Pro | Business | MRR |
+|-------|------|-----|----------|-----|
+| 1 | 5,000 | 500 | 20 | $6,580 |
+| 3 | 15,000 | 2,000 | 80 | $26,320 |
+| 6 | 40,000 | 5,000 | 200 | $65,800 |
+| 12 | 100,000 | 12,000 | 500 | $158,500 |
 
 ---
 

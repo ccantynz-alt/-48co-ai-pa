@@ -10,7 +10,7 @@ export const metadata = {
 export default function ComparePage() {
   const features = [
     { name: 'Price (monthly)', co: '$12/mo', gram: '$30/mo', wispr: '$15/mo', sw: '$7/mo' },
-    { name: 'Lifetime deal', co: '$89', gram: 'No', wispr: 'No', sw: '$249' },
+    { name: 'Business (10 users)', co: '$29/mo', gram: '$150/mo', wispr: 'N/A', sw: 'N/A' },
     { name: 'AI Grammar Check', co: true, gram: true, wispr: false, sw: false, highlight: true },
     { name: 'AI Rewrite / Polish', co: true, gram: 'Limited', wispr: 'Basic', sw: 'Basic' },
     { name: 'Context-Aware Tone', co: true, gram: false, wispr: false, sw: false, highlight: true },
@@ -105,7 +105,7 @@ export default function ComparePage() {
               <li>+ Real-time streaming transcription</li>
               <li>+ $81M in VC funding = fast development</li>
             </ul>
-            <p className="mt-3 text-[11px] text-gray-300">But: No grammar checking, cloud-only (no privacy), $15/mo, no lifetime deal.</p>
+            <p className="mt-3 text-[11px] text-gray-300">But: No grammar checking, cloud-only (no privacy), $15/mo.</p>
           </div>
 
           <div className="rounded-2xl p-6 border-2 border-indigo-200 bg-indigo-50/30 md:col-span-2">
@@ -120,8 +120,8 @@ export default function ComparePage() {
                 <p className="text-[12px] text-gray-400">Auto-detects which app you&apos;re in. Professional for email, casual for Slack, technical for code.</p>
               </div>
               <div>
-                <h3 className="text-[13px] text-gray-700 font-semibold mb-1">$89 Lifetime</h3>
-                <p className="text-[12px] text-gray-400">Pay once, use forever. Grammarly: $360/year. Wispr: $180/year. We: $89 total.</p>
+                <h3 className="text-[13px] text-gray-700 font-semibold mb-1">$29/mo for 10 users</h3>
+                <p className="text-[12px] text-gray-400">Business plan: $2.90/user. Grammarly charges $15/user ($150/mo for 10). We&apos;re 80% cheaper.</p>
               </div>
               <div>
                 <h3 className="text-[13px] text-gray-700 font-semibold mb-1">Claude AI</h3>

@@ -312,7 +312,7 @@ export default function LandingPage() {
             {[
               { name: 'Free', price: '$0', desc: 'Basic dictation and grammar hints', highlight: false },
               { name: 'Pro', price: '$12/mo', desc: 'Unlimited AI grammar, voice, offline', highlight: true },
-              { name: 'Lifetime', price: '$89', desc: 'Pro forever. Limited offer.', highlight: false },
+              { name: 'Business', price: '$29/mo', desc: 'Up to 10 users. $2.90 each.', highlight: false },
             ].map((p) => (
               <div key={p.name} className={`card p-6 ${p.highlight ? 'border-indigo-200 bg-indigo-50/30 shadow-md shadow-indigo-500/5' : ''}`}>
                 <p className="text-[14px] font-semibold text-gray-600 mb-1">{p.name}</p>

@@ -89,7 +89,8 @@ const PORT = process.env.PORT || 3001
 const LIMITS = {
   free: { grammar_per_day: 10, voice_minutes_per_month: 60, rewrite_per_day: 5 },
   pro: { grammar_per_day: 999999, voice_minutes_per_month: 999999, rewrite_per_day: 999999 },
-  lifetime: { grammar_per_day: 999999, voice_minutes_per_month: 999999, rewrite_per_day: 999999 },
+  business: { grammar_per_day: 999999, voice_minutes_per_month: 999999, rewrite_per_day: 999999 },
+  enterprise: { grammar_per_day: 999999, voice_minutes_per_month: 999999, rewrite_per_day: 999999 },
 }
 
 // ── Auth helpers ─────────────────────────────────────────
