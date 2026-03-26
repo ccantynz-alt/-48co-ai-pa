@@ -80,11 +80,23 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token);
 `)
 
-// ── Config ───────────────────────────────────────────────
-const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY || ''
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY || ''
+// ── Config — fail loudly if critical keys missing ────────
+const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || ''
 const PORT = process.env.PORT || 3001
+
+if (!CLAUDE_API_KEY) {
+  console.error('FATAL: CLAUDE_API_KEY environment variable not set. Grammar and rewrite will not work.')
+  console.error('Get your key at: https://console.anthropic.com/settings/keys')
+  process.exit(1)
+}
+if (!OPENAI_API_KEY) {
+  console.error('WARNING: OPENAI_API_KEY not set. Voice transcription will fail.')
+}
+if (!GOOGLE_CLIENT_ID) {
+  console.warn('WARNING: GOOGLE_CLIENT_ID not set. Google sign-in will be disabled.')
+}
 
 const LIMITS = {
   free: { grammar_per_day: 10, voice_minutes_per_month: 60, rewrite_per_day: 5 },
