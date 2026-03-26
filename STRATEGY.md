@@ -1,14 +1,36 @@
 # 48co Strategy & Roadmap
-> Last updated: 2026-03-25
-> Status: EXECUTE MODE
+> Last updated: 2026-03-26
+> Status: EXECUTE MODE — Grammarly killer
 
 ## The Hook
 
-**"You're not selling dictation. You're selling a thinking amplifier."**
+**"Everything you write, perfected by AI. On every device."**
 
-Every competitor just transcribes. 48co REWRITES. You ramble, it writes professionally. You describe code intent, it writes actual code. You say "email Sarah about being late", it drafts the entire email.
+We're not a dictation tool. We're not a grammar checker. We're the **AI writing layer for everything.** Voice + grammar + tone + style — one tool, every device, works offline.
 
-Once users try AI rewrite, raw dictation feels broken. That's the addiction.
+Grammarly is rules-based, English-only, $30/mo, cloud-only. We use Claude AI, support 30+ languages, cost $12/mo, and work offline. That's the 80% advantage.
+
+---
+
+## How We Beat Grammarly (The 80% Plan)
+
+| Grammarly weakness | 48co advantage |
+|-------------------|----------------|
+| Old AI (rules + GPT-3 era) | Claude AI (frontier model) |
+| English only | 30+ languages |
+| $30/mo ($360/year) | $12/mo ($99/year) + $89 lifetime |
+| No voice-to-text | Full voice built in |
+| Cloud-only (privacy risk) | Offline mode (local Whisper + local LLM) |
+| Makes writing generic | "Preserve My Voice" — learns YOUR style |
+| Laggy desktop app | Lightweight, types into any app |
+| No developer API | Public API for integrations |
+| 55% grammar detection | Claude catches more with context understanding |
+| No mobile keyboard | Custom iOS + Android keyboards |
+
+### The 3 Killer Features Grammarly Can't Copy:
+1. **Voice + Grammar in one tool** — Grammarly killed their voice feature
+2. **"Preserve My Voice"** — AI learns your writing style from past docs
+3. **Privacy-first offline** — entire enterprise market Grammarly can't touch
 
 ---
 
