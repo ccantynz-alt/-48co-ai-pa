@@ -1,0 +1,76 @@
+name: Build 48co (Tauri)
+
+# Builds Windows (.exe/.msi), macOS (.dmg), and eventually iOS/Android
+# Publishes to GitHub Releases for download
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tauri-app/**'
+      - '.github/workflows/build-tauri.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: tauri-build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest
+            target: universal-apple-darwin
+            name: mac
+          - platform: windows-latest
+            target: x86_64-pc-windows-msvc
+            name: win
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      # macOS: add universal target
+      - name: Add macOS targets
+        if: matrix.name == 'mac'
+        run: |
+          rustup target add aarch64-apple-darwin
+          rustup target add x86_64-apple-darwin
+
+      - name: Install frontend deps
+        working-directory: tauri-app
+        run: npm install
+
+      - name: Build Tauri app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: tauri-app
+          tagName: v__VERSION__
+          releaseName: "48co v__VERSION__"
+          releaseBody: |
+            ## Download 48co
+
+            **Windows:** Download the .msi or .exe installer
+            **macOS:** Download the .dmg file
+
+            ### Setup
+            1. Install the app
+            2. Right-click the tray icon → Settings
+            3. Enter your OpenAI API key
+            4. Press Ctrl+Shift+Space to start talking
+
+            ### What you need
+            - OpenAI API key (~$0.006/min for voice)
+            - Optional: Claude API key for AI grammar rewrite
+          releaseDraft: false
+          prerelease: false
