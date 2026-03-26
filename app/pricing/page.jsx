@@ -7,6 +7,9 @@ export const metadata = {
   },
 }
 
+import Nav from '../../components/Nav'
+import Footer from '../../components/Footer'
+
 export default function PricingPage() {
   const plans = [
     {
@@ -68,17 +71,7 @@ export default function PricingPage() {
 
   return (
     <main className="min-h-screen bg-white">
-      {/* Nav */}
-      <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-black/[0.04]">
-        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-3">
-          <a href="/" className="text-base font-bold tracking-tight">48<span className="text-indigo-600">co</span></a>
-          <div className="hidden sm:flex items-center gap-6">
-            <a href="/compare" className="text-[13px] text-gray-400 hover:text-gray-700 transition-colors">Compare</a>
-            <a href="/live" className="text-[13px] text-gray-400 hover:text-gray-700 transition-colors">Try Live</a>
-            <a href="/download" className="text-[13px] px-4 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition-all">Download</a>
-          </div>
-        </div>
-      </nav>
+      <Nav />
 
       <div className="max-w-5xl mx-auto px-4 pt-28 pb-16">
         <div className="text-center mb-16">
@@ -200,17 +193,7 @@ export default function PricingPage() {
         </div>
       </div>
 
-      <footer className="border-t border-black/[0.06] py-8">
-        <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <span className="text-[14px] font-bold text-gray-400">48<span className="text-indigo-500">co</span></span>
-          <div className="flex gap-6 text-[12px] text-gray-400">
-            <a href="/download" className="hover:text-gray-700 transition-colors">Download</a>
-            <a href="/compare" className="hover:text-gray-700 transition-colors">Compare</a>
-            <a href="/live" className="hover:text-gray-700 transition-colors">Try Live</a>
-          </div>
-          <p className="text-[11px] text-gray-300">Built in New Zealand</p>
-        </div>
-      </footer>
+      <Footer />
     </main>
   )
 }

@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Nav from '../../components/Nav'
+import Footer from '../../components/Footer'
 
 export default function DownloadPage() {
   const [platform, setPlatform] = useState('unknown')
@@ -10,202 +12,156 @@ export default function DownloadPage() {
     const ua = navigator.userAgent.toLowerCase()
     if (ua.includes('mac')) { setPlatform('mac'); setTab('mac') }
     else if (ua.includes('win')) { setPlatform('windows'); setTab('windows') }
-    else if (ua.includes('linux')) setPlatform('linux')
   }, [])
-
-  const FEATURES = [
-    {
-      icon: '\u{2728}',
-      title: 'AI Rewrite Mode',
-      desc: 'Speak rough ideas, get polished text. Claude AI fixes grammar, removes filler words, adjusts tone based on which app you\u2019re in.',
-    },
-    {
-      icon: '\u{1F310}',
-      title: 'Works in ANY App',
-      desc: 'Types into any focused text field \u2014 browsers, Slack, Discord, VS Code, email, Word, anything on your computer.',
-    },
-    {
-      icon: '\u{2328}',
-      title: 'Global Hotkey',
-      desc: 'Press Ctrl+Shift+Space (Cmd+Shift+Space on Mac) from anywhere. No need to switch windows.',
-    },
-    {
-      icon: '\u{1F3AF}',
-      title: '99%+ Accuracy',
-      desc: 'Powered by OpenAI Whisper API for near-perfect transcription in 50+ languages.',
-    },
-    {
-      icon: '\u{26A1}',
-      title: 'Instant Typing',
-      desc: 'Text appears in the focused field instantly. No copy-paste. No clipboard juggling.',
-    },
-    {
-      icon: '\u{1F504}',
-      title: 'Auto-Updates',
-      desc: 'Stays up to date automatically. New features and improvements delivered seamlessly.',
-    },
-    {
-      icon: '\u{1F512}',
-      title: 'Privacy First',
-      desc: 'Audio is sent directly to OpenAI for transcription. Nothing stored on our servers. Your API key, your data.',
-    },
-  ]
 
   const STEPS = {
     mac: [
-      'Click the Download button above',
-      'Open the .dmg file and drag 48co to your Applications folder',
-      'Launch 48co from Applications',
-      'Grant Accessibility permission when prompted (required for typing into other apps)',
-      'Grant Microphone permission when prompted',
-      'Enter your OpenAI API key in Settings (right-click the tray icon)',
+      'Click the Download button to get the .dmg file',
+      'Open it and drag 48co to your Applications folder',
+      'Launch 48co — it appears in your menu bar (top-right)',
+      'Allow Accessibility + Microphone when prompted',
+      'Right-click the menu bar icon and sign in',
       'Press Cmd+Shift+Space anywhere to start talking',
     ],
     windows: [
-      'Click the Download button above',
-      'Run the installer (click \u201CYes\u201D if Windows asks for permission)',
-      '48co starts automatically and appears in the system tray (bottom-right)',
-      'Enter your OpenAI API key in Settings (right-click the tray icon)',
+      'Click the Download button to get the installer',
+      'Run it — click "Yes" if Windows asks permission',
+      '48co appears in your system tray (bottom-right near the clock)',
+      'Right-click the tray icon and sign in',
       'Press Ctrl+Shift+Space anywhere to start talking',
     ],
   }
 
   return (
-    <main className="min-h-screen bg-[#0a0a0e] text-white font-mono overflow-y-auto">
-      {/* Header */}
-      <nav className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
-        <a href="/" className="text-sm font-bold tracking-[0.2em]">
-          <span className="text-white/80">48</span><span className="text-[#00f0ff]">co</span>
-        </a>
-        <div className="flex gap-4">
-          <a href="/live" className="text-[11px] text-white/30 hover:text-white/60 transition-colors">Use in Browser</a>
-          <a href="/" className="text-[11px] text-white/30 hover:text-white/60 transition-colors">Home</a>
-        </div>
-      </nav>
+    <main className="min-h-screen bg-white">
+      <Nav />
 
-      <div className="max-w-3xl mx-auto px-4 py-12">
+      <div className="max-w-3xl mx-auto px-4 pt-28 pb-16">
         {/* Hero */}
-        <section className="text-center mb-12">
-          <h1 className="text-3xl font-bold mb-3">
-            <span className="text-white/90">Download </span>
-            <span className="text-[#00f0ff]">48co</span>
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            Download <span className="text-indigo-600">48co</span>
           </h1>
-          <p className="text-white/35 text-sm max-w-md mx-auto">
-            System-wide voice-to-text. Press a hotkey, speak, and it types into whatever app you&apos;re using.
+          <p className="text-gray-400 text-base max-w-md mx-auto">
+            AI grammar + voice-to-text that works in every app on your computer. Free to start.
           </p>
-        </section>
+        </div>
 
-        {/* Download buttons */}
-        <section className="flex flex-col md:flex-row gap-4 justify-center mb-12">
+        {/* Download Buttons */}
+        <div className="flex flex-col md:flex-row gap-4 justify-center mb-12">
           <a
             href="https://github.com/ccantynz-alt/-48co-ai-pa/releases/latest/download/48co-mac.dmg"
-            className={`flex items-center gap-3 px-8 py-4 rounded-2xl border transition-all ${
+            className={`flex items-center gap-4 px-8 py-4 rounded-2xl border transition-all ${
               platform === 'mac'
-                ? 'bg-[#00f0ff]/10 border-[#00f0ff]/40 text-[#00f0ff]'
-                : 'bg-white/[0.02] border-white/10 text-white/50 hover:border-white/20'
+                ? 'bg-indigo-50 border-indigo-200 shadow-md shadow-indigo-500/5'
+                : 'border-gray-200 hover:border-gray-300'
             }`}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" opacity="0.6">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="#333" opacity="0.6">
               <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
             </svg>
             <div>
-              <p className="text-sm font-bold">Download for macOS</p>
-              <p className="text-[10px] opacity-50">Intel + Apple Silicon (.dmg)</p>
+              <p className="text-[15px] font-semibold text-gray-800">Download for macOS</p>
+              <p className="text-[12px] text-gray-400">Intel + Apple Silicon (.dmg)</p>
             </div>
-            {platform === 'mac' && <span className="text-[9px] ml-auto opacity-50">Recommended for you</span>}
+            {platform === 'mac' && <span className="text-[10px] text-indigo-500 ml-auto font-medium">Recommended</span>}
           </a>
 
           <a
             href="https://github.com/ccantynz-alt/-48co-ai-pa/releases/latest/download/48co-win.exe"
-            className={`flex items-center gap-3 px-8 py-4 rounded-2xl border transition-all ${
+            className={`flex items-center gap-4 px-8 py-4 rounded-2xl border transition-all ${
               platform === 'windows'
-                ? 'bg-[#00f0ff]/10 border-[#00f0ff]/40 text-[#00f0ff]'
-                : 'bg-white/[0.02] border-white/10 text-white/50 hover:border-white/20'
+                ? 'bg-indigo-50 border-indigo-200 shadow-md shadow-indigo-500/5'
+                : 'border-gray-200 hover:border-gray-300'
             }`}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" opacity="0.6">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="#333" opacity="0.6">
               <path d="M3 12V6.75l8-1.25V12H3zm0 .5h8v6.5l-8-1.25V12.5zM11.5 5.33L21 3.75V12h-9.5V5.33zm0 7.17H21v8.25l-9.5-1.58V12.5z"/>
             </svg>
             <div>
-              <p className="text-sm font-bold">Download for Windows</p>
-              <p className="text-[10px] opacity-50">Windows 10+ (.exe)</p>
+              <p className="text-[15px] font-semibold text-gray-800">Download for Windows</p>
+              <p className="text-[12px] text-gray-400">Windows 10+ (.exe)</p>
             </div>
-            {platform === 'windows' && <span className="text-[9px] ml-auto opacity-50">Recommended for you</span>}
+            {platform === 'windows' && <span className="text-[10px] text-indigo-500 ml-auto font-medium">Recommended</span>}
           </a>
-        </section>
+        </div>
 
-        {/* What you need */}
-        <section className="glass rounded-2xl p-5 mb-8">
-          <h2 className="text-[11px] tracking-[0.2em] text-white/30 mb-3 uppercase">Before you start</h2>
-          <div className="space-y-2 text-[11px] text-white/40">
-            <p>&#x2022; You&apos;ll need an <strong className="text-white/60">OpenAI API key</strong> for voice transcription. It costs about $0.006 per minute of speech. Get one at <a href="https://platform.openai.com/api-keys" target="_blank" className="text-[#00f0ff]/60 hover:text-[#00f0ff] underline">platform.openai.com/api-keys</a></p>
-            <p>&#x2022; <strong className="text-white/60">macOS users:</strong> You&apos;ll be asked to grant Accessibility + Microphone permissions (so 48co can type into other apps)</p>
-            <p>&#x2022; <strong className="text-white/60">Windows users:</strong> No special permissions needed</p>
-          </div>
-        </section>
+        {/* Also available */}
+        <div className="flex flex-wrap justify-center gap-3 mb-16">
+          <a href="/install" className="text-[12px] px-4 py-2 rounded-lg border border-gray-200 text-gray-400 hover:border-gray-300 hover:text-gray-600 transition-all">
+            Chrome Extension
+          </a>
+          <a href="/live" className="text-[12px] px-4 py-2 rounded-lg border border-gray-200 text-gray-400 hover:border-gray-300 hover:text-gray-600 transition-all">
+            Try in Browser (no download)
+          </a>
+        </div>
 
-        {/* Setup steps */}
-        <section className="glass rounded-2xl overflow-hidden mb-8">
-          <div className="flex border-b border-white/[0.06]">
+        {/* Setup Steps */}
+        <div className="mb-16">
+          <h2 className="text-xl font-bold text-gray-900 mb-6 text-center">Setup in {tab === 'mac' ? '6' : '5'} steps</h2>
+
+          <div className="flex justify-center gap-2 mb-6">
             <button
               onClick={() => setTab('mac')}
-              className={`flex-1 py-3 text-[11px] tracking-wider transition-colors ${
-                tab === 'mac' ? 'text-[#00f0ff] border-b-2 border-[#00f0ff]' : 'text-white/30'
+              className={`px-4 py-2 rounded-lg text-[13px] font-medium transition-all ${
+                tab === 'mac' ? 'bg-indigo-50 text-indigo-600 border border-indigo-200' : 'text-gray-400 border border-gray-200 hover:border-gray-300'
               }`}
             >
-              macOS Setup
+              macOS
             </button>
             <button
               onClick={() => setTab('windows')}
-              className={`flex-1 py-3 text-[11px] tracking-wider transition-colors ${
-                tab === 'windows' ? 'text-[#00f0ff] border-b-2 border-[#00f0ff]' : 'text-white/30'
+              className={`px-4 py-2 rounded-lg text-[13px] font-medium transition-all ${
+                tab === 'windows' ? 'bg-indigo-50 text-indigo-600 border border-indigo-200' : 'text-gray-400 border border-gray-200 hover:border-gray-300'
               }`}
             >
-              Windows Setup
+              Windows
             </button>
           </div>
 
-          <div className="p-5">
+          <div className="max-w-lg mx-auto space-y-3">
             {(STEPS[tab] || STEPS.mac).map((step, i) => (
-              <div key={i} className="flex items-start gap-3 mb-3">
-                <span className="text-[11px] text-[#00f0ff]/40 font-bold mt-0.5">{i + 1}.</span>
-                <p className="text-[11px] text-white/40 leading-relaxed">{step}</p>
+              <div key={i} className="flex items-start gap-4 p-4 rounded-xl border border-gray-100 bg-gray-50/50">
+                <span className="w-7 h-7 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 text-[12px] font-bold flex-shrink-0">
+                  {i + 1}
+                </span>
+                <p className="text-[13px] text-gray-600 leading-relaxed pt-0.5">{step}</p>
               </div>
             ))}
           </div>
-        </section>
+        </div>
 
-        {/* Features */}
-        <section className="mb-8">
-          <h2 className="text-[11px] tracking-[0.3em] text-[#00f0ff]/40 text-center mb-8 uppercase">
-            What you get
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {FEATURES.map(f => (
-              <div key={f.title} className="glass rounded-2xl p-5">
-                <span className="text-xl mb-2 block">{f.icon}</span>
-                <h3 className="text-[12px] font-bold text-white/70 mb-1">{f.title}</h3>
-                <p className="text-[10px] text-white/30 leading-relaxed">{f.desc}</p>
+        {/* Features Grid */}
+        <div className="mb-16">
+          <h2 className="text-xl font-bold text-gray-900 mb-6 text-center">What you get</h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            {[
+              { title: 'AI Grammar + Rewrite', desc: 'Fixes grammar, removes filler words, adjusts tone — all powered by Claude AI.' },
+              { title: 'Works in Every App', desc: 'Types into any focused text field — browsers, Slack, VS Code, email, Word, anything.' },
+              { title: 'Voice-to-Text', desc: 'Press a hotkey, speak naturally, text appears. 99%+ accuracy with Whisper in 50+ languages.' },
+              { title: 'Context-Aware', desc: 'Automatically detects Gmail → professional, Slack → casual, Code → technical.' },
+              { title: 'Auto-Updates', desc: 'Always up to date. New features delivered automatically, no reinstalling.' },
+              { title: 'Privacy First', desc: 'Offline mode coming soon. Your voice and text stay on your device.' },
+            ].map((f) => (
+              <div key={f.title} className="card p-5">
+                <h3 className="text-[14px] font-semibold text-gray-800 mb-1">{f.title}</h3>
+                <p className="text-[12px] text-gray-400 leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>
-        </section>
+        </div>
 
-        {/* Alternative */}
-        <section className="text-center py-8">
-          <p className="text-[11px] text-white/25 mb-3">Don&apos;t want to install anything?</p>
-          <a
-            href="/live"
-            className="inline-block px-6 py-2 rounded-xl border border-white/10 text-white/40 text-[11px] tracking-wider hover:border-white/20 transition-all"
-          >
-            Use 48co in Your Browser (free, no download)
-          </a>
-        </section>
+        {/* Pricing hint */}
+        <div className="text-center">
+          <div className="inline-block p-5 rounded-2xl bg-gray-50 border border-gray-100">
+            <p className="text-[14px] text-gray-600 font-medium mb-1">Free to start. Pro is $12/mo.</p>
+            <p className="text-[12px] text-gray-400">10 free grammar corrections per day. Upgrade for unlimited.</p>
+            <a href="/pricing" className="text-[12px] text-indigo-600 hover:text-indigo-500 font-medium mt-2 inline-block">See pricing →</a>
+          </div>
+        </div>
       </div>
 
-      <footer className="border-t border-white/[0.06] py-6 text-center">
-        <p className="text-[10px] text-white/15 tracking-wider">48co &middot; Built in NZ &middot; Open Source</p>
-      </footer>
+      <Footer />
     </main>
   )
 }
