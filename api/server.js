@@ -73,6 +73,7 @@ db.exec(`
 // ── Config ───────────────────────────────────────────────
 const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY || ''
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || ''
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || ''
 const PORT = process.env.PORT || 3001
 
 const LIMITS = {
@@ -172,6 +173,56 @@ app.post('/auth/login', async (req, res) => {
   } catch (err) {
     console.error('Login error:', err)
     res.status(500).json({ error: 'Login failed. Try again.' })
+  }
+})
+
+// ── Google Sign-In (one click, no password) ──────────────
+
+app.post('/auth/google', async (req, res) => {
+  try {
+    const { credential } = req.body
+    if (!credential) return res.status(400).json({ error: 'No Google credential provided' })
+
+    // Verify the Google ID token
+    // Google's tokeninfo endpoint validates the JWT without needing a library
+    const verifyResponse = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`)
+    if (!verifyResponse.ok) return res.status(401).json({ error: 'Invalid Google credential' })
+
+    const googleUser = await verifyResponse.json()
+
+    // Verify the token was issued for our app
+    if (GOOGLE_CLIENT_ID && googleUser.aud !== GOOGLE_CLIENT_ID) {
+      return res.status(401).json({ error: 'Google token not issued for this app' })
+    }
+
+    const email = googleUser.email?.toLowerCase()
+    if (!email) return res.status(400).json({ error: 'No email in Google account' })
+
+    // Find or create user
+    let user = db.prepare('SELECT * FROM users WHERE email = ?').get(email)
+
+    if (!user) {
+      // New user — create account (no password needed for Google auth)
+      const id = nanoid()
+      const hash = await bcrypt.hash(nanoid(32), 10) // random password placeholder
+      db.prepare('INSERT INTO users (id, email, password_hash) VALUES (?, ?, ?)').run(id, email, hash)
+      user = { id, email, plan: 'free' }
+    }
+
+    // Create session
+    const token = nanoid(32)
+    const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    db.prepare('INSERT INTO sessions (token, user_id, expires_at) VALUES (?, ?, ?)').run(token, user.id, expires)
+
+    res.json({
+      token,
+      plan: user.plan || 'free',
+      email: user.email,
+      name: googleUser.name || '',
+    })
+  } catch (err) {
+    console.error('Google auth error:', err)
+    res.status(500).json({ error: 'Google sign-in failed. Try again.' })
   }
 })
 
