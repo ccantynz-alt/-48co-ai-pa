@@ -11,25 +11,19 @@
 
   // ── State ──────────────────────────────────────────────
   let enabled = false
-  let claudeApiKey = ''
+  let authToken = ''  // managed API token (preferred — no user API key needed)
+  let claudeApiKey = '' // fallback: user's own key
   let checkTimeout = null
   let lastCheckedText = ''
   let activeTooltip = null
-  let correctionsToday = 0
-  let maxFreeCorrections = 10 // free tier limit per day
+
+  const API_BASE = 'https://api.48co.nz' // managed API proxy
 
   // ── Init: load settings ────────────────────────────────
-  chrome.storage.local.get(['grammarEnabled', 'claudeApiKey', 'correctionsToday', 'correctionDate'], (data) => {
+  chrome.storage.local.get(['grammarEnabled', 'authToken', 'claudeApiKey'], (data) => {
     enabled = data.grammarEnabled || false
+    authToken = data.authToken || ''
     claudeApiKey = data.claudeApiKey || ''
-    // Reset daily counter
-    const today = new Date().toDateString()
-    if (data.correctionDate !== today) {
-      correctionsToday = 0
-      chrome.storage.local.set({ correctionsToday: 0, correctionDate: today })
-    } else {
-      correctionsToday = data.correctionsToday || 0
-    }
     if (enabled) attachListeners()
   })
 
@@ -90,9 +84,9 @@
     return false
   }
 
-  // ── Grammar check via Claude API ───────────────────────
+  // ── Grammar check — managed API or direct ──────────────
   async function checkGrammar(el) {
-    if (!claudeApiKey) return
+    if (!authToken && !claudeApiKey) return // need at least one auth method
     if (!enabled) return
 
     const text = getTextFromField(el)
@@ -120,6 +114,29 @@
   }
 
   async function callGrammarAPI(text) {
+    // Try managed API first (no user key needed)
+    if (authToken) {
+      try {
+        const response = await fetch(API_BASE + '/grammar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + authToken },
+          body: JSON.stringify({ text }),
+        })
+        if (response.ok) {
+          const data = await response.json()
+          return data.corrections || []
+        }
+        if (response.status === 429) {
+          // Rate limited — show upgrade prompt
+          console.log('[48co] Free grammar limit reached — upgrade to Pro for unlimited')
+          return []
+        }
+      } catch { /* fall through to direct API */ }
+    }
+
+    // Fallback: user's own Claude API key (direct call)
+    if (!claudeApiKey) return []
+
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 6000)
 
@@ -134,29 +151,22 @@
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 512,
-          system: `You are a grammar checker. Analyze the text for grammar, spelling, and punctuation errors. Return a JSON array of corrections. Each correction has: "original" (the wrong text), "corrected" (the fixed text), "reason" (brief explanation, max 8 words). If the text is correct, return an empty array []. Return ONLY valid JSON, nothing else.`,
+          system: 'You are a grammar checker. Analyze the text for grammar, spelling, and punctuation errors. Return a JSON array of corrections. Each correction has: "original" (wrong text), "corrected" (fixed text), "reason" (brief, max 8 words). If correct, return []. Return ONLY valid JSON.',
           messages: [{ role: 'user', content: text }],
         }),
         signal: controller.signal,
       })
 
       clearTimeout(timeout)
-
-      if (!response.ok) {
-        if (response.status === 401) throw new Error('Invalid API key')
-        throw new Error(`API error: ${response.status}`)
-      }
+      if (!response.ok) throw new Error('API error: ' + response.status)
 
       const data = await response.json()
       const content = data.content?.[0]?.text?.trim() || '[]'
-
-      // Parse JSON — handle markdown code fences if present
       const jsonStr = content.replace(/^```json?\n?/, '').replace(/\n?```$/, '').trim()
       return JSON.parse(jsonStr)
     } catch (err) {
       clearTimeout(timeout)
-      if (err.name === 'AbortError') return []
-      if (err instanceof SyntaxError) return [] // JSON parse failed
+      if (err.name === 'AbortError' || err instanceof SyntaxError) return []
       throw err
     }
   }
