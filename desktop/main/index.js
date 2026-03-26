@@ -41,7 +41,7 @@ const store = new Store({
     vocabulary: [],           // [{from, to}]
     replacements: [],         // [{from, to}]
     launchAtLogin: true,
-    showOverlay: true,
+    showOverlay: false,        // OFF by default — no UI on screen, just types
     typingSpeed: 0,           // 0 = instant (paste), >0 = ms between chars
     aiRewrite: false,         // AI rewrite mode — polishes dictated text
     aiRewriteMode: 'professional', // professional | casual | concise | auto
@@ -201,19 +201,19 @@ async function startRecording() {
 
   updateTrayMenu()
 
-  // Show overlay
-  if (store.get('showOverlay') && overlayWindow) {
-    overlayWindow.webContents.send('recording-state', { status: 'recording' })
-    overlayWindow.showInactive() // showInactive = don't steal focus
-  }
-
-  // Tell renderer to start capturing audio
+  // Tell renderer to start capturing audio (overlay handles mic access)
   if (overlayWindow) {
     overlayWindow.webContents.send('start-recording', {
       engine: store.get('engine'),
       language: store.get('language'),
       whisperApiKey: store.get('whisperApiKey'),
     })
+    overlayWindow.webContents.send('recording-state', { status: 'recording' })
+
+    // Only show overlay if user wants it — default is OFF (zero UI)
+    if (store.get('showOverlay')) {
+      overlayWindow.showInactive()
+    }
   }
 }
 
@@ -233,58 +233,63 @@ async function stopRecording() {
 // ─── Keyboard Simulation (type into focused app) ──────────────
 async function typeText(text) {
   try {
-    const { keyboard } = require('@nut-tree-fork/nut-js')
+    const { keyboard, Key } = require('@nut-tree-fork/nut-js')
+    const { clipboard } = require('electron')
+
+    // Hide overlay BEFORE typing so it doesn't interfere with focus
+    if (overlayWindow && overlayWindow.isVisible()) {
+      overlayWindow.hide()
+    }
+
+    // Give the user's app a moment to regain focus
+    await new Promise(r => setTimeout(r, 150))
 
     const speed = store.get('typingSpeed', 0)
 
     if (speed === 0) {
-      // Instant mode: use clipboard paste (fastest, most reliable)
-      const { clipboard } = require('electron')
+      // Instant mode: clipboard paste (fastest, most reliable)
       const originalClipboard = clipboard.readText()
-
       clipboard.writeText(text)
 
-      // Small delay to ensure clipboard is ready
-      await new Promise(r => setTimeout(r, 50))
+      // Ensure clipboard is ready
+      await new Promise(r => setTimeout(r, 100))
 
       // Simulate Ctrl+V / Cmd+V
       if (process.platform === 'darwin') {
-        await keyboard.pressKey(require('@nut-tree-fork/nut-js').Key.LeftSuper)
-        await keyboard.pressKey(require('@nut-tree-fork/nut-js').Key.V)
-        await keyboard.releaseKey(require('@nut-tree-fork/nut-js').Key.V)
-        await keyboard.releaseKey(require('@nut-tree-fork/nut-js').Key.LeftSuper)
+        await keyboard.pressKey(Key.LeftSuper)
+        await keyboard.pressKey(Key.V)
+        await keyboard.releaseKey(Key.V)
+        await keyboard.releaseKey(Key.LeftSuper)
       } else {
-        await keyboard.pressKey(require('@nut-tree-fork/nut-js').Key.LeftControl)
-        await keyboard.pressKey(require('@nut-tree-fork/nut-js').Key.V)
-        await keyboard.releaseKey(require('@nut-tree-fork/nut-js').Key.V)
-        await keyboard.releaseKey(require('@nut-tree-fork/nut-js').Key.LeftControl)
+        await keyboard.pressKey(Key.LeftControl)
+        await keyboard.pressKey(Key.V)
+        await keyboard.releaseKey(Key.V)
+        await keyboard.releaseKey(Key.LeftControl)
       }
 
-      // Restore original clipboard after a brief delay
+      // Restore original clipboard after paste completes
       setTimeout(() => {
-        clipboard.writeText(originalClipboard)
+        try { clipboard.writeText(originalClipboard) } catch {}
       }, 500)
     } else {
       // Character-by-character typing mode
       await keyboard.type(text)
     }
 
+    console.log('[48co] Typed', text.length, 'chars into focused app')
     return true
   } catch (err) {
-    console.error('Keyboard simulation failed:', err)
+    console.error('[48co] Keyboard simulation failed:', err.message)
 
-    // Fallback: try clipboard paste via Electron
+    // Fallback: copy to clipboard and tell user
     try {
       const { clipboard } = require('electron')
       clipboard.writeText(text)
-      dialog.showMessageBox({
-        type: 'info',
-        title: '48co',
-        message: 'Text copied to clipboard',
-        detail: 'Keyboard simulation failed. Text has been copied to your clipboard — press Ctrl+V / Cmd+V to paste.',
-      })
+      // Don't show a dialog — just notify via tray
+      tray?.setToolTip('48co — Text copied to clipboard (Ctrl+V to paste)')
+      setTimeout(() => tray?.setToolTip('48co — Voice to Text'), 5000)
     } catch (clipErr) {
-      console.error('Clipboard fallback also failed:', clipErr)
+      console.error('[48co] Clipboard fallback failed:', clipErr.message)
     }
 
     return false
@@ -689,10 +694,11 @@ app.whenReady().then(async () => {
     console.error('Failed to register global shortcut:', shortcut)
   }
 
-  // Push-to-talk: Ctrl+Shift hold
-  // Note: True push-to-talk with key hold detection requires platform-specific
-  // native modules. For now, we use the toggle shortcut. Push-to-talk can be
-  // added later with iohook or similar native key listener.
+  // Mouse wheel click listener (global)
+  // Electron doesn't have a native global mouse listener, so we use the
+  // overlay window + a transparent full-screen input catcher for mouse events.
+  // For now, users can configure hotkeys in settings.
+  // TODO: Add iohook or similar for true global mouse button detection
 
   // Auto-update check
   if (app.isPackaged) {
