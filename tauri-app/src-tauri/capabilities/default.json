@@ -1,0 +1,14 @@
+{
+  "identifier": "default",
+  "description": "48co app capabilities",
+  "windows": ["settings"],
+  "permissions": [
+    "core:default",
+    "shell:allow-open",
+    "global-shortcut:default",
+    "clipboard-manager:default",
+    "store:default",
+    "notification:default",
+    "autostart:default"
+  ]
+}

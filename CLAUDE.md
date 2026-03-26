@@ -1,10 +1,19 @@
 # CLAUDE.md — 48co Engineering Standards & Rules
+# Built by Claude. Designed for humans.
+
+## Project Identity
+- **Product**: 48co — AI Grammar + Voice-to-Text
+- **Built by**: Claude (Anthropic AI) — fully autonomous engineering
+- **Architecture**: Tauri 2.0 (Rust + React) — bleeding edge 2026
+- **Platforms**: Windows, Mac, iOS, Android
+- **Goal**: Beat Grammarly. Everything you write, perfected by AI. On every device.
 
 ## Project Owner Context
 - The owner is NOT a developer. Never assume coding knowledge.
 - Explain decisions in plain English. No jargon without explanation.
 - If something can't be done, say WHY and offer the next-best alternative immediately.
 - Never present a half-solution without flagging what's missing.
+- **FULLY AUTONOMOUS**: Claude has permission to build, fix, audit, deploy without asking. Just do it.
 
 ---
 
@@ -89,54 +98,73 @@ Every session must follow this protocol:
 
 ---
 
-## Hard Rules — Additional
+## Architecture (Tauri 2.0 — Locked In)
 
-### No Half-Measures
-- Every feature must work end-to-end with zero user friction
-- "Copy to clipboard" is NOT a solution when auto-typing is possible
-- If the web platform can't do something, say so HONESTLY
-- Every user-facing flow must be tested: install → configure → use → edge cases
-
-### Honest Communication
-- If something is technically impossible in a browser, say so clearly
-- If a feature requires a download, don't dress it up as "web-based"
-- Separate WHAT WORKS from WHAT'S ASPIRATIONAL
-- Flag risks and blockers at the START, not when they become problems
-
-### Autonomous Operation
-- Don't wait for the user to find problems — find them yourself
-- Don't present options when one is clearly better — make the call and explain
-- If a task requires 5 steps, do all 5 — don't stop at step 2
-- If something breaks during implementation, fix it before reporting back
-
----
-
-## Architecture Decisions (Locked In)
-
-### Product = AI Grammar + Voice-to-Text Everywhere
-
-### Product Delivery — Five Platforms:
-1. **Desktop App** (PRIMARY) — Electron, system tray, global hotkey, types into any app
-2. **Chrome Extension** (VIRAL ENGINE) — Grammar check on any website, free tier drives upgrades
-3. **iPhone Keyboard** — Custom keyboard extension, corrects as you type, voice button
-4. **Android Keyboard** — Same as iPhone, InputMethodService
-5. **Website** (48co.nz) — Marketing, live demo, SEO, downloads
-
-### Voice-to-Text Standard (Match WhisperTyping):
-- Text appears in the chat box WORD BY WORD as user speaks — NOT after they stop
-- Use Web Speech API with interimResults=true for real-time streaming
-- ZERO popups, overlays, or visible UI elements — just text appearing
-- Mouse wheel click as default trigger (customizable hotkey)
-- Must work on: Claude.ai, ChatGPT, Gemini, DeepSeek, Gmail, Slack, any site
+### Why Tauri, not Electron:
+- **5MB app** vs 150MB Electron — no antivirus warnings
+- **Pure Rust** backend — fast, safe, no Node.js runtime
+- **One codebase** for Windows + Mac (iOS + Android via plugins)
+- **No native compilation issues** — enigo replaces nut-tree
+- **Modern**: Tauri 2.0 released Oct 2024, production-ready
 
 ### Tech Stack:
-- **Website**: Next.js 14, React 18, Tailwind CSS 3.4 (LIGHT THEME — white bg, indigo accent)
-- **Desktop App**: Electron 28+, @nut-tree/nut-js, OpenAI Whisper API, Claude API (grammar + rewrite)
-- **Browser Extension**: Chrome MV3 with AI grammar checker + voice-to-text
-- **Mobile Keyboard**: React Native/Expo companion app + native keyboard extensions (Swift/Kotlin)
-- **AI Grammar**: Claude Haiku API (fast grammar) + Claude Sonnet (rewrite/polish)
-- **Speech-to-Text**: OpenAI Whisper API (primary), Web Speech API (free fallback)
-- **Build/Package**: electron-builder for Win + Mac, EAS Build for iOS + Android
+- **App Framework**: Tauri 2.0 (Rust + React + Vite)
+- **Audio Capture**: cpal (Cross-Platform Audio Library, Rust)
+- **Keyboard Simulation**: enigo (Rust, cross-platform)
+- **Speech-to-Text**: OpenAI Whisper API → Phase 2: whisper.cpp local
+- **Grammar**: Claude API → Phase 2: Phi-3 Mini local
+- **Frontend**: React 18 + Tailwind CSS + Vite
+- **Website**: Next.js 14 + Vercel (API + frontend)
+- **Mobile**: Tauri plugins (Swift for iOS, Kotlin for Android)
+
+### File Structure:
+```
+tauri-app/                 → Main application (Tauri 2.0)
+  src-tauri/src/
+    lib.rs                 → App setup, system tray, global shortcut
+    audio.rs               → Mic capture (cpal), WAV encoding
+    transcribe.rs          → Whisper API integration
+    keyboard.rs            → System-wide typing (enigo)
+    grammar.rs             → Post-processing + Claude AI rewrite
+  src/
+    App.jsx                → Settings UI (React)
+    main.jsx               → Entry point
+    styles.css             → Tailwind
+
+app/                       → Next.js website (48co.nz)
+  api/                     → Vercel serverless API routes
+  page.jsx                 → Homepage
+  pricing/page.jsx         → Pricing
+  compare/page.jsx         → Competitor comparison
+  download/page.jsx        → Download page
+  live/page.jsx            → Live demo
+  install/page.jsx         → Extension install guide
+
+extension/                 → Chrome extension (grammar + voice)
+api/                       → Express API server (legacy, migrated to Vercel)
+desktop/                   → Electron app (legacy, replaced by Tauri)
+mobile/                    → Mobile app architecture docs
+```
+
+### Build Phases:
+1. **Phase 1** (NOW): Windows + Mac desktop with Whisper API + Claude grammar
+2. **Phase 2**: On-device Whisper (whisper.cpp) — no API needed
+3. **Phase 3**: On-device grammar (Phi-3 Mini) — no API needed
+4. **Phase 4**: iOS keyboard (Swift Tauri plugin)
+5. **Phase 5**: Android keyboard (Kotlin Tauri plugin)
+
+### Deployment Protocol (Blue-Green):
+- **Staging** auto-deploys on every push to main
+- **Production** requires manual approval
+- Customers NEVER see errors — they're paying for a flawless system
+- The crawl hook runs automatically on every session stop
+
+### Mandatory Crawl Protocol:
+- EVERY session start: automated reminder via SessionStart hook
+- EVERY session stop: automated error crawl via Stop hook
+- Before ANY launch or deployment: manual full crawl
+- After ANY major refactor: manual full crawl
+- The crawl hook is in .claude/settings.json — it runs automatically
 
 ### Quality Checklist (Run Before Every Commit):
 - [ ] Does every feature work end-to-end?
@@ -144,63 +172,5 @@ Every session must follow this protocol:
 - [ ] Is there any copy-paste or manual friction that could be automated?
 - [ ] Would a competitor's user be impressed or disappointed switching to us?
 - [ ] Has every engineering gap been flagged and addressed?
-- [ ] Does voice-to-text stream into the chat box in real-time (not after stopping)?
-- [ ] Does text insertion work on Claude.ai, ChatGPT, and Gmail specifically?
-
-## Known Limitations (Be Honest About These):
-- **Web bookmarklet** cannot type into other tabs — only the current page
-- **Web Speech API** is Chrome/Edge only and less accurate than Whisper
-- **Desktop app requires a download** — there is no way around this for system-wide typing
-- **Whisper API requires an API key** — costs ~$0.006/minute
-- **Electron apps are large** (~150MB) — this is a known Electron tradeoff
-- **macOS requires accessibility permissions** for keyboard simulation
-- **Chrome extension cannot type into other apps** — only browser text fields
-
-## Deployment Protocol (Blue-Green)
-
-### Environments:
-- **Staging** (staging-api.48co.nz) — auto-deploys on every push to main
-- **Production** (api.48co.nz) — requires manual approval after staging passes
-
-### Rule: NEVER push broken code to production.
-- All changes go to staging first
-- Test on staging before approving production deploy
-- If staging breaks, fix it before doing anything else
-- Customers NEVER see errors — they're paying for a flawless system
-
-### Deployment Order:
-1. Website → Vercel/Netlify (auto-deploy on push)
-2. API Server → Docker container (staging → approval → production)
-3. Desktop App → GitHub Releases (CI/CD builds .exe + .dmg)
-4. Chrome Extension → Chrome Web Store (manual upload for now)
-
-## Mandatory Crawl Protocol
-
-### When to crawl:
-- EVERY session start (automated via SessionStart hook)
-- EVERY time Claude stops working (automated via Stop hook)
-- Before ANY launch or deployment
-- After ANY major refactor
-
-### What the crawl checks:
-- Broken imports (files that import from paths that don't exist)
-- Missing files referenced in manifest.json
-- Hardcoded URLs that might break
-- Missing environment variables
-- Files referenced but not committed
-
-### The crawl hook is in .claude/settings.json — it runs automatically.
-### If you're reading this and the hook isn't set up, create it immediately.
-
-## File Structure Convention:
-```
-/app/              → Next.js website pages
-/components/       → React components
-/extension/        → Chrome extension (maintained)
-/desktop/          → Electron desktop app
-/desktop/main/     → Electron main process
-/desktop/renderer/ → Electron renderer (UI)
-/desktop/assets/   → Icons, images for desktop app
-/mobile/           → Mobile keyboard app (React Native + native extensions)
-/public/           → Static web assets
-```
+- [ ] Does Rust code compile without warnings?
+- [ ] Does the React frontend build without errors?
