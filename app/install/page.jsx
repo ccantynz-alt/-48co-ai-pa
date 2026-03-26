@@ -1,127 +1,83 @@
-'use client'
-
-import { useState } from 'react'
-
-const STEPS = [
-  {
-    number: '1',
-    title: 'Download',
-    desc: 'Click the button above. You\'ll get a .zip file called 48co-extension.zip.',
-    detail: null,
-  },
-  {
-    number: '2',
-    title: 'Unzip',
-    desc: 'Extract the zip file. You\'ll see a folder called extension/ with these files inside:',
-    detail: 'manifest.json, background.js, content.js, popup.html, and more.',
-  },
-  {
-    number: '3',
-    title: 'Open Chrome Extensions',
-    desc: 'Type this into your Chrome address bar and press Enter:',
-    detail: 'chrome://extensions',
-  },
-  {
-    number: '4',
-    title: 'Enable Developer Mode',
-    desc: 'In the top-right corner of the extensions page, flip the "Developer mode" toggle ON.',
-    detail: null,
-  },
-  {
-    number: '5',
-    title: 'Load the extension',
-    desc: 'Click "Load unpacked" (top-left), then select the extension/ folder you unzipped.',
-    detail: null,
-  },
-  {
-    number: '6',
-    title: 'Done — go to an AI chat',
-    desc: 'Open Claude.ai, ChatGPT, Gemini, or DeepSeek. The 48co mic widget appears in the bottom-right. Middle-click to record.',
-    detail: null,
-  },
-]
+import Nav from '../../components/Nav'
+import Footer from '../../components/Footer'
 
 export default function InstallPage() {
-  const [downloaded, setDownloaded] = useState(false)
-
   return (
-    <main className="min-h-screen bg-[#0a0a0e] text-white font-mono">
-      <div className="max-w-xl mx-auto px-4 py-16">
-        {/* Back link */}
-        <a href="/" className="text-[11px] text-white/20 hover:text-white/40 transition-colors">
-          &larr; Back to 48co.nz
-        </a>
+    <main className="min-h-screen bg-white">
+      <Nav />
 
-        <h1 className="text-3xl font-bold mt-8 mb-2">Install 48co</h1>
-        <p className="text-white/35 text-sm mb-10">
-          Takes about 60 seconds. No account needed.
-        </p>
+      <div className="max-w-3xl mx-auto px-4 pt-28 pb-16">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            Chrome Extension
+          </h1>
+          <p className="text-gray-400 text-base max-w-md mx-auto">
+            AI grammar checking on any website. Corrects your writing in real-time as you type in Gmail, Slack, Google Docs, and everywhere else.
+          </p>
+        </div>
 
-        {/* Download button */}
-        <a
-          href="/48co-extension.zip"
-          download="48co-extension.zip"
-          onClick={() => setDownloaded(true)}
-          className={`
-            inline-flex items-center gap-3 px-8 py-4 rounded-xl text-sm font-bold tracking-wider transition-all mb-12
-            ${downloaded
-              ? 'bg-[#00ff88]/10 border border-[#00ff88]/30 text-[#00ff88]'
-              : 'bg-[#00f0ff]/10 border border-[#00f0ff]/30 text-[#00f0ff] hover:bg-[#00f0ff]/20'
-            }
-          `}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 5v14M5 12l7 7 7-7" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          {downloaded ? 'Downloaded! Now follow the steps below' : 'Download 48co-extension.zip'}
-        </a>
+        {/* Quick install */}
+        <div className="max-w-lg mx-auto mb-16">
+          <div className="card p-6 shadow-md shadow-black/[0.03]">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">Install in 3 minutes</h2>
 
-        {/* Steps */}
-        <div className="space-y-4">
-          {STEPS.map((step, i) => (
-            <div
-              key={step.number}
-              className="glass rounded-2xl p-5"
-            >
-              <div className="flex items-start gap-4">
-                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#00f0ff]/10 text-[#00f0ff] flex items-center justify-center text-sm font-bold">
-                  {step.number}
-                </span>
-                <div className="flex-1">
-                  <h3 className="text-sm font-bold text-white/80 mb-1">{step.title}</h3>
-                  <p className="text-[12px] text-white/40 leading-relaxed">{step.desc}</p>
-                  {step.detail && (
-                    <code className="inline-block mt-2 text-[11px] text-[#00f0ff]/70 bg-[#00f0ff]/5 px-3 py-1.5 rounded border border-[#00f0ff]/10">
-                      {step.detail}
-                    </code>
-                  )}
+            <div className="space-y-4">
+              {[
+                { step: '1', title: 'Download the extension', desc: 'Click below to download the extension package (.zip file).', action: true },
+                { step: '2', title: 'Open Chrome Extensions', desc: 'Go to chrome://extensions in your browser. Turn on "Developer mode" (top-right toggle).' },
+                { step: '3', title: 'Load the extension', desc: 'Unzip the downloaded file. Click "Load unpacked" and select the unzipped folder.' },
+                { step: '4', title: 'Start using it', desc: 'Open any website. Start typing in a text field. 48co will check your grammar automatically.' },
+              ].map((s) => (
+                <div key={s.step} className="flex items-start gap-4">
+                  <span className="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 text-[13px] font-bold flex-shrink-0">
+                    {s.step}
+                  </span>
+                  <div className="flex-1">
+                    <h3 className="text-[14px] font-semibold text-gray-800 mb-0.5">{s.title}</h3>
+                    <p className="text-[12px] text-gray-400 leading-relaxed">{s.desc}</p>
+                    {s.action && (
+                      <a
+                        href="/48co-extension.zip"
+                        download
+                        className="inline-block mt-2 px-4 py-1.5 rounded-lg bg-indigo-600 text-white text-[12px] font-medium hover:bg-indigo-500 transition-all"
+                      >
+                        Download Extension (.zip)
+                      </a>
+                    )}
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
-
-        {/* Troubleshooting */}
-        <div className="mt-12 glass rounded-2xl p-6">
-          <h3 className="text-[11px] tracking-[0.15em] text-white/25 mb-4 uppercase">Troubleshooting</h3>
-          <div className="space-y-3 text-[12px] text-white/35 leading-relaxed">
-            <p><span className="text-white/50">Widget not showing?</span> Refresh the AI chat page after installing. The extension only loads on claude.ai, chatgpt.com, gemini.google.com, and chat.deepseek.com.</p>
-            <p><span className="text-white/50">Mic not working?</span> Chrome will ask for microphone permission the first time. Click &quot;Allow&quot;.</p>
-            <p><span className="text-white/50">Nothing happens when you speak?</span> Make sure you&apos;re using Chrome or Edge. Firefox and Safari don&apos;t support the Web Speech API.</p>
           </div>
         </div>
 
-        {/* Quick start after install */}
-        <div className="mt-8 text-center">
-          <p className="text-white/20 text-[11px] mb-4">After installing, try it on:</p>
-          <div className="flex gap-3 justify-center flex-wrap">
-            <a href="https://claude.ai" target="_blank" className="px-4 py-2 rounded-lg border border-white/10 text-white/40 text-[11px] hover:border-white/20 transition-all">Claude.ai</a>
-            <a href="https://chatgpt.com" target="_blank" className="px-4 py-2 rounded-lg border border-white/10 text-white/40 text-[11px] hover:border-white/20 transition-all">ChatGPT</a>
-            <a href="https://gemini.google.com" target="_blank" className="px-4 py-2 rounded-lg border border-white/10 text-white/40 text-[11px] hover:border-white/20 transition-all">Gemini</a>
-            <a href="https://chat.deepseek.com" target="_blank" className="px-4 py-2 rounded-lg border border-white/10 text-white/40 text-[11px] hover:border-white/20 transition-all">DeepSeek</a>
+        {/* What it does */}
+        <div className="mb-16">
+          <h2 className="text-xl font-bold text-gray-900 mb-6 text-center">What the extension does</h2>
+          <div className="grid md:grid-cols-3 gap-4">
+            {[
+              { title: 'AI Grammar Check', desc: 'Scans every text field you type in. Shows corrections in a clean tooltip. Click to fix.' },
+              { title: 'Voice-to-Text', desc: 'Press mouse wheel or Ctrl+Shift+Space to dictate. Text streams into the focused field as you speak.' },
+              { title: 'Works Everywhere', desc: 'Gmail, Claude, ChatGPT, Slack, Google Docs, Twitter, LinkedIn — any website with a text field.' },
+            ].map((f) => (
+              <div key={f.title} className="card p-5">
+                <h3 className="text-[14px] font-semibold text-gray-800 mb-1">{f.title}</h3>
+                <p className="text-[12px] text-gray-400 leading-relaxed">{f.desc}</p>
+              </div>
+            ))}
           </div>
+        </div>
+
+        {/* Want more? */}
+        <div className="text-center">
+          <p className="text-[13px] text-gray-400 mb-3">Want voice-to-text in ANY app (not just the browser)?</p>
+          <a href="/download" className="inline-block px-6 py-2.5 rounded-xl bg-indigo-600 text-white text-[13px] font-medium hover:bg-indigo-500 transition-all">
+            Download the Desktop App
+          </a>
         </div>
       </div>
+
+      <Footer />
     </main>
   )
 }
