@@ -17,7 +17,7 @@
   let lastCheckedText = ''
   let activeTooltip = null
 
-  const API_BASE = 'https://api.48co.nz' // managed API proxy
+  const API_BASE = 'https://48co.nz/api' // managed API (runs on same domain as website)
 
   // ── Init: load settings ────────────────────────────────
   chrome.storage.local.get(['grammarEnabled', 'authToken', 'claudeApiKey'], (data) => {
