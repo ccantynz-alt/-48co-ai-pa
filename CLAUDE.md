@@ -156,6 +156,42 @@ Every session must follow this protocol:
 - **macOS requires accessibility permissions** for keyboard simulation
 - **Chrome extension cannot type into other apps** — only browser text fields
 
+## Deployment Protocol (Blue-Green)
+
+### Environments:
+- **Staging** (staging-api.48co.nz) — auto-deploys on every push to main
+- **Production** (api.48co.nz) — requires manual approval after staging passes
+
+### Rule: NEVER push broken code to production.
+- All changes go to staging first
+- Test on staging before approving production deploy
+- If staging breaks, fix it before doing anything else
+- Customers NEVER see errors — they're paying for a flawless system
+
+### Deployment Order:
+1. Website → Vercel/Netlify (auto-deploy on push)
+2. API Server → Docker container (staging → approval → production)
+3. Desktop App → GitHub Releases (CI/CD builds .exe + .dmg)
+4. Chrome Extension → Chrome Web Store (manual upload for now)
+
+## Mandatory Crawl Protocol
+
+### When to crawl:
+- EVERY session start (automated via SessionStart hook)
+- EVERY time Claude stops working (automated via Stop hook)
+- Before ANY launch or deployment
+- After ANY major refactor
+
+### What the crawl checks:
+- Broken imports (files that import from paths that don't exist)
+- Missing files referenced in manifest.json
+- Hardcoded URLs that might break
+- Missing environment variables
+- Files referenced but not committed
+
+### The crawl hook is in .claude/settings.json — it runs automatically.
+### If you're reading this and the hook isn't set up, create it immediately.
+
 ## File Structure Convention:
 ```
 /app/              → Next.js website pages
