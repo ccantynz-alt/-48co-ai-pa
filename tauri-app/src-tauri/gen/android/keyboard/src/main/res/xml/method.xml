@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<input-method xmlns:android="http://schemas.android.com/apk/res/android"
+    android:settingsActivity="nz.co.fortyeightco.MainActivity">
+    <subtype
+        android:imeSubtypeMode="keyboard"
+        android:imeSubtypeLocale="en_US"
+        android:label="English (US)" />
+    <subtype
+        android:imeSubtypeMode="keyboard"
+        android:imeSubtypeLocale="en_GB"
+        android:label="English (UK)" />
+    <subtype
+        android:imeSubtypeMode="keyboard"
+        android:imeSubtypeLocale="en_AU"
+        android:label="English (AU)" />
+    <subtype
+        android:imeSubtypeMode="keyboard"
+        android:imeSubtypeLocale="en_NZ"
+        android:label="English (NZ)" />
+    <subtype
+        android:imeSubtypeMode="voice"
+        android:imeSubtypeLocale="en"
+        android:label="Voice" />
+</input-method>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDisplayName</key>
+    <string>48co</string>
+    <key>CFBundleName</key>
+    <string>48co Keyboard</string>
+    <key>CFBundleIdentifier</key>
+    <string>nz.co.48co.keyboard</string>
+    <key>CFBundleVersion</key>
+    <string>1.0.0</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0.0</string>
+    <key>CFBundlePackageType</key>
+    <string>XPC!</string>
+    <key>NSExtension</key>
+    <dict>
+        <key>NSExtensionPointIdentifier</key>
+        <string>com.apple.keyboard-service</string>
+        <key>NSExtensionPrincipalClass</key>
+        <string>$(PRODUCT_MODULE_NAME).KeyboardViewController</string>
+        <key>NSExtensionAttributes</key>
+        <dict>
+            <key>IsASCIICapable</key>
+            <true/>
+            <key>PrefersRightToLeft</key>
+            <false/>
+            <key>PrimaryLanguage</key>
+            <string>en</string>
+            <key>RequestsOpenAccess</key>
+            <true/>
+        </dict>
+    </dict>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>48co needs microphone access for voice-to-text dictation.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>48co uses speech recognition for voice-to-text.</string>
+</dict>
+</plist>
