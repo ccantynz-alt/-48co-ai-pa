@@ -75,12 +75,16 @@ fn encode_wav(samples: &[f32], sample_rate: u32) -> Vec<u8> {
         sample_format: hound::SampleFormat::Int,
     };
 
-    let mut writer = hound::WavWriter::new(&mut cursor, spec).unwrap();
-    for &sample in samples {
-        let amplitude = (sample * 32767.0).clamp(-32768.0, 32767.0) as i16;
-        writer.write_sample(amplitude).unwrap();
+    // Use if-let to handle errors gracefully instead of panicking
+    if let Ok(mut writer) = hound::WavWriter::new(&mut cursor, spec) {
+        for &sample in samples {
+            let amplitude = (sample * 32767.0).clamp(-32768.0, 32767.0) as i16;
+            if writer.write_sample(amplitude).is_err() {
+                break;
+            }
+        }
+        let _ = writer.finalize();
     }
-    writer.finalize().unwrap();
 
     cursor.into_inner()
 }

@@ -3,12 +3,9 @@
 // System tray app with global hotkey. Records voice, transcribes via Whisper,
 // types text into any focused application using OS-level keyboard simulation.
 //
-// Architecture:
-//   - Rust backend: audio capture, Whisper API, keyboard simulation, settings
-//   - React frontend: settings UI only (the app is invisible during normal use)
-//   - No Electron. No Node.js. Pure Rust + native APIs.
-//
-// Size: ~5MB (vs 150MB Electron). No antivirus warnings. No native compilation issues.
+// Built by Claude. Designed for humans.
+// Architecture: Pure Rust + React. No Electron. No Node.js.
+// Size: ~5MB. No antivirus warnings. No native compilation issues.
 
 mod audio;
 mod keyboard;
@@ -18,10 +15,9 @@ mod local_whisper;
 mod local_grammar;
 
 use std::sync::{Arc, Mutex};
-use tauri::{
-    AppHandle, Manager, SystemTray, SystemTrayMenu, SystemTrayMenuItem,
-    SystemTrayEvent, CustomMenuItem,
-};
+use tauri::{AppHandle, Manager};
+use tauri::menu::{Menu, MenuItem};
+use tauri::tray::TrayIconBuilder;
 
 // App state shared across commands
 pub struct AppState {
@@ -30,8 +26,8 @@ pub struct AppState {
     pub claude_api_key: Mutex<String>,
     pub language: Mutex<String>,
     pub ai_rewrite: Mutex<bool>,
-    pub use_local_whisper: Mutex<bool>,       // true = on-device, false = API
-    pub local_model: Mutex<String>,            // model filename e.g. "ggml-base.bin"
+    pub use_local_whisper: Mutex<bool>,
+    pub local_model: Mutex<String>,
 }
 
 impl Default for AppState {
@@ -48,39 +44,31 @@ impl Default for AppState {
     }
 }
 
-// Tauri commands callable from the frontend
 #[tauri::command]
-async fn toggle_recording(state: tauri::State<'_, Arc<AppState>>, app: AppHandle) -> Result<String, String> {
+async fn toggle_recording(app: AppHandle) -> Result<String, String> {
+    let state = app.state::<Arc<AppState>>();
     let mut recording = state.is_recording.lock().unwrap();
 
     if *recording {
-        // Stop recording
         *recording = false;
-        drop(recording); // release lock before async work
+        drop(recording);
 
-        // Get recorded audio and transcribe
         let audio_data = audio::stop_recording();
-
         let use_local = *state.use_local_whisper.lock().unwrap();
         let language = state.language.lock().unwrap().clone();
 
         let text = if use_local {
-            // On-device transcription — no API key, no internet, no cost
             let model_name = state.local_model.lock().unwrap().clone();
             let model_file = local_whisper::model_path(&model_name);
 
             if !model_file.exists() {
-                return Err(format!(
-                    "Model '{}' not downloaded yet. Go to Settings → Download Model.",
-                    model_name
-                ));
+                return Err(format!("Model '{}' not downloaded. Go to Settings → Download Model.", model_name));
             }
 
             let model_str = model_file.to_string_lossy().to_string();
             let audio = audio_data.clone();
             let lang = language.clone();
 
-            // Run in blocking thread (Whisper inference is CPU-bound)
             tokio::task::spawn_blocking(move || {
                 local_whisper::transcribe_local(&audio, &model_str, &lang)
             })
@@ -88,13 +76,10 @@ async fn toggle_recording(state: tauri::State<'_, Arc<AppState>>, app: AppHandle
             .map_err(|e| format!("Thread error: {}", e))?
             .map_err(|e| format!("Local transcription failed: {}", e))?
         } else {
-            // Cloud transcription via Whisper API
             let api_key = state.whisper_api_key.lock().unwrap().clone();
-
             if api_key.is_empty() {
                 return Err("No API key set. Open Settings to add your OpenAI key, or enable Local Whisper.".to_string());
             }
-
             transcribe::whisper_api(&audio_data, &api_key, &language)
                 .await
                 .map_err(|e| format!("Transcription failed: {}", e))?
@@ -104,77 +89,70 @@ async fn toggle_recording(state: tauri::State<'_, Arc<AppState>>, app: AppHandle
             return Ok("No speech detected.".to_string());
         }
 
-        // Grammar correction pipeline:
-        // 1. If AI rewrite enabled + Claude key → use Claude API (best quality)
-        // 2. Otherwise → use local grammar engine (free, instant, offline)
+        // Grammar pipeline: post-process first, then either AI rewrite or local grammar
         let ai_enabled = *state.ai_rewrite.lock().unwrap();
         let claude_key = state.claude_api_key.lock().unwrap().clone();
+        let processed = grammar::post_process(&text);
 
         let final_text = if ai_enabled && !claude_key.is_empty() {
-            // Cloud AI rewrite (Claude API — best quality)
-            grammar::rewrite(&text, &claude_key)
+            grammar::rewrite(&processed, &claude_key)
                 .await
-                .unwrap_or_else(|_| local_grammar::fix_grammar(&text))
+                .unwrap_or_else(|_| local_grammar::fix_grammar(&processed))
         } else {
-            // Local grammar correction (free, instant, no API)
-            local_grammar::fix_grammar(&grammar::post_process(&text))
+            local_grammar::fix_grammar(&processed)
         };
 
-        // Type into focused application
         keyboard::type_text(&final_text)
             .map_err(|e| format!("Typing failed: {}", e))?;
 
-        // Update tray
         update_tray(&app, false);
-
         Ok(final_text)
     } else {
-        // Start recording
+        // Start recording — check we have either local model or API key
+        let use_local = *state.use_local_whisper.lock().unwrap();
         let api_key = state.whisper_api_key.lock().unwrap().clone();
-        if api_key.is_empty() {
-            return Err("No API key set. Open Settings to add your OpenAI key.".to_string());
+
+        if !use_local && api_key.is_empty() {
+            return Err("No API key set. Open Settings to add your key, or enable Local Whisper.".to_string());
         }
 
         *recording = true;
         drop(recording);
 
-        audio::start_recording()
-            .map_err(|e| format!("Mic error: {}", e))?;
-
+        audio::start_recording().map_err(|e| format!("Mic error: {}", e))?;
         update_tray(&app, true);
-
         Ok("Recording started".to_string())
     }
 }
 
 #[tauri::command]
-fn set_api_key(state: tauri::State<'_, Arc<AppState>>, key: String) {
-    *state.whisper_api_key.lock().unwrap() = key;
+fn set_api_key(app: AppHandle, key: String) {
+    app.state::<Arc<AppState>>().whisper_api_key.lock().unwrap().clone_from(&key);
 }
 
 #[tauri::command]
-fn set_claude_key(state: tauri::State<'_, Arc<AppState>>, key: String) {
-    *state.claude_api_key.lock().unwrap() = key;
+fn set_claude_key(app: AppHandle, key: String) {
+    app.state::<Arc<AppState>>().claude_api_key.lock().unwrap().clone_from(&key);
 }
 
 #[tauri::command]
-fn set_language(state: tauri::State<'_, Arc<AppState>>, lang: String) {
-    *state.language.lock().unwrap() = lang;
+fn set_language(app: AppHandle, lang: String) {
+    app.state::<Arc<AppState>>().language.lock().unwrap().clone_from(&lang);
 }
 
 #[tauri::command]
-fn set_ai_rewrite(state: tauri::State<'_, Arc<AppState>>, enabled: bool) {
-    *state.ai_rewrite.lock().unwrap() = enabled;
+fn set_ai_rewrite(app: AppHandle, enabled: bool) {
+    *app.state::<Arc<AppState>>().ai_rewrite.lock().unwrap() = enabled;
 }
 
 #[tauri::command]
-fn set_use_local_whisper(state: tauri::State<'_, Arc<AppState>>, enabled: bool) {
-    *state.use_local_whisper.lock().unwrap() = enabled;
+fn set_use_local_whisper(app: AppHandle, enabled: bool) {
+    *app.state::<Arc<AppState>>().use_local_whisper.lock().unwrap() = enabled;
 }
 
 #[tauri::command]
-fn set_local_model(state: tauri::State<'_, Arc<AppState>>, model: String) {
-    *state.local_model.lock().unwrap() = model;
+fn set_local_model(app: AppHandle, model: String) {
+    app.state::<Arc<AppState>>().local_model.lock().unwrap().clone_from(&model);
 }
 
 #[tauri::command]
@@ -203,15 +181,6 @@ fn update_tray(app: &AppHandle, recording: bool) {
     }
 }
 
-fn build_tray_menu() -> SystemTrayMenu {
-    SystemTrayMenu::new()
-        .add_item(CustomMenuItem::new("toggle", "Start Recording"))
-        .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(CustomMenuItem::new("settings", "Settings"))
-        .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(CustomMenuItem::new("quit", "Quit 48co"))
-}
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let state = Arc::new(AppState::default());
@@ -226,25 +195,26 @@ pub fn run() {
             None,
         ))
         .plugin(tauri_plugin_notification::init())
-        .manage(state.clone())
-        .system_tray(SystemTray::new().with_menu(build_tray_menu()))
-        .on_system_tray_event(move |app, event| {
-            match event {
-                SystemTrayEvent::LeftClick { .. } => {
-                    // Toggle recording on left click
-                    let state = app.state::<Arc<AppState>>();
-                    let app_handle = app.clone();
-                    tauri::async_runtime::spawn(async move {
-                        let _ = toggle_recording(state, app_handle).await;
-                    });
-                }
-                SystemTrayEvent::MenuItemClick { id, .. } => {
-                    match id.as_str() {
+        .manage(state)
+        .setup(|app| {
+            // Build tray menu (Tauri 2.0 API)
+            let toggle_item = MenuItem::with_id(app, "toggle", "Start Recording", true, None::<&str>)?;
+            let settings_item = MenuItem::with_id(app, "settings", "Settings", true, None::<&str>)?;
+            let quit_item = MenuItem::with_id(app, "quit", "Quit 48co", true, None::<&str>)?;
+            let menu = Menu::with_items(app, &[&toggle_item, &settings_item, &quit_item])?;
+
+            let _tray = TrayIconBuilder::with_id("main")
+                .tooltip("48co — Ready")
+                .menu(&menu)
+                .on_menu_event(move |app, event| {
+                    match event.id.as_ref() {
                         "toggle" => {
-                            let state = app.state::<Arc<AppState>>();
-                            let app_handle = app.clone();
+                            let handle = app.clone();
                             tauri::async_runtime::spawn(async move {
-                                let _ = toggle_recording(state, app_handle).await;
+                                match toggle_recording(handle).await {
+                                    Ok(msg) => println!("[48co] {}", msg),
+                                    Err(e) => eprintln!("[48co] Error: {}", e),
+                                }
                             });
                         }
                         "settings" => {
@@ -253,37 +223,37 @@ pub fn run() {
                                 let _ = window.set_focus();
                             }
                         }
-                        "quit" => {
-                            app.exit(0);
-                        }
+                        "quit" => { app.exit(0); }
                         _ => {}
                     }
-                }
-                _ => {}
-            }
-        })
-        .setup(|app| {
-            // Register global shortcut: Ctrl+Shift+Space
+                })
+                .on_tray_icon_event(|tray, event| {
+                    if let tauri::tray::TrayIconEvent::Click { .. } = event {
+                        let handle = tray.app_handle().clone();
+                        tauri::async_runtime::spawn(async move {
+                            match toggle_recording(handle).await {
+                                Ok(msg) => println!("[48co] {}", msg),
+                                Err(e) => eprintln!("[48co] Error: {}", e),
+                            }
+                        });
+                    }
+                })
+                .build(app)?;
+
+            // Register global shortcut
             use tauri_plugin_global_shortcut::ShortcutState;
-
-            let state = app.state::<Arc<AppState>>().inner().clone();
             let app_handle = app.handle().clone();
-
-            app.global_shortcut().on_shortcut("CmdOrCtrl+Shift+Space", move |_, _, event| {
+            app.global_shortcut().on_shortcut("CmdOrCtrl+Shift+Space", move |_app, _shortcut, event| {
                 if event.state == ShortcutState::Pressed {
-                    let s = state.clone();
                     let h = app_handle.clone();
                     tauri::async_runtime::spawn(async move {
-                        let _ = toggle_recording(
-                            tauri::State::from(&s),
-                            h,
-                        ).await;
+                        match toggle_recording(h).await {
+                            Ok(msg) => println!("[48co] {}", msg),
+                            Err(e) => eprintln!("[48co] Error: {}", e),
+                        }
                     });
                 }
             })?;
-
-            // Load saved settings from store
-            // Settings are loaded by the frontend on startup and sent via commands
 
             Ok(())
         })
