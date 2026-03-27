@@ -13,6 +13,7 @@ mod transcribe;
 mod grammar;
 mod local_whisper;
 mod local_grammar;
+mod hotkeys;
 
 use std::sync::{Arc, Mutex};
 use tauri::{AppHandle, Manager};
@@ -171,6 +172,22 @@ fn get_models_dir() -> String {
     local_whisper::models_dir().to_string_lossy().to_string()
 }
 
+#[tauri::command]
+fn set_mouse_hotkey(button: String) {
+    let hk = hotkeys::HotkeyButton::from_str(&button);
+    hotkeys::set_mouse_hotkey(hk);
+}
+
+#[tauri::command]
+fn get_hotkey_options() -> Vec<serde_json::Value> {
+    vec![
+        serde_json::json!({"id": "middle-click", "label": "Mouse Wheel Click", "desc": "Press the scroll wheel as a button"}),
+        serde_json::json!({"id": "mouse4", "label": "Mouse Side Button (Back)", "desc": "Side button near your thumb"}),
+        serde_json::json!({"id": "mouse5", "label": "Mouse Side Button (Forward)", "desc": "Other side button"}),
+        serde_json::json!({"id": "keyboard-only", "label": "Keyboard Only", "desc": "Use Ctrl+Shift+Space only"}),
+    ]
+}
+
 fn update_tray(app: &AppHandle, recording: bool) {
     if let Some(tray) = app.tray_by_id("main") {
         let _ = tray.set_tooltip(Some(if recording {
@@ -255,6 +272,21 @@ pub fn run() {
                 }
             })?;
 
+            // Start mouse button listener (runs in background thread)
+            // This is what enables mouse wheel click as a hotkey
+            let mouse_handle = app.handle().clone();
+            hotkeys::start_mouse_listener(move || {
+                let h = mouse_handle.clone();
+                tauri::async_runtime::spawn(async move {
+                    match toggle_recording(h).await {
+                        Ok(msg) => println!("[48co] Mouse toggle: {}", msg),
+                        Err(e) => eprintln!("[48co] Mouse toggle error: {}", e),
+                    }
+                });
+            });
+
+            println!("[48co] Ready. Ctrl+Shift+Space or mouse wheel click to record.");
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -268,6 +300,8 @@ pub fn run() {
             check_model_downloaded,
             download_model,
             get_models_dir,
+            set_mouse_hotkey,
+            get_hotkey_options,
         ])
         .run(tauri::generate_context!())
         .expect("error while running 48co");
