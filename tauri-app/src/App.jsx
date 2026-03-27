@@ -11,6 +11,7 @@ export default function App() {
   const [localModel, setLocalModel] = useState('ggml-base.bin')
   const [modelDownloaded, setModelDownloaded] = useState(false)
   const [downloading, setDownloading] = useState(false)
+  const [mouseHotkey, setMouseHotkey] = useState('middle-click')
   const [status, setStatus] = useState('Ready')
   const [saved, setSaved] = useState(false)
 
@@ -25,6 +26,7 @@ export default function App() {
         setAiRewrite(await store.get('aiRewrite') || false)
         setUseLocalWhisper(await store.get('useLocalWhisper') || false)
         setLocalModel(await store.get('localModel') || 'ggml-base.bin')
+        setMouseHotkey(await store.get('mouseHotkey') || 'middle-click')
 
         // Send to Rust backend
         if (await store.get('whisperApiKey')) invoke('set_api_key', { key: await store.get('whisperApiKey') })
@@ -33,6 +35,7 @@ export default function App() {
         invoke('set_ai_rewrite', { enabled: await store.get('aiRewrite') || false })
         invoke('set_use_local_whisper', { enabled: await store.get('useLocalWhisper') || false })
         invoke('set_local_model', { model: await store.get('localModel') || 'ggml-base.bin' })
+        invoke('set_mouse_hotkey', { button: await store.get('mouseHotkey') || 'middle-click' })
 
         // Check if model is downloaded
         const model = await store.get('localModel') || 'ggml-base.bin'
@@ -227,14 +230,38 @@ export default function App() {
         {/* Status */}
         <p className="text-xs text-gray-400 text-center">{status}</p>
 
-        {/* Shortcut info */}
+        {/* Hotkey Settings */}
         <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-          <p className="text-xs text-gray-500 font-medium mb-2">Keyboard Shortcut</p>
-          <p className="text-sm text-gray-700">
-            <kbd className="px-1.5 py-0.5 bg-white border border-gray-200 rounded text-xs">Ctrl+Shift+Space</kbd>
-            {' '}to toggle recording
-          </p>
-          <p className="text-xs text-gray-400 mt-2">Works in any app — browser, email, Slack, anywhere</p>
+          <p className="text-xs text-gray-500 font-medium mb-3">Recording Trigger</p>
+
+          <div className="mb-3">
+            <p className="text-sm text-gray-700 mb-1">
+              <kbd className="px-1.5 py-0.5 bg-white border border-gray-200 rounded text-xs">Ctrl+Shift+Space</kbd>
+              {' '}— always active
+            </p>
+          </div>
+
+          <div className="mb-2">
+            <label className="block text-xs text-gray-500 mb-1">Mouse button (optional)</label>
+            <select
+              value={mouseHotkey}
+              onChange={async (e) => {
+                setMouseHotkey(e.target.value)
+                await invoke('set_mouse_hotkey', { button: e.target.value })
+                const store = await load('settings.json')
+                await store.set('mouseHotkey', e.target.value)
+                await store.save()
+              }}
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-indigo-300"
+            >
+              <option value="middle-click">Mouse Wheel Click (press the scroll wheel)</option>
+              <option value="mouse4">Side Button (Back)</option>
+              <option value="mouse5">Side Button (Forward)</option>
+              <option value="keyboard-only">Keyboard Only — no mouse trigger</option>
+            </select>
+          </div>
+
+          <p className="text-xs text-gray-400">Works in any app — browser, email, Slack, anywhere</p>
         </div>
       </div>
     </div>
