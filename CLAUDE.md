@@ -1,15 +1,19 @@
-# CLAUDE.md — 48co Engineering Standards & Rules
+# CLAUDE.md — AlecRae Voice Engineering Standards & Rules
 # Built by Claude. Designed for humans.
-# Last deep scan: March 27, 2026
+# Last deep scan: March 28, 2026
 # Status: WAR MODE — No more three-legged dog. Ship or die.
 
 ## Project Identity
-- **Product**: 48co — AI Grammar + Voice-to-Text + Custom Keyboard
+- **Product**: AlecRae Voice — AI Grammar + Voice-to-Text + Custom Keyboard
+- **Brand**: AlecRae (parent brand) — this repo builds the Voice product only
+- **Domain**: alecrae.ai (primary), alecrae.com (redirect)
+- **Other AlecRae products** (separate repos, not built here): AlecRae Law, AlecRae Accounting, AlecRae Oracle
 - **Built by**: Claude (Anthropic AI) — fully autonomous engineering
 - **Architecture**: Tauri 2.0 (Rust + React) — bleeding edge 2026
 - **Platforms**: Windows, Mac, iOS, Android, Chrome Extension, Web App
 - **Goal**: 80-90% ahead of every competitor. Not "as good as" — BETTER THAN. Grammarly, Wispr Flow, SuperWhisper, WhisperTyping — all of them.
 - **Target users**: Lawyers, accountants, doctors, executives, anyone who writes for a living. This is a professional tool, not a toy.
+- **Naming rule**: All user-facing text says "AlecRae Voice" (or just "AlecRae" in context). The old name "48co" is retired.
 
 ## Project Owner Context
 - The owner is NOT a developer. Never assume coding knowledge.
@@ -194,7 +198,7 @@ These are locked-in decisions. Do not deviate without documenting why.
 ## COMPETITIVE GAP ANALYSIS — What We Must Build
 
 ### vs Grammarly (Market Leader)
-| Feature | Grammarly | 48co | Gap |
+| Feature | Grammarly | AlecRae Voice | Gap |
 |---------|-----------|------|-----|
 | Grammar checking | Yes (rule + AI) | Yes (Claude AI) | We're BETTER — AI-native |
 | Voice-to-text | No | Yes | We WIN |
@@ -209,7 +213,7 @@ These are locked-in decisions. Do not deviate without documenting why.
 | Payment/subscriptions | Yes (Stripe) | No | CRITICAL GAP |
 
 ### vs Wispr Flow
-| Feature | Wispr Flow | 48co | Gap |
+| Feature | Wispr Flow | AlecRae Voice | Gap |
 |---------|-----------|------|-----|
 | Voice-to-text | Yes (cloud) | Yes (cloud + local) | We're BETTER — offline mode |
 | Real-time streaming | Yes | No | GAP — must add Deepgram/AssemblyAI |
@@ -218,7 +222,7 @@ These are locked-in decisions. Do not deviate without documenting why.
 | Price | $15/mo | $12/mo | We WIN |
 
 ### vs SuperWhisper
-| Feature | SuperWhisper | 48co | Gap |
+| Feature | SuperWhisper | AlecRae Voice | Gap |
 |---------|-------------|------|-----|
 | Mac-native polish | Excellent | Good | GAP — improve Tauri UI/UX |
 | Real-time streaming | Yes | No | GAP — critical |
@@ -227,13 +231,131 @@ These are locked-in decisions. Do not deviate without documenting why.
 | Grammar correction | No | Yes | We WIN |
 
 ### Priority Build Order (What Closes The Most Gaps)
-1. **Stripe payment integration** — can't run a business without revenue
+1. **Stripe payment integration** — DONE (checkout, webhooks, billing portal wired)
 2. **Real-time streaming transcription** — table stakes, every competitor has it
 3. **iOS custom keyboard (Swift)** — massive market, professionals need this
 4. **Android custom keyboard (Kotlin)** — same as above
 5. **Meeting transcription** — Grammarly and Otter.ai own this space
 6. **Team admin dashboard** — unlocks Business tier revenue
 7. **Desktop release pipeline** — users need to actually download and install the app
+
+---
+
+## ADVANCED FEATURES — What Makes AlecRae Voice 80-90% Ahead
+
+These are the features that no competitor combines in one product. Each one is a reason a professional says "I can't work without this."
+
+### Tier 1 — Build Now (Differentiators)
+
+**Real-Time Streaming Transcription**
+- Words appear as you speak, not after you stop. Sub-500ms latency.
+- Cloud: Deepgram Nova-3 or AssemblyAI Universal-2 (WebSocket streaming)
+- Local: whisper.cpp with voice activity detection, 1-second chunked inference
+- Why: SuperWhisper and Wispr Flow both have this. We must match or beat it.
+
+**Custom Vocabulary Injection**
+- Users add industry terms the AI never gets wrong: legal terms, medical terms, company names, product names
+- Stored per user, synced across devices
+- Injected into both speech recognition and grammar correction
+- Why: Every dictation tool butchers specialist terms. A lawyer getting "per say" instead of "per se" loses trust immediately.
+
+**Perfect Number Dictation**
+- "twelve million four hundred fifty-three thousand and twenty-two dollars and sixteen cents" → $12,453,022.16
+- Currency-aware: NZD, USD, GBP, EUR with correct symbols
+- Percentage handling: "twelve point five percent" → 12.5%
+- Why: Accountants and executives dictate numbers constantly. Getting this wrong is a dealbreaker.
+
+**Full Offline / Confidentiality Mode**
+- Toggle that guarantees zero data leaves the device
+- All transcription via local whisper.cpp, all grammar via local rules
+- Audit log: every session logged with timestamp and processing mode (local vs cloud)
+- Why: Lawyers have attorney-client privilege obligations. A tool that can prove zero cloud leakage becomes the ONLY tool privacy-conscious firms approve.
+
+**Preserve My Voice (Already Built — Expand It)**
+- Already stores writing samples and feeds them to Claude for style matching
+- Expand: learn from corrections the user makes (if they keep changing "utilize" back to "use", stop suggesting "utilize")
+- Expand: per-context voice profiles (formal for emails, casual for Slack)
+- Why: Unique feature. No competitor has this. It's our moat.
+
+### Tier 2 — Build Next (Competitive Advantages)
+
+**Meeting Transcription + Action Items**
+- Join Zoom, Teams, Google Meet — or capture system audio silently
+- Multi-speaker diarization: identifies who said what
+- Auto-extract action items: "John will send the proposal by Friday" → Action: John — Send proposal — Due: Friday
+- Decision logging: highlights decisions made during the meeting
+- 3-paragraph summary generated within 30 seconds of meeting end
+- Follow-up email draft: one click to send decisions and action items to attendees
+- Why: Otter.ai charges $20/mo just for this. We bundle it into the $12/mo Pro plan.
+
+**Correction By Voice**
+- "Fix that" / "Change lawyer to attorney" / "Delete the last sentence" — conversational editing
+- No keyboard needed to make corrections to dictated text
+- Why: Wispr Flow has this. It makes hands-free dictation actually usable.
+
+**Context-Aware Auto-Formatting**
+- Detects whether you're in an email, Slack, legal document, spreadsheet, or code editor
+- Automatically adjusts formatting: bullet points in Slack, formal paragraphs in email, code fences in IDE
+- Why: Wispr Flow pioneered this. We already detect apps — now we format for them.
+
+### Tier 3 — Build Later (Future Dominance)
+
+**Real-Time Translation**
+- Speak in English, text appears in another language (or vice versa)
+- 200+ languages via SeamlessM4T or similar
+- Use case: NZ professional dictating in English, output in Te Reo Maori
+- Why: No voice-to-text competitor does live translation. First to ship wins.
+
+**Multi-Modal Context (Voice + Screen)**
+- AI sees what's on your screen AND hears what you say
+- "Summarize what's on screen" / "What does this spreadsheet show?"
+- Screen context processed in memory, never stored permanently
+- Privacy: user chooses which apps can be captured (never banking, passwords)
+- Why: Granola.ai is pioneering this for meetings. We extend it to all work.
+
+**Voice Cloning / Text-to-Speech**
+- Read back any document in YOUR voice, not a robot
+- 30-second voice enrollment to create a clone
+- Use case: lawyer records a voice memo from written text — sounds like the lawyer
+- Local processing option: voice model never leaves the device
+- Why: ElevenLabs charges $22/mo for this alone. We bundle it.
+
+**RAG on Your Documents**
+- Connect AlecRae Voice to your document repository (local folders, Google Drive, SharePoint)
+- "Use the language from last year's report" — finds and inserts it
+- "What's our standard clause for indemnification?" — searches your docs and answers
+- Vector database (local ChromaDB or cloud Pinecone) for semantic search
+- Why: This turns a dictation tool into a knowledge assistant. Massive upgrade.
+
+**Agent Workflows — AI That Takes Actions**
+- Move beyond transcription: the AI executes multi-step tasks from voice
+- "Draft an email to [client] summarizing today's meeting and send it"
+- "Log 2 hours to the ABC Corp project"
+- "Schedule a follow-up meeting with everyone from today's call"
+- Integration with calendar, email, project management tools
+- Why: This is where AI is heading. Voice commands that DO things, not just type things.
+
+### What This Means vs Competitors
+
+| Feature | Grammarly | Wispr Flow | SuperWhisper | Otter.ai | AlecRae Voice |
+|---------|-----------|------------|--------------|----------|---------------|
+| Grammar + AI rewrite | Yes | Basic | No | No | Yes (Claude) |
+| Voice-to-text | No | Yes | Yes | Yes | Yes |
+| Real-time streaming | N/A | Yes | Yes | Yes | Planned |
+| Custom vocabulary | No | No | Yes | No | Planned |
+| Number dictation | N/A | Basic | Basic | Basic | Planned (perfect) |
+| Meeting transcription | No | No | No | Yes | Planned |
+| Preserve My Voice | No | No | No | No | YES (unique) |
+| Offline / privacy mode | No | No | Yes | No | Yes |
+| Voice correction | No | Yes | No | No | Planned |
+| Real-time translation | No | No | No | No | Planned |
+| Screen context | No | No | No | No | Planned |
+| Agent workflows | No | No | No | No | Planned |
+| Custom keyboard iOS | Yes | No | No | No | Planned |
+| Custom keyboard Android | Yes | No | No | No | Planned |
+| Price | $30/mo | $15/mo | $10/mo | $20/mo | $12/mo |
+
+**Nobody combines all of this in one product. That's the 80-90% advantage.**
 
 ---
 
@@ -256,7 +378,7 @@ tauri-app/                 -> Main desktop application (Tauri 2.0)
     main.jsx               -> Entry point
     styles.css             -> Tailwind
 
-app/                       -> Next.js website (48co.nz) — SINGLE BACKEND
+app/                       -> Next.js website (alecrae.ai) — SINGLE BACKEND
   api/                     -> Vercel serverless API routes (auth, grammar, rewrite, usage)
   page.jsx                 -> Homepage
   pricing/page.jsx         -> Pricing
@@ -366,6 +488,6 @@ shared-rust/               -> Shared Rust core (grammar, whisper bindings) via u
 
 This app is for lawyers drafting contracts. Accountants writing reports. Doctors dictating notes. Executives composing emails. These people don't have time for broken software. They don't care about our tech stack. They care that when they speak, the right words appear. When they write, their grammar is perfect. When they switch devices, it just works.
 
-Every decision we make must pass one test: **Would a lawyer pay $12/month for this?**
+Every decision we make must pass one test: **Would a lawyer pay $12/month for AlecRae Voice?**
 
 If the answer is no, we haven't built it right yet. Keep going.
