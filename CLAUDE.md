@@ -1,15 +1,19 @@
-# CLAUDE.md — 48co Engineering Standards & Rules
+# CLAUDE.md — AlecRae Voice Engineering Standards & Rules
 # Built by Claude. Designed for humans.
-# Last deep scan: March 27, 2026
+# Last deep scan: March 28, 2026
 # Status: WAR MODE — No more three-legged dog. Ship or die.
 
 ## Project Identity
-- **Product**: 48co — AI Grammar + Voice-to-Text + Custom Keyboard
+- **Product**: AlecRae Voice — AI Grammar + Voice-to-Text + Custom Keyboard
+- **Brand**: AlecRae (parent brand) — this repo builds the Voice product only
+- **Domain**: alecrae.ai (primary), alecrae.com (redirect)
+- **Other AlecRae products** (separate repos, not built here): AlecRae Law, AlecRae Accounting, AlecRae Oracle
 - **Built by**: Claude (Anthropic AI) — fully autonomous engineering
 - **Architecture**: Tauri 2.0 (Rust + React) — bleeding edge 2026
 - **Platforms**: Windows, Mac, iOS, Android, Chrome Extension, Web App
 - **Goal**: 80-90% ahead of every competitor. Not "as good as" — BETTER THAN. Grammarly, Wispr Flow, SuperWhisper, WhisperTyping — all of them.
 - **Target users**: Lawyers, accountants, doctors, executives, anyone who writes for a living. This is a professional tool, not a toy.
+- **Naming rule**: All user-facing text says "AlecRae Voice" (or just "AlecRae" in context). The old name "48co" is retired.
 
 ## Project Owner Context
 - The owner is NOT a developer. Never assume coding knowledge.
@@ -194,7 +198,7 @@ These are locked-in decisions. Do not deviate without documenting why.
 ## COMPETITIVE GAP ANALYSIS — What We Must Build
 
 ### vs Grammarly (Market Leader)
-| Feature | Grammarly | 48co | Gap |
+| Feature | Grammarly | AlecRae Voice | Gap |
 |---------|-----------|------|-----|
 | Grammar checking | Yes (rule + AI) | Yes (Claude AI) | We're BETTER — AI-native |
 | Voice-to-text | No | Yes | We WIN |
@@ -209,7 +213,7 @@ These are locked-in decisions. Do not deviate without documenting why.
 | Payment/subscriptions | Yes (Stripe) | No | CRITICAL GAP |
 
 ### vs Wispr Flow
-| Feature | Wispr Flow | 48co | Gap |
+| Feature | Wispr Flow | AlecRae Voice | Gap |
 |---------|-----------|------|-----|
 | Voice-to-text | Yes (cloud) | Yes (cloud + local) | We're BETTER — offline mode |
 | Real-time streaming | Yes | No | GAP — must add Deepgram/AssemblyAI |
@@ -218,7 +222,7 @@ These are locked-in decisions. Do not deviate without documenting why.
 | Price | $15/mo | $12/mo | We WIN |
 
 ### vs SuperWhisper
-| Feature | SuperWhisper | 48co | Gap |
+| Feature | SuperWhisper | AlecRae Voice | Gap |
 |---------|-------------|------|-----|
 | Mac-native polish | Excellent | Good | GAP — improve Tauri UI/UX |
 | Real-time streaming | Yes | No | GAP — critical |
@@ -256,7 +260,7 @@ tauri-app/                 -> Main desktop application (Tauri 2.0)
     main.jsx               -> Entry point
     styles.css             -> Tailwind
 
-app/                       -> Next.js website (48co.nz) — SINGLE BACKEND
+app/                       -> Next.js website (alecrae.ai) — SINGLE BACKEND
   api/                     -> Vercel serverless API routes (auth, grammar, rewrite, usage)
   page.jsx                 -> Homepage
   pricing/page.jsx         -> Pricing
@@ -366,6 +370,6 @@ shared-rust/               -> Shared Rust core (grammar, whisper bindings) via u
 
 This app is for lawyers drafting contracts. Accountants writing reports. Doctors dictating notes. Executives composing emails. These people don't have time for broken software. They don't care about our tech stack. They care that when they speak, the right words appear. When they write, their grammar is perfect. When they switch devices, it just works.
 
-Every decision we make must pass one test: **Would a lawyer pay $12/month for this?**
+Every decision we make must pass one test: **Would a lawyer pay $12/month for AlecRae Voice?**
 
 If the answer is no, we haven't built it right yet. Keep going.
