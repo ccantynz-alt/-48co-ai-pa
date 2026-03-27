@@ -35,5 +35,12 @@ cpal = "0.15"          # Cross-platform audio capture
 hound = "3.5"          # WAV encoding for Whisper API
 regex = "1"            # Text processing patterns
 once_cell = "1"        # Lazy static initialization
+candle-core = { version = "0.8", optional = true }       # Local LLM inference (Phase 3)
+candle-transformers = { version = "0.8", optional = true } # Model loading
+candle-nn = { version = "0.8", optional = true }
+
+[features]
+default = []
+local-grammar = ["candle-core", "candle-transformers", "candle-nn"]  # Enable for on-device grammar
 whisper-rs = "0.12"    # whisper.cpp Rust bindings — on-device speech-to-text
 dirs = "5"             # OS-standard directories for model storage
