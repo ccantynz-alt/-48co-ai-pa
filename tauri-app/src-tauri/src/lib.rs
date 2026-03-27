@@ -15,6 +15,7 @@ mod keyboard;
 mod transcribe;
 mod grammar;
 mod local_whisper;
+mod local_grammar;
 
 use std::sync::{Arc, Mutex};
 use tauri::{
@@ -103,16 +104,20 @@ async fn toggle_recording(state: tauri::State<'_, Arc<AppState>>, app: AppHandle
             return Ok("No speech detected.".to_string());
         }
 
-        // Optional: AI grammar/rewrite
+        // Grammar correction pipeline:
+        // 1. If AI rewrite enabled + Claude key → use Claude API (best quality)
+        // 2. Otherwise → use local grammar engine (free, instant, offline)
         let ai_enabled = *state.ai_rewrite.lock().unwrap();
         let claude_key = state.claude_api_key.lock().unwrap().clone();
 
         let final_text = if ai_enabled && !claude_key.is_empty() {
+            // Cloud AI rewrite (Claude API — best quality)
             grammar::rewrite(&text, &claude_key)
                 .await
-                .unwrap_or(text.clone()) // fallback to original on failure
+                .unwrap_or_else(|_| local_grammar::fix_grammar(&text))
         } else {
-            grammar::post_process(&text)
+            // Local grammar correction (free, instant, no API)
+            local_grammar::fix_grammar(&grammar::post_process(&text))
         };
 
         // Type into focused application
