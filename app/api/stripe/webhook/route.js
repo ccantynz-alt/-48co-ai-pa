@@ -9,7 +9,7 @@
  */
 import { NextResponse } from 'next/server'
 import { sql } from '@vercel/postgres'
-import { stripe } from '../../../../lib/stripe'
+import { getStripe } from '../../../../lib/stripe'
 import { initDb } from '../../../../lib/db'
 
 // Stripe needs the raw body to verify the webhook signature
@@ -29,7 +29,7 @@ export async function POST(request) {
 
     let event
     try {
-      event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET)
+      event = getStripe().webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET)
     } catch (err) {
       console.error('Webhook signature failed:', err.message)
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
@@ -79,7 +79,7 @@ export async function POST(request) {
 
 async function activatePlan(customerId) {
   // Get the active subscription to determine plan
-  const subscriptions = await stripe.subscriptions.list({
+  const subscriptions = await getStripe().subscriptions.list({
     customer: customerId,
     status: 'active',
     limit: 1,
