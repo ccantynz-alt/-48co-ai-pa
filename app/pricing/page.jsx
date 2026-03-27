@@ -1,3 +1,7 @@
+import Nav from '../../components/Nav'
+import Footer from '../../components/Footer'
+import PricingCards from './PricingCards'
+
 export const metadata = {
   title: '48co Pricing — AI Grammar & Voice Plans | Free, Pro & Teams',
   description: 'AI grammar correction + voice-to-text on every device. Free to start, Pro at $12/mo, Business $29/mo for 10 users. 60% cheaper than Grammarly.',
@@ -7,68 +11,7 @@ export const metadata = {
   },
 }
 
-import Nav from '../../components/Nav'
-import Footer from '../../components/Footer'
-
 export default function PricingPage() {
-  const plans = [
-    {
-      name: 'Free',
-      price: '$0',
-      period: 'forever',
-      highlight: false,
-      features: [
-        '10 AI grammar corrections per day',
-        'Basic voice dictation (60 min/mo)',
-        'Chrome extension',
-        'Works on any website',
-        'Spelling + punctuation fixes',
-      ],
-      cta: 'Get Started Free',
-      ctaHref: '/download',
-    },
-    {
-      name: 'Pro',
-      price: '$12',
-      period: '/month or $99/year',
-      highlight: true,
-      badge: 'MOST POPULAR',
-      features: [
-        'Unlimited AI grammar corrections',
-        'Unlimited voice-to-text',
-        'AI Rewrite Mode (tone + polish)',
-        'Preserve My Voice (learns your style)',
-        'Context-aware (email, Slack, code)',
-        'Desktop app (Mac + Windows)',
-        'Chrome extension (all websites)',
-        'iPhone + Android keyboard (coming)',
-        'Offline mode (privacy-first)',
-        '50+ languages',
-        'Custom vocabulary + macros',
-      ],
-      cta: 'Start 7-Day Free Trial',
-      ctaHref: '/download',
-    },
-    {
-      name: 'Business',
-      price: '$29',
-      period: '/month — up to 10 users',
-      highlight: false,
-      badge: 'BEST VALUE',
-      features: [
-        'Everything in Pro for up to 10 users',
-        'Team style guide enforcement',
-        'Shared vocabulary across team',
-        'Admin dashboard + usage analytics',
-        'Priority support',
-        'Invoice billing',
-        'That\u2019s just $2.90 per user',
-      ],
-      cta: 'Start Business Trial',
-      ctaHref: 'mailto:team@48co.nz',
-    },
-  ]
-
   return (
     <main className="min-h-screen bg-white">
       <Nav />
@@ -89,38 +32,8 @@ export default function PricingPage() {
           </p>
         </div>
 
-        {/* Plans */}
-        <div className="grid md:grid-cols-3 gap-6">
-          {plans.map((plan) => (
-            <div key={plan.name} className={`rounded-2xl p-6 flex flex-col border ${
-              plan.highlight ? 'border-indigo-200 bg-indigo-50/30 shadow-lg shadow-indigo-500/5 relative' : 'border-gray-200'
-            }`}>
-              {plan.badge && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-[10px] font-bold tracking-wider px-3 py-1 rounded-full">
-                  {plan.badge}
-                </span>
-              )}
-              <h2 className="text-lg font-bold text-gray-800 mb-1">{plan.name}</h2>
-              <div className="mb-5">
-                <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
-                <span className="text-[13px] text-gray-400 ml-1">{plan.period}</span>
-              </div>
-              <ul className="flex-1 space-y-2.5 mb-6">
-                {plan.features.map((f, i) => (
-                  <li key={i} className="text-[13px] text-gray-500 flex items-start gap-2">
-                    <svg className="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <a href={plan.ctaHref} className={`block text-center py-2.5 rounded-xl text-[13px] font-medium transition-all ${
-                plan.highlight ? 'bg-indigo-600 text-white hover:bg-indigo-500' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}>
-                {plan.cta}
-              </a>
-            </div>
-          ))}
-        </div>
+        {/* Plans — client component with Stripe checkout */}
+        <PricingCards />
 
         {/* vs Grammarly */}
         <div className="mt-20 max-w-3xl mx-auto">
@@ -180,7 +93,7 @@ export default function PricingPage() {
               { q: 'How does the free tier work?', a: 'You get 10 AI grammar corrections per day in the Chrome extension, plus 60 minutes of voice dictation per month. No credit card required. The free tier never expires.' },
               { q: 'What does Pro include that Free doesn\'t?', a: 'Unlimited corrections, unlimited voice, AI Rewrite Mode (polishes your tone), context-aware formatting, desktop app, offline mode, and the upcoming mobile keyboards.' },
               { q: 'How is this better than Grammarly?', a: '48co uses Claude AI (the latest model) instead of rules-based checking. It also includes voice-to-text, works as a desktop app that types into ANY application (not just browsers), costs $12/mo vs $30/mo, and our Business plan is $29/mo for 10 users vs Grammarly\'s $150/mo.' },
-              { q: 'Do I need an API key?', a: 'The free tier works out of the box. Pro uses Claude API for grammar and Whisper API for voice — you bring your own keys (costs ~$0.003 per correction). We\'re adding managed API access so you won\'t need keys soon.' },
+              { q: 'Do I need an API key?', a: 'No. All plans use our managed AI service. You just sign up and start using it.' },
               { q: 'Will it work on my phone?', a: 'iPhone and Android keyboard apps are coming soon. They\'ll replace your default keyboard and correct everything you type — texts, emails, notes, everything.' },
               { q: 'Can I cancel anytime?', a: 'Yes, instantly. No contracts, no cancellation fees, no questions asked. Monthly plans cancel at the end of the billing period. Annual plans can be refunded within 14 days.' },
             ].map((faq) => (
