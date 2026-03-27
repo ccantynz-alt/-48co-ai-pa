@@ -11,7 +11,7 @@
  * Returns: { url: "https://billing.stripe.com/..." }
  */
 import { NextResponse } from 'next/server'
-import { stripe, APP_URL } from '../../../../lib/stripe'
+import { getStripe, APP_URL } from '../../../../lib/stripe'
 import { authenticate, initDb } from '../../../../lib/db'
 
 export async function POST(request) {
@@ -26,7 +26,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'No subscription found. Choose a plan first.' }, { status: 400 })
     }
 
-    const session = await stripe.billingPortal.sessions.create({
+    const session = await getStripe().billingPortal.sessions.create({
       customer: user.stripe_customer_id,
       return_url: `${APP_URL}/pricing`,
     })
