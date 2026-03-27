@@ -7,6 +7,10 @@ export default function App() {
   const [claudeKey, setClaudeKey] = useState('')
   const [language, setLanguage] = useState('en')
   const [aiRewrite, setAiRewrite] = useState(false)
+  const [useLocalWhisper, setUseLocalWhisper] = useState(false)
+  const [localModel, setLocalModel] = useState('ggml-base.bin')
+  const [modelDownloaded, setModelDownloaded] = useState(false)
+  const [downloading, setDownloading] = useState(false)
   const [status, setStatus] = useState('Ready')
   const [saved, setSaved] = useState(false)
 
@@ -19,12 +23,21 @@ export default function App() {
         setClaudeKey(await store.get('claudeApiKey') || '')
         setLanguage(await store.get('language') || 'en')
         setAiRewrite(await store.get('aiRewrite') || false)
+        setUseLocalWhisper(await store.get('useLocalWhisper') || false)
+        setLocalModel(await store.get('localModel') || 'ggml-base.bin')
 
         // Send to Rust backend
         if (await store.get('whisperApiKey')) invoke('set_api_key', { key: await store.get('whisperApiKey') })
         if (await store.get('claudeApiKey')) invoke('set_claude_key', { key: await store.get('claudeApiKey') })
         if (await store.get('language')) invoke('set_language', { lang: await store.get('language') })
         invoke('set_ai_rewrite', { enabled: await store.get('aiRewrite') || false })
+        invoke('set_use_local_whisper', { enabled: await store.get('useLocalWhisper') || false })
+        invoke('set_local_model', { model: await store.get('localModel') || 'ggml-base.bin' })
+
+        // Check if model is downloaded
+        const model = await store.get('localModel') || 'ggml-base.bin'
+        const downloaded = await invoke('check_model_downloaded', { modelName: model })
+        setModelDownloaded(downloaded)
       } catch (e) {
         console.warn('Settings load failed:', e)
       }
@@ -39,6 +52,8 @@ export default function App() {
       await store.set('claudeApiKey', claudeKey)
       await store.set('language', language)
       await store.set('aiRewrite', aiRewrite)
+      await store.set('useLocalWhisper', useLocalWhisper)
+      await store.set('localModel', localModel)
       await store.save()
 
       // Update Rust backend
@@ -46,6 +61,8 @@ export default function App() {
       await invoke('set_claude_key', { key: claudeKey })
       await invoke('set_language', { lang: language })
       await invoke('set_ai_rewrite', { enabled: aiRewrite })
+      await invoke('set_use_local_whisper', { enabled: useLocalWhisper })
+      await invoke('set_local_model', { model: localModel })
 
       setSaved(true)
       setTimeout(() => setSaved(false), 2000)
@@ -95,6 +112,61 @@ export default function App() {
             className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-indigo-300"
           />
           <p className="text-xs text-gray-400 mt-1">For AI grammar rewrite. ~$0.003/rewrite</p>
+        </div>
+
+        {/* Local Whisper */}
+        <div className="mb-6 p-4 rounded-lg bg-gray-50 border border-gray-100">
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <p className="text-sm font-medium text-gray-700">Local Voice (no API needed)</p>
+              <p className="text-xs text-gray-400">Runs Whisper on your device. Free, private, works offline.</p>
+            </div>
+            <button
+              onClick={() => setUseLocalWhisper(!useLocalWhisper)}
+              className={`w-10 h-6 rounded-full transition-colors ${useLocalWhisper ? 'bg-indigo-600' : 'bg-gray-200'}`}
+            >
+              <div className={`w-4 h-4 bg-white rounded-full shadow transform transition-transform mx-1 ${useLocalWhisper ? 'translate-x-4' : ''}`} />
+            </button>
+          </div>
+
+          {useLocalWhisper && (
+            <>
+              <select
+                value={localModel}
+                onChange={(e) => { setLocalModel(e.target.value); setModelDownloaded(false) }}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm mb-2 focus:outline-none focus:border-indigo-300"
+              >
+                <option value="ggml-tiny.bin">Tiny (~75MB, fastest)</option>
+                <option value="ggml-base.bin">Base (~142MB, recommended)</option>
+                <option value="ggml-small.bin">Small (~466MB, more accurate)</option>
+                <option value="ggml-medium.bin">Medium (~1.5GB, very accurate)</option>
+                <option value="ggml-large-v3-turbo.bin">Large V3 Turbo (~1.6GB, best)</option>
+              </select>
+
+              {modelDownloaded ? (
+                <p className="text-xs text-green-600">Model ready</p>
+              ) : (
+                <button
+                  onClick={async () => {
+                    setDownloading(true)
+                    setStatus('Downloading model...')
+                    try {
+                      await invoke('download_model', { modelName: localModel })
+                      setModelDownloaded(true)
+                      setStatus('Model downloaded!')
+                    } catch (e) {
+                      setStatus('Download failed: ' + e)
+                    }
+                    setDownloading(false)
+                  }}
+                  disabled={downloading}
+                  className="w-full py-2 rounded-lg bg-indigo-100 text-indigo-700 text-xs font-medium hover:bg-indigo-200 transition-colors disabled:opacity-50"
+                >
+                  {downloading ? 'Downloading...' : `Download ${localModel}`}
+                </button>
+              )}
+            </>
+          )}
         </div>
 
         {/* Language */}

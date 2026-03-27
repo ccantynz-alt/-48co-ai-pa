@@ -14,6 +14,7 @@ mod audio;
 mod keyboard;
 mod transcribe;
 mod grammar;
+mod local_whisper;
 
 use std::sync::{Arc, Mutex};
 use tauri::{
@@ -28,6 +29,8 @@ pub struct AppState {
     pub claude_api_key: Mutex<String>,
     pub language: Mutex<String>,
     pub ai_rewrite: Mutex<bool>,
+    pub use_local_whisper: Mutex<bool>,       // true = on-device, false = API
+    pub local_model: Mutex<String>,            // model filename e.g. "ggml-base.bin"
 }
 
 impl Default for AppState {
@@ -38,6 +41,8 @@ impl Default for AppState {
             claude_api_key: Mutex::new(String::new()),
             language: Mutex::new("en".to_string()),
             ai_rewrite: Mutex::new(false),
+            use_local_whisper: Mutex::new(false),
+            local_model: Mutex::new("ggml-base.bin".to_string()),
         }
     }
 }
@@ -55,17 +60,44 @@ async fn toggle_recording(state: tauri::State<'_, Arc<AppState>>, app: AppHandle
         // Get recorded audio and transcribe
         let audio_data = audio::stop_recording();
 
-        let api_key = state.whisper_api_key.lock().unwrap().clone();
+        let use_local = *state.use_local_whisper.lock().unwrap();
         let language = state.language.lock().unwrap().clone();
 
-        if api_key.is_empty() {
-            return Err("No API key set. Open Settings to add your OpenAI key.".to_string());
-        }
+        let text = if use_local {
+            // On-device transcription — no API key, no internet, no cost
+            let model_name = state.local_model.lock().unwrap().clone();
+            let model_file = local_whisper::model_path(&model_name);
 
-        // Transcribe with Whisper
-        let text = transcribe::whisper_api(&audio_data, &api_key, &language)
+            if !model_file.exists() {
+                return Err(format!(
+                    "Model '{}' not downloaded yet. Go to Settings → Download Model.",
+                    model_name
+                ));
+            }
+
+            let model_str = model_file.to_string_lossy().to_string();
+            let audio = audio_data.clone();
+            let lang = language.clone();
+
+            // Run in blocking thread (Whisper inference is CPU-bound)
+            tokio::task::spawn_blocking(move || {
+                local_whisper::transcribe_local(&audio, &model_str, &lang)
+            })
             .await
-            .map_err(|e| format!("Transcription failed: {}", e))?;
+            .map_err(|e| format!("Thread error: {}", e))?
+            .map_err(|e| format!("Local transcription failed: {}", e))?
+        } else {
+            // Cloud transcription via Whisper API
+            let api_key = state.whisper_api_key.lock().unwrap().clone();
+
+            if api_key.is_empty() {
+                return Err("No API key set. Open Settings to add your OpenAI key, or enable Local Whisper.".to_string());
+            }
+
+            transcribe::whisper_api(&audio_data, &api_key, &language)
+                .await
+                .map_err(|e| format!("Transcription failed: {}", e))?
+        };
 
         if text.is_empty() {
             return Ok("No speech detected.".to_string());
@@ -128,6 +160,32 @@ fn set_language(state: tauri::State<'_, Arc<AppState>>, lang: String) {
 #[tauri::command]
 fn set_ai_rewrite(state: tauri::State<'_, Arc<AppState>>, enabled: bool) {
     *state.ai_rewrite.lock().unwrap() = enabled;
+}
+
+#[tauri::command]
+fn set_use_local_whisper(state: tauri::State<'_, Arc<AppState>>, enabled: bool) {
+    *state.use_local_whisper.lock().unwrap() = enabled;
+}
+
+#[tauri::command]
+fn set_local_model(state: tauri::State<'_, Arc<AppState>>, model: String) {
+    *state.local_model.lock().unwrap() = model;
+}
+
+#[tauri::command]
+fn check_model_downloaded(model_name: String) -> bool {
+    local_whisper::model_exists(&model_name)
+}
+
+#[tauri::command]
+async fn download_model(model_name: String) -> Result<String, String> {
+    let path = local_whisper::download_model(&model_name).await?;
+    Ok(format!("Model downloaded: {:?}", path))
+}
+
+#[tauri::command]
+fn get_models_dir() -> String {
+    local_whisper::models_dir().to_string_lossy().to_string()
 }
 
 fn update_tray(app: &AppHandle, recording: bool) {
@@ -230,6 +288,11 @@ pub fn run() {
             set_claude_key,
             set_language,
             set_ai_rewrite,
+            set_use_local_whisper,
+            set_local_model,
+            check_model_downloaded,
+            download_model,
+            get_models_dir,
         ])
         .run(tauri::generate_context!())
         .expect("error while running 48co");
