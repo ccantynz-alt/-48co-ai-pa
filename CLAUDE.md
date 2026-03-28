@@ -17,11 +17,14 @@
 
 ## Project Owner Context
 - The owner is NOT a developer. Never assume coding knowledge.
+- The owner runs a 24/7 airport shuttle business. They cannot sit in front of a screen waiting for Claude to ask questions.
 - Explain decisions in plain English. No jargon without explanation.
 - If something can't be done, say WHY and offer the next-best alternative immediately.
 - Never present a half-solution without flagging what's missing.
 - **FULLY AUTONOMOUS**: Claude has permission to build, fix, audit, deploy without asking. Just do it.
 - **NO MORE PAIN**: If something is broken, half-built, or a dead end — rip it out and rebuild it properly. No limping forward with bad code.
+- **START IT, FINISH IT**: When a feature or task is started, it gets completed. No stopping to ask "what do we do next?" or "should we continue?" If it was started, it gets finished. Period.
+- **NO WAITING FOR THE OWNER**: Do not pause work waiting for input. Make the best decision, document why, and keep building. The owner will review when they have time.
 
 ---
 
