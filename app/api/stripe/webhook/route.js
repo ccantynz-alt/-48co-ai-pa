@@ -91,9 +91,14 @@ async function activatePlan(customerId) {
   const priceId = sub.items.data[0]?.price?.id
 
   // Determine plan from price ID
-  let plan = 'pro' // default for any paid plan
-  if (priceId === process.env.STRIPE_BIZ_PRICE_ID) {
+  let plan = 'free' // default if no match
+  if (priceId === process.env.STRIPE_PRO_PRICE_ID || priceId === process.env.STRIPE_PRO_YEAR_PRICE_ID) {
+    plan = 'pro'
+  } else if (priceId === process.env.STRIPE_BIZ_PRICE_ID) {
     plan = 'business'
+  } else {
+    // Unknown price ID — treat any paid subscription as pro
+    plan = 'pro'
   }
 
   await sql`UPDATE users SET plan = ${plan}, stripe_customer_id = ${customerId} WHERE stripe_customer_id = ${customerId}`
