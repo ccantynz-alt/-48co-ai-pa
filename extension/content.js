@@ -1,5 +1,5 @@
 /**
- * 48co Content Script — STREAMING VOICE-TO-TEXT
+ * AlecRae Voice Content Script — STREAMING VOICE-TO-TEXT
  *
  * Works like WhisperTyping: text appears in the chat box WORD BY WORD
  * as you speak. No popups. No overlays. No visible UI.
@@ -51,6 +51,45 @@
   })
 
   // ═══════════════════════════════════════════════════════════════
+  // STATUS TOAST — shows mic status so user knows what's happening
+  // ═══════════════════════════════════════════════════════════════
+
+  let toastEl = null
+  let toastTimeout = null
+
+  function showToast(message, type = 'info', duration = 3000) {
+    if (toastEl) toastEl.remove()
+
+    toastEl = document.createElement('div')
+    toastEl.setAttribute('style', `
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      z-index: 2147483647; padding: 10px 20px; border-radius: 8px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px; font-weight: 500; pointer-events: none;
+      transition: opacity 0.3s; opacity: 0;
+      ${type === 'recording' ? 'background: rgba(255,59,92,0.9); color: white;' :
+        type === 'error' ? 'background: rgba(255,59,92,0.9); color: white;' :
+        type === 'success' ? 'background: rgba(0,200,100,0.9); color: white;' :
+        'background: rgba(30,30,40,0.9); color: rgba(255,255,255,0.9);'}
+    `)
+    toastEl.textContent = message
+    document.body.appendChild(toastEl)
+    requestAnimationFrame(() => { toastEl.style.opacity = '1' })
+
+    if (toastTimeout) clearTimeout(toastTimeout)
+    if (duration > 0) {
+      toastTimeout = setTimeout(() => {
+        if (toastEl) { toastEl.style.opacity = '0'; setTimeout(() => { if (toastEl) toastEl.remove(); toastEl = null }, 300) }
+      }, duration)
+    }
+  }
+
+  function hideToast() {
+    if (toastEl) { toastEl.style.opacity = '0'; setTimeout(() => { if (toastEl) toastEl.remove(); toastEl = null }, 300) }
+    if (toastTimeout) clearTimeout(toastTimeout)
+  }
+
+  // ═══════════════════════════════════════════════════════════════
   // TEXT INSERTION — multiple methods for different editors
   // ═══════════════════════════════════════════════════════════════
 
@@ -81,6 +120,10 @@
       selectors.push('rich-textarea div[contenteditable="true"]', 'div.ql-editor[contenteditable="true"]')
     } else if (host.includes('chat.deepseek.com')) {
       selectors.push('textarea#chat-input', 'textarea[placeholder*="message"]')
+    } else if (host.includes('mail.google.com')) {
+      selectors.push('div[aria-label="Message Body"][contenteditable="true"]', 'div.Am.Al.editable[contenteditable="true"]')
+    } else if (host.includes('slack.com')) {
+      selectors.push('div[data-qa="message_input"] div[contenteditable="true"]', 'div.ql-editor[contenteditable="true"]')
     }
 
     // Site-specific
@@ -100,19 +143,29 @@
     return null
   }
 
-  // Insert text at cursor position
+  // Insert text at cursor position — tries modern methods first, deprecated last
   function insertAtCursor(text) {
     const el = findTextInput()
     if (!el) return false
     el.focus()
 
     if (el.contentEditable === 'true') {
-      // Method 1: execCommand (works on many editors)
-      const ok = document.execCommand('insertText', false, text)
-      if (ok) {
-        el.dispatchEvent(new InputEvent('input', { bubbles: true, data: text }))
-        return true
-      }
+      // Method 1: Selection/Range API (modern, not deprecated)
+      try {
+        const sel = window.getSelection()
+        if (sel.rangeCount) {
+          const range = sel.getRangeAt(0)
+          range.deleteContents()
+          const textNode = document.createTextNode(text)
+          range.insertNode(textNode)
+          range.setStartAfter(textNode)
+          range.collapse(true)
+          sel.removeAllRanges()
+          sel.addRange(range)
+          el.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: text }))
+          return true
+        }
+      } catch {}
 
       // Method 2: Synthetic paste (works on ProseMirror — Claude, ChatGPT)
       try {
@@ -122,23 +175,13 @@
         return true
       } catch {}
 
-      // Method 3: Direct DOM insert
+      // Method 3: execCommand fallback (deprecated but still works in some editors)
       try {
-        const textNode = document.createTextNode(text)
-        const sel = window.getSelection()
-        if (sel.rangeCount) {
-          const range = sel.getRangeAt(0)
-          range.deleteContents()
-          range.insertNode(textNode)
-          range.setStartAfter(textNode)
-          range.collapse(true)
-          sel.removeAllRanges()
-          sel.addRange(range)
-        } else {
-          el.appendChild(textNode)
+        const ok = document.execCommand('insertText', false, text)
+        if (ok) {
+          el.dispatchEvent(new InputEvent('input', { bubbles: true, data: text }))
+          return true
         }
-        el.dispatchEvent(new InputEvent('input', { bubbles: true }))
-        return true
       } catch {}
 
       return false
@@ -166,14 +209,18 @@
     el.focus()
 
     if (el.contentEditable === 'true') {
-      // Select all then replace
+      // Select all then replace via Selection API
       const sel = window.getSelection()
       const range = document.createRange()
       range.selectNodeContents(el)
       sel.removeAllRanges()
       sel.addRange(range)
-      document.execCommand('insertText', false, newText)
-      el.dispatchEvent(new InputEvent('input', { bubbles: true }))
+
+      // Try modern method first
+      range.deleteContents()
+      const textNode = document.createTextNode(newText)
+      range.insertNode(textNode)
+      el.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertReplacementText', data: newText }))
     } else if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
       const proto = el.tagName === 'TEXTAREA' ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype
       const setter = Object.getOwnPropertyDescriptor(proto, 'value').set
@@ -192,14 +239,14 @@
 
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition
     if (!SR) {
-      console.warn('[48co] Speech API not available — use Chrome or Edge')
+      showToast('Voice not supported in this browser. Use Chrome or Edge.', 'error', 5000)
       return
     }
 
     // Remember which text field we're typing into
     const targetEl = findTextInput()
     if (!targetEl) {
-      console.warn('[48co] No text field found — click on a text box first')
+      showToast('Click on a text box first, then try again.', 'error', 4000)
       return
     }
     targetEl.focus()
@@ -220,6 +267,7 @@
     recognition.onstart = () => {
       state.status = 'recording'
       updateBadge('recording')
+      showToast('Listening... speak now', 'recording', 0)
     }
 
     recognition.onresult = (e) => {
@@ -235,9 +283,7 @@
         insertAtCursor(newChars)
         lastInsertedText = full
       } else if (full !== lastInsertedText) {
-        // Speech API revised earlier text — need to replace
-        // This happens when interim results change
-        // For now, just update our tracker (don't rewrite — too disruptive)
+        // Speech API revised earlier text — update tracker
         lastInsertedText = full
       }
 
@@ -266,6 +312,9 @@
             }
           }
         }
+        showToast('Done', 'success', 1500)
+      } else {
+        hideToast()
       }
 
       lastInsertedText = ''
@@ -274,7 +323,20 @@
 
     recognition.onerror = (e) => {
       if (e.error === 'aborted') return
-      console.warn('[48co]', e.error)
+
+      // Show user-friendly error messages
+      const messages = {
+        'not-allowed': 'Microphone blocked. Click the lock icon in your browser address bar and allow microphone access.',
+        'no-speech': 'No speech detected. Try speaking louder or check your microphone.',
+        'audio-capture': 'No microphone found. Check that a microphone is connected and selected as your default.',
+        'network': 'Network error. Check your internet connection.',
+        'service-not-allowed': 'Speech service not available. Try refreshing the page.',
+      }
+
+      const msg = messages[e.error] || `Mic error: ${e.error}`
+      showToast(msg, 'error', 6000)
+      console.warn('[AlecRae Voice]', e.error, msg)
+
       state.status = 'idle'
       recognition = null
       lastInsertedText = ''
@@ -284,7 +346,8 @@
     try {
       recognition.start()
     } catch (err) {
-      console.warn('[48co] Failed to start:', err)
+      showToast('Could not start microphone. Try refreshing the page.', 'error', 5000)
+      console.warn('[AlecRae Voice] Failed to start:', err)
       state.status = 'idle'
       recognition = null
     }
@@ -292,6 +355,7 @@
 
   function stopStreaming() {
     if (recognition && state.status === 'recording') {
+      showToast('Processing...', 'info', 2000)
       try { recognition.stop() } catch {}
     }
   }
@@ -380,6 +444,7 @@
       if (recognition) { try { recognition.abort() } catch {} recognition = null }
       state.status = 'idle'
       lastInsertedText = ''
+      hideToast()
       updateBadge('idle')
     }
     if (msg.type === 'STATE_UPDATED') {
@@ -387,29 +452,45 @@
     }
     // Whisper engine: transcription comes back as complete text
     if (msg.type === 'TRANSCRIPTION_READY') {
-      if (msg.error) { console.warn('[48co]', msg.error); updateBadge('idle'); return }
+      if (msg.error) {
+        showToast(msg.error, 'error', 6000)
+        updateBadge('idle')
+        return
+      }
       if (msg.text) {
         const processed = postProcess(msg.text)
         insertAtCursor(processed)
+        showToast('Done', 'success', 1500)
       }
       state.status = 'idle'
       updateBadge('idle')
     }
   })
 
-  // Push-to-talk
+  // Push-to-talk — hold Ctrl+Shift to record, release to stop
   let pttActive = false
+  let pttKeys = { ctrl: false, shift: false }
+
   window.addEventListener('keydown', (e) => {
     if (!state.pushToTalk) return
-    if (e.ctrlKey && e.shiftKey && !e.altKey && !e.metaKey && e.key === 'Shift' && !pttActive) {
+
+    if (e.key === 'Control') pttKeys.ctrl = true
+    if (e.key === 'Shift') pttKeys.shift = true
+
+    if (pttKeys.ctrl && pttKeys.shift && !pttActive) {
       pttActive = true
       startStreaming()
       e.preventDefault()
     }
   })
+
   window.addEventListener('keyup', (e) => {
     if (!state.pushToTalk) return
-    if (pttActive && (e.key === 'Shift' || e.key === 'Control')) {
+
+    if (e.key === 'Control') pttKeys.ctrl = false
+    if (e.key === 'Shift') pttKeys.shift = false
+
+    if (pttActive && (!pttKeys.ctrl || !pttKeys.shift)) {
       pttActive = false
       stopStreaming()
       e.preventDefault()

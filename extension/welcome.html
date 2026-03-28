@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Welcome to 48co</title>
+  <title>Welcome to AlecRae Voice</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -24,12 +24,12 @@
 
     .logo {
       font-family: 'JetBrains Mono', 'SF Mono', monospace;
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 700;
       text-align: center;
       margin-bottom: 8px;
     }
-    .logo .co { color: #00f0ff; }
+    .logo .accent { color: #00f0ff; }
 
     .subtitle {
       text-align: center;
@@ -44,6 +44,11 @@
       border-radius: 16px;
       padding: 28px;
       margin-bottom: 16px;
+    }
+
+    .mic-setup-card {
+      background: rgba(0, 240, 255, 0.04);
+      border: 1px solid rgba(0, 240, 255, 0.15);
     }
 
     .step-number {
@@ -78,6 +83,34 @@
       font-weight: 500;
     }
 
+    .mic-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 14px 24px;
+      border-radius: 12px;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      color: #00f0ff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      width: 100%;
+    }
+    .mic-btn:hover { background: rgba(0, 240, 255, 0.2); }
+    .mic-btn.success { background: rgba(0, 200, 100, 0.15); border-color: rgba(0, 200, 100, 0.3); color: #00ff88; }
+    .mic-btn.error { background: rgba(255, 59, 92, 0.15); border-color: rgba(255, 59, 92, 0.3); color: #ff3b5c; }
+
+    #mic-name {
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      text-align: center;
+      margin-top: 8px;
+    }
+
     .sites {
       display: flex;
       gap: 8px;
@@ -91,11 +124,12 @@
       border: 1px solid rgba(255,255,255,0.08);
       font-size: 12px;
       color: rgba(255,255,255,0.5);
+      text-decoration: none;
     }
 
     .controls-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
       margin-top: 16px;
     }
@@ -159,44 +193,53 @@
 </head>
 <body>
   <div class="container">
-    <div class="logo">48<span class="co">co</span></div>
-    <p class="subtitle">Voice-to-text for any website &mdash; installed successfully</p>
+    <div class="logo">AlecRae <span class="accent">Voice</span></div>
+    <p class="subtitle">AI grammar + voice-to-text for every website &mdash; installed successfully</p>
+
+    <!-- Step 0: Mic setup — THIS MUST HAPPEN FIRST -->
+    <div class="card mic-setup-card">
+      <div class="step-number">&#127908;</div>
+      <h3>Set up your microphone</h3>
+      <p>Click the button below to allow microphone access. This only happens once &mdash; after that, voice dictation works instantly on every website.</p>
+      <button class="mic-btn" id="mic-setup-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="9" y="2" width="6" height="11" rx="3"/>
+          <path d="M5 10a7 7 0 0014 0"/>
+          <line x1="12" y1="21" x2="12" y2="17"/>
+          <line x1="9" y1="21" x2="15" y2="21"/>
+        </svg>
+        Allow Microphone Access
+      </button>
+      <div id="mic-name"></div>
+    </div>
 
     <!-- Step 1: Go to any website -->
     <div class="card">
       <div class="step-number">1</div>
       <h3>Open any website</h3>
-      <p>The <span class="highlight">48co widget</span> appears on every website. Optimized for AI chats but works everywhere.</p>
+      <p>AlecRae Voice works on <span class="highlight">every website</span>. Optimized for AI chats but works anywhere you type.</p>
       <div class="sites">
         <a href="https://claude.ai" target="_blank" class="site-badge">Claude.ai</a>
         <a href="https://chatgpt.com" target="_blank" class="site-badge">ChatGPT</a>
         <a href="https://gemini.google.com" target="_blank" class="site-badge">Gemini</a>
-        <a href="https://chat.deepseek.com" target="_blank" class="site-badge">DeepSeek</a>
-        <span class="site-badge">Gmail, Slack, Notion, any site...</span>
+        <a href="https://mail.google.com" target="_blank" class="site-badge">Gmail</a>
+        <span class="site-badge">Slack, Notion, any site...</span>
       </div>
     </div>
 
     <!-- Step 2: Start recording -->
     <div class="card">
       <div class="step-number">2</div>
-      <h3>Start talking</h3>
-      <p>Four ways to start recording. Pick whichever feels natural.</p>
-      <div class="controls-grid" style="grid-template-columns: 1fr 1fr;">
+      <h3>Click a text box, then start talking</h3>
+      <p>Click any text field, then use one of these to start recording:</p>
+      <div class="controls-grid">
         <div class="control">
-          <div class="control-icon">&#8679;</div>
-          <div class="control-label">Scroll up</div>
-        </div>
-        <div class="control">
-          <div class="control-icon">&#9673;</div>
-          <div class="control-label">Click widget</div>
-        </div>
-        <div class="control">
-          <div class="control-icon">&#8984;&#8679;&#9251;</div>
+          <div class="control-icon">Ctrl+Shift+Space</div>
           <div class="control-label">Keyboard shortcut</div>
         </div>
         <div class="control">
           <div class="control-icon">&#9041;</div>
-          <div class="control-label">Push-to-talk (hold Ctrl+Shift)</div>
+          <div class="control-label">Middle-click (mouse wheel)</div>
         </div>
       </div>
     </div>
@@ -204,38 +247,15 @@
     <!-- Step 3: Stop and it types -->
     <div class="card">
       <div class="step-number">3</div>
-      <h3>Stop &mdash; and it types for you</h3>
-      <p><span class="highlight">Scroll down</span> or click again to stop. Your transcript is typed directly into the focused text field. Punctuation, capitalization, and formatting are applied automatically.</p>
+      <h3>Press again to stop &mdash; text appears instantly</h3>
+      <p>Words appear <span class="highlight">as you speak</span>. When you stop, punctuation and capitalization are cleaned up automatically. Say <span class="highlight">"period"</span>, <span class="highlight">"comma"</span>, or <span class="highlight">"new line"</span> and they're converted for you.</p>
     </div>
 
-    <!-- Voice punctuation & commands -->
+    <!-- That's it -->
     <div class="card">
-      <div class="step-number">&#9733;</div>
-      <h3>Voice punctuation &amp; commands</h3>
-      <p>Say punctuation naturally. 48co converts it for you.</p>
-      <div class="commands-list">
-        <div class="cmd-row"><span class="cmd-trigger">&ldquo;period&rdquo; / &ldquo;comma&rdquo; / &ldquo;question mark&rdquo;</span> <span class="cmd-action">Inserts punctuation</span></div>
-        <div class="cmd-row"><span class="cmd-trigger">&ldquo;new line&rdquo; / &ldquo;new paragraph&rdquo;</span> <span class="cmd-action">Line breaks</span></div>
-        <div class="cmd-row"><span class="cmd-trigger">&ldquo;open paren&rdquo; / &ldquo;close paren&rdquo;</span> <span class="cmd-action">Brackets</span></div>
-        <div class="cmd-row"><span class="cmd-trigger">&ldquo;thumbs up emoji&rdquo;</span> <span class="cmd-action">Inserts emoji</span></div>
-        <div class="cmd-row"><span class="cmd-trigger">&ldquo;refactor this&rdquo; / &ldquo;debug this&rdquo;</span> <span class="cmd-action">Dev prompts</span></div>
-        <div class="cmd-row"><span class="cmd-trigger">&ldquo;send it&rdquo;</span> <span class="cmd-action">Submits message</span></div>
-        <div class="cmd-row"><span class="cmd-trigger">&ldquo;cancel&rdquo;</span> <span class="cmd-action">Clears &amp; resets</span></div>
-      </div>
-    </div>
-
-    <!-- Languages & settings -->
-    <div class="card">
-      <div class="step-number">&#127760;</div>
-      <h3>50+ languages &amp; custom vocabulary</h3>
-      <p>Click the <span class="highlight">48co extension icon</span> in the toolbar to change language, add custom vocabulary, configure text replacements, and switch to the Whisper API for higher accuracy.</p>
-    </div>
-
-    <!-- Tip: code mode -->
-    <div class="card">
-      <div class="step-number">&lt;/&gt;</div>
-      <h3>Auto code mode</h3>
-      <p>If you say words like <span class="highlight">function</span>, <span class="highlight">class</span>, <span class="highlight">import</span>, or <span class="highlight">const</span>, your transcript is automatically wrapped in markdown code fences. Click <span class="highlight">CODE</span> on the widget to force it on.</p>
+      <div class="step-number">&#10003;</div>
+      <h3>That's it. No setup. No API keys. Just talk.</h3>
+      <p>The free engine (Web Speech) works immediately with zero configuration. For higher accuracy, you can optionally switch to the Whisper API in the extension settings.</p>
     </div>
 
     <a href="https://claude.ai" target="_blank" class="cta">
@@ -243,8 +263,47 @@
     </a>
 
     <div class="footer">
-      <a href="https://48co.nz">48co.nz</a> &middot; v1.0.0
+      <a href="https://alecrae.ai">alecrae.ai</a> &middot; v1.2.0
     </div>
   </div>
+
+  <script>
+    // Auto-request microphone permission on first install
+    const micBtn = document.getElementById('mic-setup-btn')
+    const micName = document.getElementById('mic-name')
+
+    async function setupMic() {
+      micBtn.textContent = 'Requesting access...'
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+        const devices = await navigator.mediaDevices.enumerateDevices()
+        const audioInputs = devices.filter(d => d.kind === 'audioinput')
+        stream.getTracks().forEach(t => t.stop())
+
+        const defaultMic = devices.find(d => d.kind === 'audioinput' && d.deviceId === 'default')
+        const name = defaultMic?.label || audioInputs[0]?.label || 'Microphone'
+
+        micBtn.className = 'mic-btn success'
+        micBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Microphone ready!'
+        micName.textContent = name
+        micName.style.color = '#00ff88'
+      } catch (err) {
+        micBtn.className = 'mic-btn error'
+        if (err.name === 'NotAllowedError') {
+          micBtn.textContent = 'Blocked — click to try again'
+          micName.textContent = 'You need to allow microphone access for voice to work'
+        } else {
+          micBtn.textContent = 'No microphone found'
+          micName.textContent = 'Plug in a microphone and click to try again'
+        }
+        micName.style.color = '#ff3b5c'
+      }
+    }
+
+    micBtn.addEventListener('click', setupMic)
+
+    // Auto-request on page load (first install)
+    setTimeout(setupMic, 500)
+  </script>
 </body>
 </html>

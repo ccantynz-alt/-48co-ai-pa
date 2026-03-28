@@ -1,5 +1,5 @@
 /**
- * 48co Grammar Checker
+ * AlecRae Voice Grammar Checker
  * Watches text fields on any page. When user pauses typing, checks grammar
  * via Claude API and shows inline corrections in a tooltip.
  *
@@ -16,14 +16,26 @@
   let checkTimeout = null
   let lastCheckedText = ''
   let activeTooltip = null
+  let correctionsToday = 0
+  const maxFreeCorrections = 10
 
-  const API_BASE = 'https://48co.nz/api' // managed API (runs on same domain as website)
+  const API_BASE = 'https://alecrae.ai/api' // managed API
 
   // ── Init: load settings ────────────────────────────────
-  chrome.storage.local.get(['grammarEnabled', 'authToken', 'claudeApiKey'], (data) => {
+  chrome.storage.local.get(['grammarEnabled', 'authToken', 'claudeApiKey', 'correctionsToday', 'correctionsDate'], (data) => {
     enabled = data.grammarEnabled || false
     authToken = data.authToken || ''
     claudeApiKey = data.claudeApiKey || ''
+
+    // Reset daily counter if it's a new day
+    const today = new Date().toDateString()
+    if (data.correctionsDate === today) {
+      correctionsToday = data.correctionsToday || 0
+    } else {
+      correctionsToday = 0
+      chrome.storage.local.set({ correctionsToday: 0, correctionsDate: today })
+    }
+
     if (enabled) attachListeners()
   })
 
@@ -104,7 +116,7 @@
         hideTooltip()
       }
     } catch (err) {
-      console.warn('[48co grammar]', err.message)
+      console.warn('[AlecRae Voice grammar]', err.message)
     }
   }
 
@@ -127,8 +139,6 @@
           return data.corrections || []
         }
         if (response.status === 429) {
-          // Rate limited — show upgrade prompt
-          console.log('[48co] Free grammar limit reached — upgrade to Pro for unlimited')
           return []
         }
       } catch { /* fall through to direct API */ }
@@ -172,18 +182,16 @@
   }
 
   // ── Show corrections UI ────────────────────────────────
-  // Minimal tooltip above the text field showing what to fix
 
   function showCorrections(el, originalText, corrections) {
     hideTooltip()
 
-    if (correctionsToday >= maxFreeCorrections && !claudeApiKey) {
-      // Free tier exhausted
+    if (correctionsToday >= maxFreeCorrections && !claudeApiKey && !authToken) {
       return
     }
 
     const tooltip = document.createElement('div')
-    tooltip.id = 'foureightco-grammar'
+    tooltip.id = 'alecrae-grammar'
     tooltip.style.cssText = `
       position: fixed;
       z-index: 2147483647;
@@ -202,7 +210,7 @@
     const header = document.createElement('div')
     header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(0,0,0,0.06);background:#f8f9fa;'
     header.innerHTML = `
-      <span style="font-weight:600;font-size:12px;color:#4f46e5;">48co Grammar</span>
+      <span style="font-weight:600;font-size:12px;color:#4f46e5;">AlecRae Grammar</span>
       <span style="font-size:11px;color:#888;">${corrections.length} correction${corrections.length > 1 ? 's' : ''}</span>
     `
     tooltip.appendChild(header)
@@ -220,7 +228,7 @@
       row.innerHTML = `
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
           <span style="color:#dc2626;text-decoration:line-through;font-size:12px;">${escapeHtml(c.original)}</span>
-          <span style="color:#888;font-size:10px;">→</span>
+          <span style="color:#888;font-size:10px;">&rarr;</span>
           <span style="color:#16a34a;font-weight:500;font-size:12px;">${escapeHtml(c.corrected)}</span>
         </div>
         <div style="font-size:11px;color:#888;">${escapeHtml(c.reason)}</div>
@@ -230,7 +238,7 @@
       row.addEventListener('click', () => {
         applyCorrection(el, c.original, c.corrected)
         correctionsToday++
-        chrome.storage.local.set({ correctionsToday })
+        chrome.storage.local.set({ correctionsToday, correctionsDate: new Date().toDateString() })
         row.style.background = '#f0fff4'
         row.innerHTML = '<div style="font-size:12px;color:#16a34a;text-align:center;padding:4px 0;">Applied!</div>'
         setTimeout(() => {
@@ -254,7 +262,7 @@
       fixAll.addEventListener('click', () => {
         corrections.forEach((c) => applyCorrection(el, c.original, c.corrected))
         correctionsToday += corrections.length
-        chrome.storage.local.set({ correctionsToday })
+        chrome.storage.local.set({ correctionsToday, correctionsDate: new Date().toDateString() })
         hideTooltip()
       })
       tooltip.appendChild(fixAll)
@@ -288,15 +296,11 @@
 
   function applyCorrection(el, original, corrected) {
     if (el.contentEditable === 'true') {
-      const html = el.innerHTML
-      // Replace first occurrence
       const idx = el.innerText.indexOf(original)
       if (idx !== -1) {
-        // Use execCommand for undo support
         const sel = window.getSelection()
         const range = document.createRange()
 
-        // Find text node containing the original
         const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT)
         let node, offset = 0
         while ((node = walker.nextNode())) {
@@ -305,7 +309,11 @@
             range.setEnd(node, Math.min(idx - offset + original.length, node.length))
             sel.removeAllRanges()
             sel.addRange(range)
-            document.execCommand('insertText', false, corrected)
+            // Use Selection API to replace
+            const textNode = document.createTextNode(corrected)
+            range.deleteContents()
+            range.insertNode(textNode)
+            el.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertReplacementText', data: corrected }))
             break
           }
           offset += node.length
@@ -317,7 +325,10 @@
       if (idx !== -1) {
         el.focus()
         el.setSelectionRange(idx, idx + original.length)
-        document.execCommand('insertText', false, corrected)
+        // Use native setter for React compatibility
+        const proto = el.tagName === 'TEXTAREA' ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype
+        const setter = Object.getOwnPropertyDescriptor(proto, 'value').set
+        setter.call(el, val.substring(0, idx) + corrected + val.substring(idx + original.length))
         el.dispatchEvent(new Event('input', { bubbles: true }))
       }
     }
@@ -330,7 +341,7 @@
   }
 
   // ── Public API for popup ───────────────────────────────
-  window._48coGrammar = {
+  window._alecRaeGrammar = {
     get enabled() { return enabled },
     get correctionsToday() { return correctionsToday },
   }

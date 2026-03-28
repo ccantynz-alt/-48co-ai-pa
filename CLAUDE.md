@@ -36,8 +36,19 @@
 - Website: auth, grammar API, rewrite API, live demo — working
 - "Preserve My Voice" feature — unique, no competitor has this
 
+### Deep Audit Results — March 28, 2026
+**Bugs found and fixed this session:**
+- CRITICAL: grammar.js crashed — referenced variables that were never declared (`correctionsToday`, `maxFreeCorrections`). Fixed.
+- CRITICAL: API URL hardcoded to dead domain `https://48co.nz/api`. Fixed to `https://alecrae.ai/api`.
+- HIGH: Grammar correction used deprecated `execCommand()` for text replacement. Fixed to Selection/Range API.
+- HIGH: Missing `.code-btn` CSS class in popup — add vocabulary buttons were unstyled. Fixed.
+- HIGH: Voice commands and coding mode code existed in `lib/` and `adapters/` but were never wired into content.js. Documented for next session.
+- MEDIUM: "48co" branding in 20+ locations across extension, desktop app, and website. Extension fixed. Desktop and website still need updating.
+
+**Stripe integration added:** checkout, webhooks, billing portal all wired up. Needs Stripe API keys in env vars.
+
 ### What's Broken or Missing (The Three-Legged Dog)
-1. **No payment system** — Stripe not connected. Can't make money.
+1. **No payment system** — Stripe now WIRED but needs API keys in Vercel env vars to go live.
 2. **Mobile apps are empty scaffolding** — folders exist, nothing works on phones
 3. **No custom keyboard for iOS/Android** — the killer feature doesn't exist yet
 4. **Two competing backends** — Express API AND Next.js API doing the same job. Pick one.
@@ -133,7 +144,27 @@ Every change gets documented so the next session knows what happened.
 - Architecture decisions are recorded with reasoning
 - **NEW**: This CLAUDE.md file is the single source of truth. Keep it updated every session.
 
-### Rule 10: Mandatory Session Protocol
+### Rule 10: Daily Technology Scanning — Non-Negotiable
+Every session must verify AlecRae Voice uses the most advanced technology available:
+- **Check AI model versions**: Are we on the latest Claude, Whisper, Deepgram models?
+- **Check competitor releases**: Has Grammarly, Wispr Flow, SuperWhisper, or any competitor shipped something new?
+- **Check dependency versions**: Are all npm packages and Rust crates on latest stable?
+- **Check browser API changes**: Has Chrome, Safari, or Firefox changed any API we use?
+- **Check for deprecated code**: Is anything we use marked for removal?
+- **If something better exists — switch immediately.** No "we'll do it later." The standard is 80-90% ahead.
+- **Document every finding** in this file under the audit results section above.
+
+### Rule 11: Test Before Reporting — Zero Ping-Pong
+Never tell the user something works without verifying it first:
+- Read the actual code and trace the execution path
+- Check for undefined variables, missing imports, broken references
+- Verify message chains work from sender to receiver
+- Check that every file referenced in manifests/configs actually exists
+- If automated tests exist, run them
+- **If you find a bug while testing — fix it immediately, then report**
+- The user should never discover a bug that Claude should have caught
+
+### Rule 12: Mandatory Session Protocol
 Every session must follow this protocol:
 1. **SCAN** — Check for broken features, bugs, security issues
 2. **DETECT** — Find engineering gaps vs competitors

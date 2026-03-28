@@ -1,5 +1,5 @@
 /**
- * 48co Popup Script
+ * AlecRae Voice Popup Script
  * Settings UI. Shows real recording state. Force-reset if stuck.
  * No optimistic updates — waits for actual state confirmation.
  */
@@ -257,5 +257,44 @@ chrome.runtime.sendMessage({ type: 'GET_RECORDING_STATE' }, (response) => {
   }
 })
 
+// ── Auto-detect microphone ────────────────────────────────────────
+async function detectMicrophone() {
+  const micDevice = $('#mic-device')
+  try {
+    // Request mic permission (triggers browser prompt if needed)
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    // Got permission — now enumerate devices to find the mic name
+    const devices = await navigator.mediaDevices.enumerateDevices()
+    const audioInputs = devices.filter(d => d.kind === 'audioinput' && d.deviceId !== 'default')
+    // Release the stream immediately — we just needed permission
+    stream.getTracks().forEach(t => t.stop())
+
+    if (audioInputs.length > 0) {
+      // Show the first real mic name (not "Default")
+      const defaultDevice = devices.find(d => d.kind === 'audioinput' && d.deviceId === 'default')
+      const micName = defaultDevice?.label || audioInputs[0].label || 'Microphone detected'
+      micDevice.textContent = micName
+      micDevice.style.color = '#00ff88'
+    } else {
+      micDevice.textContent = 'No microphone found'
+      micDevice.style.color = '#ff3b5c'
+    }
+  } catch (err) {
+    if (err.name === 'NotAllowedError') {
+      micDevice.innerHTML = 'Mic blocked — <a href="#" id="mic-fix-link" style="color:#00f0ff;text-decoration:underline">click to fix</a>'
+      micDevice.style.color = '#ff3b5c'
+      // Clicking the fix link re-prompts
+      setTimeout(() => {
+        const link = $('#mic-fix-link')
+        if (link) link.addEventListener('click', (e) => { e.preventDefault(); detectMicrophone() })
+      }, 0)
+    } else {
+      micDevice.textContent = 'No microphone found — plug one in'
+      micDevice.style.color = '#ff3b5c'
+    }
+  }
+}
+
 // ── Init ───────────────────────────────────────────────────────────
 detectSite()
+detectMicrophone()
