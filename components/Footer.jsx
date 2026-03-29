@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function Footer() {
   return (
     <footer className="bg-navy-950 text-white">
@@ -18,18 +20,18 @@ export default function Footer() {
             <div>
               <p className="text-[11px] font-semibold text-white/40 uppercase tracking-widest mb-4">Product</p>
               <div className="flex flex-col gap-3 text-[13px] text-white/50">
-                <a href="/download" className="hover:text-white transition-colors">Download</a>
-                <a href="/install" className="hover:text-white transition-colors">Chrome Extension</a>
-                <a href="/live" className="hover:text-white transition-colors">Try Live</a>
-                <a href="/compare" className="hover:text-white transition-colors">Compare</a>
+                <Link href="/download" className="hover:text-white transition-colors">Download</Link>
+                <Link href="/install" className="hover:text-white transition-colors">Chrome Extension</Link>
+                <Link href="/live" className="hover:text-white transition-colors">Try Live</Link>
+                <Link href="/compare" className="hover:text-white transition-colors">Compare</Link>
               </div>
             </div>
             <div>
               <p className="text-[11px] font-semibold text-white/40 uppercase tracking-widest mb-4">Company</p>
               <div className="flex flex-col gap-3 text-[13px] text-white/50">
-                <a href="/pricing" className="hover:text-white transition-colors">Pricing</a>
-                <a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a>
-                <a href="/terms" className="hover:text-white transition-colors">Terms of Service</a>
+                <Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link>
+                <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+                <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
                 <a href="mailto:support@48co.nz" className="hover:text-white transition-colors">Support</a>
               </div>
             </div>

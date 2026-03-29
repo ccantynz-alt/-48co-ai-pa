@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import Nav from '../../components/Nav'
 import Footer from '../../components/Footer'
 
@@ -74,9 +75,9 @@ export default function InstallPage() {
         {/* Want more? */}
         <div className="text-center">
           <p className="text-[13px] text-gray-500 mb-4">Want voice-to-text in ANY app (not just the browser)?</p>
-          <a href="/download" className="inline-block px-6 py-3 rounded-lg bg-navy-900 text-white text-[13px] font-semibold hover:bg-navy-800 transition-all">
+          <Link href="/download" className="inline-block px-6 py-3 rounded-lg bg-navy-900 text-white text-[13px] font-semibold hover:bg-navy-800 transition-all">
             Download the Desktop App
-          </a>
+          </Link>
         </div>
       </div>
 

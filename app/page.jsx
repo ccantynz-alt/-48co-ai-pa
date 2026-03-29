@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import Link from 'next/link'
 import Waveform from '../components/Waveform'
 import Nav from '../components/Nav'
 import Footer from '../components/Footer'
@@ -115,12 +116,12 @@ export default function LandingPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center mb-16 animate-fade-up" style={{ animationDelay: '0.3s' }}>
-            <a href="/download" className="px-8 py-3.5 rounded-lg bg-white text-navy-900 text-[15px] font-semibold transition-all hover:bg-gray-100 shadow-lg shadow-black/20">
+            <Link href="/download" className="px-8 py-3.5 rounded-lg bg-white text-navy-900 text-[15px] font-semibold transition-all hover:bg-gray-100 shadow-lg shadow-black/20">
               Download Free
-            </a>
-            <a href="/live" className="px-8 py-3.5 rounded-lg border border-white/15 text-white/70 text-[15px] font-medium hover:border-white/25 hover:text-white transition-all">
+            </Link>
+            <Link href="/live" className="px-8 py-3.5 rounded-lg border border-white/15 text-white/70 text-[15px] font-medium hover:border-white/25 hover:text-white transition-all">
               Try in Browser
-            </a>
+            </Link>
           </div>
 
           {/* ── Demo Card ──────────────────────── */}
@@ -402,9 +403,9 @@ export default function LandingPage() {
             ))}
           </div>
 
-          <a href="/pricing" className="text-[13px] text-navy-700 hover:text-navy-900 font-semibold transition-colors">
+          <Link href="/pricing" className="text-[13px] text-navy-700 hover:text-navy-900 font-semibold transition-colors">
             See full pricing &rarr;
-          </a>
+          </Link>
         </div>
       </section>
 
@@ -417,9 +418,9 @@ export default function LandingPage() {
           <p className="text-white/50 text-base mb-12 max-w-md mx-auto leading-relaxed">
             Join professionals who write with confidence. AI grammar, voice dictation, and translation — on every device.
           </p>
-          <a href="/download" className="inline-block px-10 py-4 rounded-lg bg-white text-navy-900 text-[15px] font-semibold transition-all hover:bg-gray-100 shadow-lg shadow-black/20">
+          <Link href="/download" className="inline-block px-10 py-4 rounded-lg bg-white text-navy-900 text-[15px] font-semibold transition-all hover:bg-gray-100 shadow-lg shadow-black/20">
             Download 48co Free
-          </a>
+          </Link>
           <p className="text-[12px] text-white/25 mt-5">Mac + Windows + Chrome + iOS + Android. Free tier. No credit card.</p>
         </div>
       </section>

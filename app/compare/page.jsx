@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export const metadata = {
   title: '48co vs Grammarly vs Wispr Flow vs SuperWhisper — 2026 Comparison',
   description: 'Honest comparison of AI grammar and voice-to-text tools in 2026. See how 48co compares on price, features, privacy, and AI quality.',
@@ -124,9 +126,9 @@ export default function ComparePage() {
 
         {/* CTA */}
         <div className="mt-16 text-center">
-          <a href="/download" className="inline-block px-8 py-3.5 rounded-lg bg-navy-900 text-white text-[15px] font-semibold hover:bg-navy-800 transition-all">
+          <Link href="/download" className="inline-block px-8 py-3.5 rounded-lg bg-navy-900 text-white text-[15px] font-semibold hover:bg-navy-800 transition-all">
             Download 48co Free
-          </a>
+          </Link>
           <p className="text-[12px] text-gray-400 mt-3">Mac + Windows + Chrome + iOS + Android. Free tier. No credit card.</p>
         </div>
       </div>
