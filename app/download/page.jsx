@@ -141,7 +141,8 @@ export default function DownloadPage() {
               { title: 'Voice-to-Text', desc: 'Press a hotkey, speak naturally, text appears. 99%+ accuracy with Whisper in 50+ languages.' },
               { title: 'Context-Aware', desc: 'Automatically detects Gmail → professional, Slack → casual, Code → technical.' },
               { title: 'Auto-Updates', desc: 'Always up to date. New features delivered automatically, no reinstalling.' },
-              { title: 'Privacy First', desc: 'Offline mode coming soon. Your voice and text stay on your device.' },
+              { title: 'Privacy First', desc: 'Local Whisper model for fully offline voice-to-text. Your voice and text never leave your device.' },
+              { title: 'Real-time Translation', desc: 'Speak English, text appears in 60+ languages. Domain-aware for legal, medical, and finance.' },
             ].map((f) => (
               <div key={f.title} className="card p-5">
                 <h3 className="text-[14px] font-semibold text-gray-800 mb-1">{f.title}</h3>

@@ -180,7 +180,7 @@ export default function LivePage() {
             {[
               { title: 'Voice punctuation', desc: 'Say "comma", "period", "new line" — they convert automatically' },
               { title: 'Auto-capitalization', desc: 'First letter + after periods get capitalized' },
-              { title: '16 languages', desc: 'Switch language in the dropdown above' },
+              { title: '60+ languages', desc: 'Switch language above. Full app supports real-time translation.' },
               { title: 'Real-time', desc: 'Words appear as you speak, not after you stop' },
             ].map(f => (
               <div key={f.title} className="p-4 rounded-xl border border-gray-100 bg-gray-50/50">

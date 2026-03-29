@@ -11,3 +11,4 @@ desktop/assets/icon.png
 desktop/assets/tray-icon.png
 desktop/assets/tray-iconTemplate.png
 desktop/assets/tray-iconTemplate@2x.png
+shared-rust/target/

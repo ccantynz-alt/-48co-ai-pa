@@ -63,6 +63,9 @@ export default function PricingPage() {
                   { f: 'Context-aware (app detection)', us: true, them: false },
                   { f: 'Desktop app (types into any app)', us: true, them: false },
                   { f: 'Offline mode', us: true, them: false },
+                  { f: 'Real-time translation (60+ languages)', us: true, them: false },
+                  { f: 'Real-time streaming (Deepgram)', us: true, them: false },
+                  { f: 'iPhone & Android keyboard', us: true, them: true },
                   { f: 'AI engine', us: 'Claude (latest)', them: 'Proprietary' },
                   { f: 'Developer mode (code fences)', us: true, them: false },
                 ].map((row) => (
@@ -91,10 +94,10 @@ export default function PricingPage() {
           <div className="space-y-6">
             {[
               { q: 'How does the free tier work?', a: 'You get 10 AI grammar corrections per day in the Chrome extension, plus 60 minutes of voice dictation per month. No credit card required. The free tier never expires.' },
-              { q: 'What does Pro include that Free doesn\'t?', a: 'Unlimited corrections, unlimited voice, AI Rewrite Mode (polishes your tone), context-aware formatting, desktop app, offline mode, and the upcoming mobile keyboards.' },
+              { q: 'What does Pro include that Free doesn\'t?', a: 'Unlimited corrections, unlimited voice, AI Rewrite Mode (polishes your tone), context-aware formatting, desktop app, offline mode, real-time translation (60+ languages), mobile keyboard apps for iPhone and Android, and Deepgram real-time streaming.' },
               { q: 'How is this better than Grammarly?', a: '48co uses Claude AI (the latest model) instead of rules-based checking. It also includes voice-to-text, works as a desktop app that types into ANY application (not just browsers), costs $12/mo vs $30/mo, and our Business plan is $29/mo for 10 users vs Grammarly\'s $150/mo.' },
               { q: 'Do I need an API key?', a: 'No. All plans use our managed AI service. You just sign up and start using it.' },
-              { q: 'Will it work on my phone?', a: 'iPhone and Android keyboard apps are coming soon. They\'ll replace your default keyboard and correct everything you type — texts, emails, notes, everything.' },
+              { q: 'Will it work on my phone?', a: 'Yes. We have custom keyboard apps for both iPhone and Android. They work as a system-level keyboard in every app — texts, emails, notes, everything. Voice-to-text and grammar checking built right into the keyboard.' },
               { q: 'Can I cancel anytime?', a: 'Yes, instantly. No contracts, no cancellation fees, no questions asked. Monthly plans cancel at the end of the billing period. Annual plans can be refunded within 14 days.' },
             ].map((faq) => (
               <div key={faq.q}>
