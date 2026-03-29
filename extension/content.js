@@ -1,5 +1,5 @@
 /**
- * AlecRae Voice Content Script — STREAMING VOICE-TO-TEXT
+ * 48co Voice Content Script — STREAMING VOICE-TO-TEXT
  *
  * Works like WhisperTyping: text appears in the chat box WORD BY WORD
  * as you speak. No popups. No overlays. No visible UI.
@@ -60,26 +60,38 @@
   function showToast(message, type = 'info', duration = 3000) {
     if (toastEl) toastEl.remove()
 
+    const colors = {
+      recording: 'background:rgba(79,70,229,0.95);color:white;',
+      error:     'background:rgba(220,38,38,0.95);color:white;',
+      success:   'background:rgba(5,150,105,0.95);color:white;',
+      info:      'background:rgba(26,26,46,0.92);color:rgba(255,255,255,0.95);',
+    }
+
     toastEl = document.createElement('div')
     toastEl.setAttribute('style', `
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-      z-index: 2147483647; padding: 10px 20px; border-radius: 8px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      font-size: 13px; font-weight: 500; pointer-events: none;
-      transition: opacity 0.3s; opacity: 0;
-      ${type === 'recording' ? 'background: rgba(255,59,92,0.9); color: white;' :
-        type === 'error' ? 'background: rgba(255,59,92,0.9); color: white;' :
-        type === 'success' ? 'background: rgba(0,200,100,0.9); color: white;' :
-        'background: rgba(30,30,40,0.9); color: rgba(255,255,255,0.9);'}
+      position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(8px);
+      z-index:2147483647;padding:10px 22px;border-radius:10px;
+      font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      font-size:13px;font-weight:500;pointer-events:none;
+      transition:opacity 0.25s ease,transform 0.25s ease;opacity:0;
+      box-shadow:0 4px 20px rgba(0,0,0,0.12);letter-spacing:-0.01em;
+      ${colors[type] || colors.info}
     `)
     toastEl.textContent = message
     document.body.appendChild(toastEl)
-    requestAnimationFrame(() => { toastEl.style.opacity = '1' })
+    requestAnimationFrame(() => {
+      toastEl.style.opacity = '1'
+      toastEl.style.transform = 'translateX(-50%) translateY(0)'
+    })
 
     if (toastTimeout) clearTimeout(toastTimeout)
     if (duration > 0) {
       toastTimeout = setTimeout(() => {
-        if (toastEl) { toastEl.style.opacity = '0'; setTimeout(() => { if (toastEl) toastEl.remove(); toastEl = null }, 300) }
+        if (toastEl) {
+          toastEl.style.opacity = '0'
+          toastEl.style.transform = 'translateX(-50%) translateY(8px)'
+          setTimeout(() => { if (toastEl) toastEl.remove(); toastEl = null }, 250)
+        }
       }, duration)
     }
   }
@@ -335,7 +347,7 @@
 
       const msg = messages[e.error] || `Mic error: ${e.error}`
       showToast(msg, 'error', 6000)
-      console.warn('[AlecRae Voice]', e.error, msg)
+      console.warn('[48co Voice]', e.error, msg)
 
       state.status = 'idle'
       recognition = null
@@ -347,7 +359,7 @@
       recognition.start()
     } catch (err) {
       showToast('Could not start microphone. Try refreshing the page.', 'error', 5000)
-      console.warn('[AlecRae Voice] Failed to start:', err)
+      console.warn('[48co Voice] Failed to start:', err)
       state.status = 'idle'
       recognition = null
     }

@@ -13,7 +13,7 @@ export async function POST(request) {
   }
 
   const { text, mode = 'professional', preserveVoice = true } = await request.json()
-  if (!text) return NextResponse.json({ error: 'No text provided' }, { status: 400 })
+  if (!text) return NextResponse.json({ error: 'Please provide text to rewrite' }, { status: 400 })
 
   const claudeKey = process.env.CLAUDE_API_KEY
   if (!claudeKey) return NextResponse.json({ error: 'Service unavailable' }, { status: 503 })
@@ -45,7 +45,7 @@ export async function POST(request) {
       }),
     })
 
-    if (!response.ok) return NextResponse.json({ error: 'Rewrite failed' }, { status: 502 })
+    if (!response.ok) return NextResponse.json({ error: 'Rewrite service is temporarily unavailable. Please try again in a moment.' }, { status: 502 })
 
     const data = await response.json()
     const rewritten = data.content?.[0]?.text?.trim() || text
@@ -54,6 +54,6 @@ export async function POST(request) {
     return NextResponse.json({ text: rewritten })
   } catch (err) {
     console.error('Rewrite error:', err)
-    return NextResponse.json({ error: 'Rewrite failed' }, { status: 500 })
+    return NextResponse.json({ error: 'Something went wrong. Please try again shortly.' }, { status: 500 })
   }
 }

@@ -1,5 +1,5 @@
 /**
- * AlecRae Voice Background Service Worker
+ * 48co Voice Background Service Worker
  * Routes messages between content script, popup, and offscreen document.
  * Tracks which tab started recording so results go to the RIGHT tab.
  */
@@ -33,7 +33,7 @@ async function ensureOffscreen() {
     return true
   } catch (err) {
     offscreenCreating = null
-    console.error('[AlecRae] Failed to create offscreen:', err)
+    console.error('[48co] Failed to create offscreen:', err)
     return false
   }
 }
@@ -115,7 +115,7 @@ chrome.commands.onCommand.addListener(async (command) => {
 // ── Message router ─────────────────────────────────────────────────
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   handleMessage(msg, sender).then(sendResponse).catch((err) => {
-    console.error('[AlecRae] Error:', err)
+    console.error('[48co] Error:', err)
     sendResponse({ error: err.message })
   })
   return true

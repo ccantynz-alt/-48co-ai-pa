@@ -16,7 +16,7 @@ export default function Waveform({ isRecording }) {
           key={i}
           className={`w-[3px] rounded-full transition-all duration-300 ${
             isRecording
-              ? `${cls} bg-[#00f0ff]`
+              ? `${cls} bg-indigo-500`
               : 'bg-white/20'
           }`}
           // Static bars have varying heights for visual interest when idle

@@ -6,12 +6,13 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      width: 320px;
-      background: #0a0a0e;
-      color: #fff;
-      font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
-      font-size: 11px;
+      width: 340px;
+      background: #ffffff;
+      color: #1a1a2e;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 12px;
       padding: 0;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* Header */
@@ -19,107 +20,120 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 16px 18px;
+      border-bottom: 1px solid #f0f0f5;
+      background: #fafafe;
     }
     .logo {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 700;
-      letter-spacing: 0.2em;
-      color: rgba(255,255,255,0.8);
+      letter-spacing: -0.01em;
+      color: #1a1a2e;
     }
+    .logo span { color: #4f46e5; }
     .version {
-      font-size: 9px;
-      color: rgba(255,255,255,0.2);
+      font-size: 10px;
+      color: #b0b0c0;
+      font-weight: 500;
     }
 
     /* Sections */
     .section {
-      padding: 12px 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 14px 18px;
+      border-bottom: 1px solid #f0f0f5;
     }
     .section-title {
-      font-size: 9px;
-      letter-spacing: 0.15em;
-      color: rgba(255,255,255,0.25);
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: #8888a0;
       margin-bottom: 10px;
       text-transform: uppercase;
+      font-weight: 600;
     }
 
     .row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
     .row:last-child { margin-bottom: 0; }
 
     .label {
-      color: rgba(255,255,255,0.5);
+      color: #4a4a6a;
+      font-weight: 500;
       flex: 1;
+    }
+    .label-hint {
+      display: block;
+      font-size: 10px;
+      color: #a0a0b8;
+      font-weight: 400;
+      margin-top: 2px;
     }
 
     /* Toggle switch */
     .toggle {
-      width: 36px;
-      height: 20px;
-      border-radius: 10px;
-      background: rgba(255,255,255,0.1);
+      width: 40px;
+      height: 22px;
+      border-radius: 11px;
+      background: #e0e0ea;
       cursor: pointer;
       position: relative;
-      transition: background 0.2s;
+      transition: background 0.25s ease;
       border: none;
       padding: 0;
       flex-shrink: 0;
     }
-    .toggle.on { background: rgba(0, 240, 255, 0.4); }
+    .toggle.on { background: #4f46e5; }
     .toggle .knob {
       position: absolute;
       top: 2px;
       left: 2px;
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
       background: white;
-      transition: left 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      transition: left 0.25s ease;
     }
-    .toggle.on .knob { left: 18px; }
+    .toggle.on .knob { left: 20px; }
 
     /* Select */
     select {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.6);
-      font-size: 10px;
+      background: #f8f8fc;
+      border: 1px solid #e4e4ee;
+      color: #4a4a6a;
+      font-size: 11px;
       font-family: inherit;
-      border-radius: 4px;
-      padding: 4px 8px;
+      border-radius: 8px;
+      padding: 6px 10px;
       outline: none;
       cursor: pointer;
+      transition: border-color 0.2s;
     }
-    select option {
-      background: #0a0a0e;
-      color: rgba(255,255,255,0.6);
-    }
+    select:focus { border-color: #4f46e5; }
 
     /* Input */
     input[type="text"], input[type="password"] {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.6);
-      font-size: 10px;
+      background: #f8f8fc;
+      border: 1px solid #e4e4ee;
+      color: #4a4a6a;
+      font-size: 11px;
       font-family: inherit;
-      border-radius: 4px;
-      padding: 4px 8px;
+      border-radius: 8px;
+      padding: 6px 10px;
       outline: none;
-      width: 160px;
+      width: 170px;
+      transition: border-color 0.2s;
     }
-    input:focus { border-color: rgba(0, 240, 255, 0.3); }
+    input:focus { border-color: #4f46e5; }
+    input::placeholder { color: #c0c0d0; }
 
     /* Range slider */
     input[type="range"] {
       width: 120px;
-      accent-color: #00f0ff;
+      accent-color: #4f46e5;
       cursor: pointer;
     }
 
@@ -128,140 +142,145 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 3px 0;
-      font-size: 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
+      padding: 5px 0;
+      font-size: 11px;
+      border-bottom: 1px solid #f4f4f8;
     }
-    .entry-row .entry-from { color: #00f0ff; flex: 1; }
-    .entry-row .entry-to { color: rgba(255,255,255,0.4); flex: 1; text-align: right; margin-right: 6px; }
+    .entry-row .entry-from { color: #4f46e5; font-weight: 500; flex: 1; }
+    .entry-row .entry-to { color: #8888a0; flex: 1; text-align: right; margin-right: 8px; }
     .entry-row .entry-del {
-      background: none; border: none; color: rgba(255,255,255,0.15);
-      cursor: pointer; font-size: 10px; padding: 0 2px;
+      background: none; border: none; color: #c0c0d0;
+      cursor: pointer; font-size: 12px; padding: 0 4px;
+      transition: color 0.2s;
     }
-    .entry-row .entry-del:hover { color: #ff3b5c; }
+    .entry-row .entry-del:hover { color: #e53e3e; }
 
     /* Add button */
     .code-btn {
-      background: rgba(0, 240, 255, 0.1);
-      border: 1px solid rgba(0, 240, 255, 0.2);
-      color: #00f0ff;
-      font-size: 12px;
+      background: #4f46e5;
+      border: none;
+      color: white;
+      font-size: 13px;
       font-weight: 600;
-      border-radius: 4px;
-      padding: 4px 8px;
+      border-radius: 8px;
+      padding: 5px 10px;
       cursor: pointer;
       transition: background 0.2s;
     }
-    .code-btn:hover { background: rgba(0, 240, 255, 0.2); }
+    .code-btn:hover { background: #4338ca; }
 
     /* Voice commands */
     .cmd {
-      padding: 4px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      color: rgba(255,255,255,0.25);
-      font-size: 10px;
+      padding: 5px 0;
+      border-bottom: 1px solid #f4f4f8;
+      color: #8888a0;
+      font-size: 11px;
     }
     .cmd:last-child { border-bottom: none; }
     .cmd-trigger {
-      color: #00f0ff;
+      color: #4f46e5;
+      font-weight: 500;
     }
 
     /* Footer */
     .footer {
-      padding: 10px 16px;
+      padding: 12px 18px;
       text-align: center;
     }
     .footer a {
-      color: rgba(255,255,255,0.2);
+      color: #b0b0c0;
       text-decoration: none;
-      font-size: 9px;
-      letter-spacing: 0.1em;
+      font-size: 10px;
+      font-weight: 500;
     }
-    .footer a:hover { color: #00f0ff; }
+    .footer a:hover { color: #4f46e5; }
 
     /* Status badge */
     .status-badge {
       display: inline-block;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 9px;
-      letter-spacing: 0.05em;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
     }
     .status-badge.connected {
-      color: #00ff88;
-      border: 1px solid rgba(0, 255, 136, 0.2);
+      color: #059669;
+      background: #ecfdf5;
     }
     .status-badge.disconnected {
-      color: #ff3b5c;
-      border: 1px solid rgba(255, 59, 92, 0.2);
+      color: #dc2626;
+      background: #fef2f2;
     }
 
-    /* Mic toggle button in popup */
+    /* Mic toggle button */
     .mic-section {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
-      padding: 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      gap: 8px;
+      padding: 20px 18px;
+      border-bottom: 1px solid #f0f0f5;
+      background: linear-gradient(180deg, #fafafe 0%, #ffffff 100%);
     }
     .mic-toggle-btn {
-      width: 52px;
-      height: 52px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.04);
-      border: 2px solid rgba(255,255,255,0.15);
+      background: #f4f4f8;
+      border: 2px solid #e4e4ee;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.3s;
+      transition: all 0.3s ease;
     }
     .mic-toggle-btn:hover {
-      border-color: rgba(255,255,255,0.25);
-      background: rgba(255,255,255,0.06);
+      border-color: #4f46e5;
+      background: #f0f0ff;
     }
     .mic-toggle-btn.recording {
-      border-color: #ff3b5c;
-      box-shadow: 0 0 16px rgba(255,59,92,0.4);
-      animation: popupPulse 1.2s ease-in-out infinite;
+      border-color: #ef4444;
+      background: #fef2f2;
+      box-shadow: 0 0 0 6px rgba(239,68,68,0.1);
+      animation: popupPulse 1.5s ease-in-out infinite;
     }
     .mic-toggle-btn svg { transition: all 0.2s; }
     .mic-status {
-      font-size: 9px;
-      color: rgba(255,255,255,0.25);
-      letter-spacing: 0.1em;
+      font-size: 11px;
+      color: #8888a0;
+      font-weight: 500;
     }
-    .mic-status.recording { color: #ff3b5c; }
+    .mic-status.recording { color: #ef4444; font-weight: 600; }
     @keyframes popupPulse {
-      0%, 100% { box-shadow: 0 0 16px rgba(255,59,92,0.4); }
-      50% { box-shadow: 0 0 24px rgba(255,59,92,0.6); }
+      0%, 100% { box-shadow: 0 0 0 6px rgba(239,68,68,0.1); }
+      50% { box-shadow: 0 0 0 10px rgba(239,68,68,0.15); }
     }
   </style>
 </head>
 <body>
 
   <div class="header">
-    <span class="logo">&equiv; ALECRAE VOICE</span>
+    <span class="logo">48<span>co</span> Voice</span>
     <span class="version">v1.2.0</span>
   </div>
 
   <!-- Grammar Mode -->
-  <div class="section" style="background:rgba(79,70,229,0.06);border-bottom:1px solid rgba(255,255,255,0.06)">
+  <div class="section" style="background:#f8f7ff;border-bottom:1px solid #f0f0f5">
     <div class="row">
-      <span class="label" style="color:rgba(255,255,255,0.7)">AI Grammar Check</span>
+      <span class="label">
+        AI Grammar Check
+        <span class="label-hint">Corrects grammar as you type, on any site</span>
+      </span>
       <button class="toggle" id="grammar-toggle"><span class="knob"></span></button>
-    </div>
-    <div style="font-size:9px;color:rgba(255,255,255,0.2);margin-top:4px">
-      Checks grammar in real-time on any text field. Requires Claude API key.
     </div>
   </div>
 
   <!-- Mic toggle -->
   <div class="mic-section">
-    <div id="mic-device" style="font-size:9px;color:rgba(255,255,255,0.2);margin-bottom:6px;text-align:center;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Detecting microphone...</div>
+    <div id="mic-device" style="font-size:10px;color:#a0a0b8;margin-bottom:4px;text-align:center;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Detecting microphone...</div>
     <button class="mic-toggle-btn" id="mic-toggle-btn">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8888a0" stroke-width="1.5">
         <rect x="9" y="2" width="6" height="11" rx="3"/>
         <path d="M5 10a7 7 0 0014 0"/>
         <line x1="12" y1="21" x2="12" y2="17"/>
@@ -294,11 +313,11 @@
       <input type="password" id="api-key" placeholder="sk-..." />
     </div>
     <div class="row">
-      <span class="label">Claude Key</span>
+      <span class="label">
+        Claude Key
+        <span class="label-hint">Powers grammar + AI rewrite</span>
+      </span>
       <input type="password" id="claude-key" placeholder="sk-ant-..." />
-    </div>
-    <div style="font-size:9px;color:rgba(255,255,255,0.15);padding:0 16px 8px;margin-top:-4px">
-      Powers grammar check + AI rewrite. Get key at console.anthropic.com
     </div>
     <div class="row">
       <span class="label">Language</span>
@@ -364,23 +383,35 @@
     </div>
   </div>
 
-  <!-- Transcription -->
+  <!-- Behaviour -->
   <div class="section">
     <div class="section-title">Behaviour</div>
     <div class="row">
-      <span class="label">Auto coding mode</span>
+      <span class="label">
+        Auto coding mode
+        <span class="label-hint">Detects code context automatically</span>
+      </span>
       <button class="toggle" id="auto-coding-toggle"><span class="knob"></span></button>
     </div>
     <div class="row">
-      <span class="label">Force code mode</span>
+      <span class="label">
+        Force code mode
+        <span class="label-hint">Always format as code output</span>
+      </span>
       <button class="toggle" id="coding-mode-toggle"><span class="knob"></span></button>
     </div>
     <div class="row">
-      <span class="label">Auto-submit</span>
+      <span class="label">
+        Auto-submit
+        <span class="label-hint">Send message after you say "send it"</span>
+      </span>
       <button class="toggle" id="auto-submit-toggle"><span class="knob"></span></button>
     </div>
     <div class="row">
-      <span class="label">Push-to-talk (Ctrl+Shift)</span>
+      <span class="label">
+        Push-to-talk
+        <span class="label-hint">Hold Ctrl+Shift to record, release to stop</span>
+      </span>
       <button class="toggle" id="ptt-toggle"><span class="knob"></span></button>
     </div>
     <div class="row">
@@ -392,11 +423,12 @@
   <!-- Custom Vocabulary -->
   <div class="section">
     <div class="section-title">Custom Vocabulary</div>
+    <div style="font-size:10px;color:#a0a0b8;margin-bottom:8px">Add terms the AI should always get right (legal terms, names, etc.)</div>
     <div id="vocab-list"></div>
     <div class="row" style="margin-top:6px">
-      <input type="text" id="vocab-from" placeholder="Heard as..." style="width:90px" />
-      <span style="color:rgba(255,255,255,0.15);margin:0 4px">&rarr;</span>
-      <input type="text" id="vocab-to" placeholder="Replace with..." style="width:90px" />
+      <input type="text" id="vocab-from" placeholder="Heard as..." style="width:100px" />
+      <span style="color:#c0c0d0;margin:0 4px;font-size:10px">&rarr;</span>
+      <input type="text" id="vocab-to" placeholder="Replace with..." style="width:100px" />
       <button class="code-btn" id="vocab-add" style="margin-left:4px">+</button>
     </div>
   </div>
@@ -406,9 +438,9 @@
     <div class="section-title">Text Replacements</div>
     <div id="replace-list"></div>
     <div class="row" style="margin-top:6px">
-      <input type="text" id="replace-from" placeholder="Find..." style="width:90px" />
-      <span style="color:rgba(255,255,255,0.15);margin:0 4px">&rarr;</span>
-      <input type="text" id="replace-to" placeholder="Replace..." style="width:90px" />
+      <input type="text" id="replace-from" placeholder="Find..." style="width:100px" />
+      <span style="color:#c0c0d0;margin:0 4px;font-size:10px">&rarr;</span>
+      <input type="text" id="replace-to" placeholder="Replace..." style="width:100px" />
       <button class="code-btn" id="replace-add" style="margin-left:4px">+</button>
     </div>
   </div>
@@ -416,35 +448,35 @@
   <!-- Voice Commands Reference -->
   <div class="section">
     <div class="section-title">Voice Commands</div>
-    <div class="cmd">&ldquo;<span class="cmd-trigger">refactor this</span>&rdquo; &rarr; paste refactor prompt</div>
-    <div class="cmd">&ldquo;<span class="cmd-trigger">explain this</span>&rdquo; &rarr; paste explain prompt</div>
-    <div class="cmd">&ldquo;<span class="cmd-trigger">debug this</span>&rdquo; &rarr; paste debug prompt</div>
-    <div class="cmd">&ldquo;<span class="cmd-trigger">fix this</span>&rdquo; &rarr; paste fix prompt</div>
-    <div class="cmd">&ldquo;<span class="cmd-trigger">test this</span>&rdquo; &rarr; paste test prompt</div>
-    <div class="cmd">&ldquo;<span class="cmd-trigger">optimize this</span>&rdquo; &rarr; paste optimize prompt</div>
-    <div class="cmd">&ldquo;<span class="cmd-trigger">send it</span>&rdquo; &rarr; submit message</div>
-    <div class="cmd">&ldquo;<span class="cmd-trigger">cancel</span>&rdquo; &rarr; clear &amp; reset</div>
+    <div class="cmd">"<span class="cmd-trigger">refactor this</span>" &mdash; paste refactor prompt</div>
+    <div class="cmd">"<span class="cmd-trigger">explain this</span>" &mdash; paste explain prompt</div>
+    <div class="cmd">"<span class="cmd-trigger">debug this</span>" &mdash; paste debug prompt</div>
+    <div class="cmd">"<span class="cmd-trigger">fix this</span>" &mdash; paste fix prompt</div>
+    <div class="cmd">"<span class="cmd-trigger">test this</span>" &mdash; paste test prompt</div>
+    <div class="cmd">"<span class="cmd-trigger">optimize this</span>" &mdash; paste optimize prompt</div>
+    <div class="cmd">"<span class="cmd-trigger">send it</span>" &mdash; submit message</div>
+    <div class="cmd">"<span class="cmd-trigger">cancel</span>" &mdash; clear &amp; reset</div>
   </div>
 
   <!-- Shortcuts -->
   <div class="section">
-    <div class="section-title">Shortcuts</div>
+    <div class="section-title">Keyboard Shortcuts</div>
     <div class="row">
       <span class="label">Toggle mic</span>
-      <span style="color:rgba(255,255,255,0.3)">Ctrl+Shift+Space</span>
+      <span style="color:#8888a0;font-size:11px;font-weight:500">Ctrl+Shift+Space</span>
     </div>
     <div class="row">
       <span class="label">Middle-click</span>
-      <span style="color:rgba(255,255,255,0.3)">Toggle recording</span>
+      <span style="color:#8888a0;font-size:11px;font-weight:500">Toggle recording</span>
     </div>
     <div class="row">
       <span class="label">Push-to-talk</span>
-      <span style="color:rgba(255,255,255,0.3)">Hold Ctrl+Shift</span>
+      <span style="color:#8888a0;font-size:11px;font-weight:500">Hold Ctrl+Shift</span>
     </div>
   </div>
 
   <div class="footer">
-    <a href="https://alecrae.ai" target="_blank">alecrae.ai</a>
+    <a href="https://48co.nz" target="_blank">48co.nz</a>
   </div>
 
   <script src="popup.js"></script>

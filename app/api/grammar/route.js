@@ -13,8 +13,8 @@ export async function POST(request) {
   }
 
   const { text } = await request.json()
-  if (!text || text.length < 5) return NextResponse.json({ error: 'Text too short' }, { status: 400 })
-  if (text.length > 3000) return NextResponse.json({ error: 'Text too long (max 3000 chars)' }, { status: 400 })
+  if (!text || text.length < 5) return NextResponse.json({ error: 'Please provide at least 5 characters of text' }, { status: 400 })
+  if (text.length > 3000) return NextResponse.json({ error: 'Text exceeds the 3,000 character limit. Please split into smaller sections.' }, { status: 400 })
 
   const claudeKey = process.env.CLAUDE_API_KEY
   if (!claudeKey) return NextResponse.json({ error: 'Service unavailable' }, { status: 503 })
@@ -35,7 +35,7 @@ export async function POST(request) {
       }),
     })
 
-    if (!response.ok) return NextResponse.json({ error: 'Grammar check failed' }, { status: 502 })
+    if (!response.ok) return NextResponse.json({ error: 'Grammar service is temporarily unavailable. Please try again in a moment.' }, { status: 502 })
 
     const data = await response.json()
     const content = data.content?.[0]?.text?.trim() || '[]'
@@ -48,6 +48,6 @@ export async function POST(request) {
     return NextResponse.json({ corrections })
   } catch (err) {
     console.error('Grammar check error:', err)
-    return NextResponse.json({ error: 'Grammar check failed' }, { status: 500 })
+    return NextResponse.json({ error: 'Something went wrong. Please try again shortly.' }, { status: 500 })
   }
 }
