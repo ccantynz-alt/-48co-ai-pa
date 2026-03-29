@@ -57,7 +57,10 @@ export default function InstallPage() {
           <div className="grid md:grid-cols-3 gap-4">
             {[
               { title: 'AI Grammar Check', desc: 'Scans every text field you type in. Shows corrections in a clean tooltip. Click to fix.' },
-              { title: 'Voice-to-Text', desc: 'Press mouse wheel or Ctrl+Shift+Space to dictate. Text streams into the focused field as you speak.' },
+              { title: 'Voice-to-Text', desc: 'Press middle-click or Ctrl+Shift+Space to dictate. Text streams into the focused field as you speak.' },
+              { title: 'Real-time Streaming', desc: 'Deepgram Nova-3 engine option for sub-500ms latency. Words appear as you speak.' },
+              { title: 'Live Translation', desc: 'Speak English, text appears in 60+ languages. Domain-aware for legal, medical, and finance terminology.' },
+              { title: 'Custom Vocabulary', desc: 'Add specialist terms the AI should never get wrong — legal Latin, medical terms, client names.' },
               { title: 'Works Everywhere', desc: 'Gmail, Claude, ChatGPT, Slack, Google Docs, Twitter, LinkedIn — any website with a text field.' },
             ].map((f) => (
               <div key={f.title} className="card p-5">

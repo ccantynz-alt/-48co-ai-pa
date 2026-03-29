@@ -102,7 +102,7 @@ export default function LandingPage() {
           </h1>
 
           <p className="text-lg md:text-xl text-gray-400 max-w-xl mx-auto leading-relaxed mb-10 animate-fade-up" style={{ animationDelay: '0.2s' }}>
-            Speak or type — 48co fixes your grammar, polishes your tone, and types it perfectly. On every device, in every app.
+            AI grammar, voice-to-text, and real-time translation — in every app, on every device. Built for lawyers, accountants, and professionals who write for a living.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center mb-16 animate-fade-up" style={{ animationDelay: '0.3s' }}>
@@ -144,7 +144,7 @@ export default function LandingPage() {
           </div>
 
           <p className="text-[12px] text-gray-300 mt-8 animate-fade-up" style={{ animationDelay: '0.5s' }}>
-            Mac &middot; Windows &middot; iPhone &middot; Chrome &middot; Free to start
+            Mac &middot; Windows &middot; iPhone &middot; Android &middot; Chrome &middot; Free to start
           </p>
         </div>
       </section>
@@ -189,12 +189,12 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
-              { title: 'AI Grammar Fix', desc: 'Catches every error — spelling, grammar, punctuation, word choice. Powered by Claude AI, not basic rules.', color: 'text-indigo-600 bg-indigo-50' },
-              { title: 'Tone Adjustment', desc: 'Automatically adjusts tone based on context. Professional for email, casual for Slack, technical for code.', color: 'text-emerald-600 bg-emerald-50' },
-              { title: 'Voice-to-Text', desc: 'Press a hotkey, speak naturally, get perfect text. 99%+ accuracy with OpenAI Whisper in 50+ languages.', color: 'text-blue-600 bg-blue-50' },
-              { title: 'Real-time Polish', desc: 'Works as you type, not after. See corrections inline before you hit send.', color: 'text-amber-600 bg-amber-50' },
-              { title: 'Works Offline', desc: 'Local AI model for privacy-sensitive work. Your text never has to leave your device.', color: 'text-purple-600 bg-purple-50' },
-              { title: 'Developer Mode', desc: 'Auto-detects code and wraps in markdown. Voice commands for refactoring, debugging, and testing.', color: 'text-rose-600 bg-rose-50' },
+              { title: 'AI Grammar + Rewrite', desc: 'Catches every error — spelling, grammar, punctuation, word choice. Rewrites for tone: professional for contracts, casual for Slack. Powered by Claude AI.', color: 'text-indigo-600 bg-indigo-50' },
+              { title: 'Voice-to-Text', desc: 'Press a hotkey, speak naturally, get perfect text. Choose between Web Speech (free), Whisper (accurate), or Deepgram Nova-3 (real-time streaming).', color: 'text-blue-600 bg-blue-50' },
+              { title: 'Real-time Translation', desc: 'Speak in one language, text appears in another. 60+ languages including Te Reo Māori. Domain-aware for legal, medical, and finance terminology.', color: 'text-emerald-600 bg-emerald-50' },
+              { title: 'Custom Vocabulary', desc: 'Add industry terms the AI never gets wrong. "per se" not "per say". "fiduciary" not "fudiciary". Perfect for law, medicine, and accounting.', color: 'text-amber-600 bg-amber-50' },
+              { title: 'Works Offline', desc: 'Local Whisper model runs entirely on your device. Zero data leaves your computer. Audit-ready for attorney-client privilege.', color: 'text-purple-600 bg-purple-50' },
+              { title: 'Number Dictation', desc: '"twelve million four hundred fifty-three thousand dollars" becomes $12,453,000. Currency-aware: NZD, USD, GBP, EUR. Built for accountants.', color: 'text-rose-600 bg-rose-50' },
             ].map((f) => (
               <div key={f.title} className="card p-6">
                 <h3 className="text-[15px] font-semibold text-gray-800 mb-2">{f.title}</h3>
@@ -217,7 +217,7 @@ export default function LandingPage() {
             {[
               { before: 'hey can u send me the report i need it for tmrw thx', after: 'Hey, can you send me the report? I need it for tomorrow. Thanks!' },
               { before: 'i thinkt he main issue is that there server is not responding properly and we need too fix it asap', after: 'I think the main issue is that their server is not responding properly, and we need to fix it ASAP.' },
-              { before: 'the product is great but i think we should of added more features before launching it was to early', after: 'The product is great, but I think we should have added more features before launching — it was too early.' },
+              { before: 'the defendant breached there fiduciary duty per say and we should of filed a motion in limine before the deposition', after: 'The defendant breached their fiduciary duty per se, and we should have filed a motion in limine before the deposition.' },
             ].map((ex, i) => (
               <div key={i} className="card overflow-hidden">
                 <div className="grid md:grid-cols-2">

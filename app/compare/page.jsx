@@ -20,8 +20,8 @@ export default function ComparePage() {
     { name: 'Voice-to-Text', co: true, gram: false, wispr: true, sw: true, highlight: true },
     { name: 'Desktop App (any app)', co: true, gram: false, wispr: true, sw: true },
     { name: 'Chrome Extension', co: true, gram: true, wispr: false, sw: false },
-    { name: 'iPhone / iPad', co: 'Coming Q2', gram: true, wispr: true, sw: true },
-    { name: 'Android', co: 'Coming Q2', gram: true, wispr: true, sw: false },
+    { name: 'iPhone / iPad', co: true, gram: true, wispr: true, sw: true },
+    { name: 'Android', co: true, gram: true, wispr: true, sw: false },
     { name: 'Offline Mode', co: true, gram: false, wispr: false, sw: true },
     { name: 'Privacy (local-first)', co: true, gram: false, wispr: false, sw: true },
     { name: 'Windows + Mac', co: true, gram: true, wispr: true, sw: true },
@@ -29,7 +29,9 @@ export default function ComparePage() {
     { name: 'Custom Vocabulary', co: true, gram: false, wispr: true, sw: true },
     { name: 'Developer Mode', co: true, gram: false, wispr: false, sw: false, highlight: true },
     { name: 'AI Engine', co: 'Claude', gram: 'Proprietary', wispr: 'Mixed', sw: 'Whisper' },
-    { name: 'Meeting Transcription', co: 'Coming Q2', gram: false, wispr: false, sw: false },
+    { name: 'Real-time Translation', co: true, gram: false, wispr: false, sw: false, highlight: true },
+    { name: 'Real-time Streaming', co: true, gram: false, wispr: true, sw: true },
+    { name: 'Meeting Transcription', co: 'Coming soon', gram: false, wispr: false, sw: false },
   ]
 
   function renderCell(val) {
@@ -83,7 +85,6 @@ export default function ComparePage() {
           <div className="rounded-2xl p-6 border border-gray-200">
             <h2 className="text-[15px] font-bold text-gray-800 mb-3">Where Grammarly beats us (for now)</h2>
             <ul className="space-y-2 text-[13px] text-gray-400">
-              <li>+ Mobile keyboard already shipped (ours is coming Q2)</li>
               <li>+ Microsoft Office plugin (Word, Outlook)</li>
               <li>+ 15+ years of user data training their models</li>
               <li>+ Brand recognition — everyone knows Grammarly</li>
@@ -94,9 +95,8 @@ export default function ComparePage() {
           <div className="rounded-2xl p-6 border border-gray-200">
             <h2 className="text-[15px] font-bold text-gray-800 mb-3">Where Wispr Flow beats us (for now)</h2>
             <ul className="space-y-2 text-[13px] text-gray-400">
-              <li>+ iOS/Android app already shipped</li>
+              <li>+ Established iOS/Android apps with large user base</li>
               <li>+ 200+ app integrations</li>
-              <li>+ Real-time streaming transcription</li>
               <li>+ $81M in VC funding = fast development</li>
             </ul>
             <p className="mt-3 text-[11px] text-gray-300">But: No grammar checking, cloud-only (no privacy), $15/mo.</p>
