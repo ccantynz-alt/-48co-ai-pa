@@ -3,52 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <title>Welcome to 48co Voice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: #0a0a0e;
-      color: #fff;
-      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #ffffff;
+      color: #1a1a2e;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 40px 20px;
+      padding: 48px 24px;
+      -webkit-font-smoothing: antialiased;
     }
 
     .container {
-      max-width: 560px;
+      max-width: 540px;
       width: 100%;
     }
 
     .logo {
-      font-family: 'JetBrains Mono', 'SF Mono', monospace;
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 700;
       text-align: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+      color: #1a1a2e;
     }
-    .logo .accent { color: #00f0ff; }
+    .logo .accent { color: #4f46e5; }
 
     .subtitle {
       text-align: center;
-      color: rgba(255,255,255,0.3);
-      font-size: 13px;
+      color: #8888a0;
+      font-size: 14px;
       margin-bottom: 40px;
+      line-height: 1.5;
     }
 
     .card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 16px;
-      padding: 28px;
-      margin-bottom: 16px;
+      background: #fafafe;
+      border: 1px solid #f0f0f5;
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 14px;
     }
 
     .mic-setup-card {
-      background: rgba(0, 240, 255, 0.04);
-      border: 1px solid rgba(0, 240, 255, 0.15);
+      background: #f8f7ff;
+      border: 1px solid #e8e6f5;
     }
 
     .step-number {
@@ -58,8 +64,8 @@
       width: 28px;
       height: 28px;
       border-radius: 50%;
-      background: rgba(0, 240, 255, 0.1);
-      color: #00f0ff;
+      background: #f0eeff;
+      color: #4f46e5;
       font-size: 13px;
       font-weight: 700;
       margin-bottom: 12px;
@@ -68,19 +74,20 @@
     .card h3 {
       font-size: 16px;
       font-weight: 600;
-      color: rgba(255,255,255,0.9);
+      color: #1a1a2e;
       margin-bottom: 8px;
+      letter-spacing: -0.01em;
     }
 
     .card p {
-      font-size: 13px;
+      font-size: 14px;
       line-height: 1.7;
-      color: rgba(255,255,255,0.4);
+      color: #6a6a80;
     }
 
     .highlight {
-      color: #00f0ff;
-      font-weight: 500;
+      color: #4f46e5;
+      font-weight: 600;
     }
 
     .mic-btn {
@@ -91,41 +98,45 @@
       margin-top: 16px;
       padding: 14px 24px;
       border-radius: 12px;
-      background: rgba(0, 240, 255, 0.1);
-      border: 1px solid rgba(0, 240, 255, 0.25);
-      color: #00f0ff;
+      background: #4f46e5;
+      border: none;
+      color: white;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all 0.2s;
       width: 100%;
+      font-family: inherit;
     }
-    .mic-btn:hover { background: rgba(0, 240, 255, 0.2); }
-    .mic-btn.success { background: rgba(0, 200, 100, 0.15); border-color: rgba(0, 200, 100, 0.3); color: #00ff88; }
-    .mic-btn.error { background: rgba(255, 59, 92, 0.15); border-color: rgba(255, 59, 92, 0.3); color: #ff3b5c; }
+    .mic-btn:hover { background: #4338ca; }
+    .mic-btn.success { background: #059669; }
+    .mic-btn.error { background: #dc2626; }
 
     #mic-name {
-      font-size: 11px;
-      color: rgba(255,255,255,0.3);
+      font-size: 12px;
+      color: #8888a0;
       text-align: center;
-      margin-top: 8px;
+      margin-top: 10px;
     }
 
     .sites {
       display: flex;
       gap: 8px;
-      margin-top: 16px;
+      margin-top: 14px;
       flex-wrap: wrap;
     }
     .site-badge {
-      padding: 6px 14px;
+      padding: 7px 14px;
       border-radius: 8px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: #f4f4f8;
+      border: 1px solid #e8e8f0;
       font-size: 12px;
-      color: rgba(255,255,255,0.5);
+      color: #6a6a80;
       text-decoration: none;
+      font-weight: 500;
+      transition: all 0.15s;
     }
+    .site-badge:hover { border-color: #4f46e5; color: #4f46e5; }
 
     .controls-grid {
       display: grid;
@@ -135,19 +146,21 @@
     }
     .control {
       text-align: center;
-      padding: 14px 8px;
+      padding: 16px 10px;
       border-radius: 12px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
+      background: #f8f8fc;
+      border: 1px solid #f0f0f5;
     }
     .control-icon {
-      font-size: 20px;
-      margin-bottom: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #4f46e5;
+      margin-bottom: 8px;
     }
     .control-label {
-      font-size: 10px;
-      color: rgba(255,255,255,0.3);
-      letter-spacing: 0.05em;
+      font-size: 11px;
+      color: #8888a0;
+      font-weight: 500;
     }
 
     .commands-list {
@@ -156,59 +169,62 @@
     .cmd-row {
       display: flex;
       justify-content: space-between;
-      padding: 6px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      font-size: 12px;
+      padding: 7px 0;
+      border-bottom: 1px solid #f4f4f8;
+      font-size: 13px;
     }
     .cmd-row:last-child { border-bottom: none; }
-    .cmd-trigger { color: #00f0ff; }
-    .cmd-action { color: rgba(255,255,255,0.25); }
+    .cmd-trigger { color: #4f46e5; font-weight: 500; }
+    .cmd-action { color: #a0a0b8; }
 
     .cta {
       display: block;
       text-align: center;
-      margin-top: 32px;
-      padding: 14px 32px;
+      margin-top: 28px;
+      padding: 16px 32px;
       border-radius: 12px;
-      background: rgba(0, 240, 255, 0.1);
-      border: 1px solid rgba(0, 240, 255, 0.25);
-      color: #00f0ff;
-      font-size: 14px;
+      background: #4f46e5;
+      border: none;
+      color: white;
+      font-size: 15px;
       font-weight: 600;
       text-decoration: none;
       cursor: pointer;
       transition: background 0.2s;
+      font-family: inherit;
     }
-    .cta:hover { background: rgba(0, 240, 255, 0.2); }
+    .cta:hover { background: #4338ca; }
 
     .footer {
       text-align: center;
-      margin-top: 24px;
-      color: rgba(255,255,255,0.15);
-      font-size: 11px;
+      margin-top: 20px;
+      color: #c0c0d0;
+      font-size: 12px;
     }
-    .footer a { color: rgba(255,255,255,0.2); text-decoration: none; }
-    .footer a:hover { color: #00f0ff; }
+    .footer a { color: #b0b0c0; text-decoration: none; font-weight: 500; }
+    .footer a:hover { color: #4f46e5; }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="logo">48co <span class="accent">Voice</span></div>
-    <p class="subtitle">AI grammar + voice-to-text for every website &mdash; installed successfully</p>
+    <div class="logo">48<span class="accent">co</span> Voice</div>
+    <p class="subtitle">AI grammar + voice-to-text for every website &mdash; installed successfully.</p>
 
-    <!-- Step 0: Mic setup — THIS MUST HAPPEN FIRST -->
+    <!-- Step 0: Mic setup -->
     <div class="card mic-setup-card">
-      <div class="step-number">&#127908;</div>
+      <div class="step-number">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0014 0"/><line x1="12" y1="21" x2="12" y2="17"/></svg>
+      </div>
       <h3>Set up your microphone</h3>
       <p>Click the button below to allow microphone access. This only happens once &mdash; after that, voice dictation works instantly on every website.</p>
       <button class="mic-btn" id="mic-setup-btn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="9" y="2" width="6" height="11" rx="3"/>
           <path d="M5 10a7 7 0 0014 0"/>
           <line x1="12" y1="21" x2="12" y2="17"/>
           <line x1="9" y1="21" x2="15" y2="21"/>
         </svg>
-        Allow Microphone Access
+        Enable Microphone
       </button>
       <div id="mic-name"></div>
     </div>
@@ -217,11 +233,10 @@
     <div class="card">
       <div class="step-number">1</div>
       <h3>Open any website</h3>
-      <p>48co Voice works on <span class="highlight">every website</span>. Optimized for AI chats but works anywhere you type.</p>
+      <p>48co Voice works on <span class="highlight">every website</span>. Optimised for AI chats, email, and document editors &mdash; works anywhere you type.</p>
       <div class="sites">
         <a href="https://claude.ai" target="_blank" class="site-badge">Claude.ai</a>
         <a href="https://chatgpt.com" target="_blank" class="site-badge">ChatGPT</a>
-        <a href="https://gemini.google.com" target="_blank" class="site-badge">Gemini</a>
         <a href="https://mail.google.com" target="_blank" class="site-badge">Gmail</a>
         <span class="site-badge">Slack, Notion, any site...</span>
       </div>
@@ -238,8 +253,10 @@
           <div class="control-label">Keyboard shortcut</div>
         </div>
         <div class="control">
-          <div class="control-icon">&#9041;</div>
-          <div class="control-label">Middle-click (mouse wheel)</div>
+          <div class="control-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="4"/><line x1="12" y1="6" x2="12" y2="10"/></svg>
+          </div>
+          <div class="control-label">Middle-click (scroll wheel)</div>
         </div>
       </div>
     </div>
@@ -248,13 +265,15 @@
     <div class="card">
       <div class="step-number">3</div>
       <h3>Press again to stop &mdash; text appears instantly</h3>
-      <p>Words appear <span class="highlight">as you speak</span>. When you stop, punctuation and capitalization are cleaned up automatically. Say <span class="highlight">"period"</span>, <span class="highlight">"comma"</span>, or <span class="highlight">"new line"</span> and they're converted for you.</p>
+      <p>Words appear <span class="highlight">as you speak</span>. When you stop, punctuation and capitalisation are cleaned up automatically. Say <span class="highlight">"period"</span>, <span class="highlight">"comma"</span>, or <span class="highlight">"new line"</span> and they&rsquo;re converted for you.</p>
     </div>
 
     <!-- That's it -->
     <div class="card">
-      <div class="step-number">&#10003;</div>
-      <h3>That's it. No setup. No API keys. Just talk.</h3>
+      <div class="step-number">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <h3>That&rsquo;s it. No setup. No API keys. Just talk.</h3>
       <p>The free engine (Web Speech) works immediately with zero configuration. For higher accuracy, you can optionally switch to the Whisper API in the extension settings.</p>
     </div>
 
@@ -268,7 +287,6 @@
   </div>
 
   <script>
-    // Auto-request microphone permission on first install
     const micBtn = document.getElementById('mic-setup-btn')
     const micName = document.getElementById('mic-name')
 
@@ -284,25 +302,23 @@
         const name = defaultMic?.label || audioInputs[0]?.label || 'Microphone'
 
         micBtn.className = 'mic-btn success'
-        micBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Microphone ready!'
+        micBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg> Microphone ready'
         micName.textContent = name
-        micName.style.color = '#00ff88'
+        micName.style.color = '#059669'
       } catch (err) {
         micBtn.className = 'mic-btn error'
         if (err.name === 'NotAllowedError') {
-          micBtn.textContent = 'Blocked — click to try again'
-          micName.textContent = 'You need to allow microphone access for voice to work'
+          micBtn.textContent = 'Access blocked — click to try again'
+          micName.textContent = 'Microphone access is required for voice dictation'
         } else {
           micBtn.textContent = 'No microphone found'
-          micName.textContent = 'Plug in a microphone and click to try again'
+          micName.textContent = 'Connect a microphone and click to try again'
         }
-        micName.style.color = '#ff3b5c'
+        micName.style.color = '#dc2626'
       }
     }
 
     micBtn.addEventListener('click', setupMic)
-
-    // Auto-request on page load (first install)
     setTimeout(setupMic, 500)
   </script>
 </body>
