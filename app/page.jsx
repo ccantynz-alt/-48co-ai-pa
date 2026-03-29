@@ -159,18 +159,20 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-4 gap-4">
             {[
-              { icon: '💻', title: 'Desktop App', desc: 'Mac + Windows. Types into any app with a global hotkey.', status: 'Available' },
-              { icon: '🌐', title: 'Chrome Extension', desc: 'Grammar check on any website. Gmail, Slack, Docs, everything.', status: 'Available' },
-              { icon: '📱', title: 'iPhone & iPad', desc: 'Custom keyboard that corrects as you type.', status: 'Coming soon' },
-              { icon: '🤖', title: 'Android', desc: 'Custom keyboard for Samsung, Pixel, and all Android.', status: 'Coming soon' },
+              { title: 'Desktop App', desc: 'Mac + Windows. Types into any app with a global hotkey. 5MB, launches in under 2 seconds.', status: 'Available',
+                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-indigo-400"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg> },
+              { title: 'Chrome Extension', desc: 'Real-time grammar on every website. Gmail, Slack, Claude, ChatGPT, Docs.', status: 'Available',
+                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-indigo-400"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg> },
+              { title: 'iPhone & iPad', desc: 'Custom keyboard with voice-to-text and grammar. Works in every app on your phone.', status: 'Available',
+                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-indigo-400"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> },
+              { title: 'Android', desc: 'Material Design keyboard with voice, grammar, and real-time translation built in.', status: 'Available',
+                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-indigo-400"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> },
             ].map((p) => (
-              <div key={p.title} className="card p-5 text-center">
-                <span className="text-3xl mb-3 block">{p.icon}</span>
-                <h3 className="text-[14px] font-semibold text-gray-800 mb-1">{p.title}</h3>
+              <div key={p.title} className="card p-6 text-center">
+                <div className="flex justify-center mb-4">{p.icon}</div>
+                <h3 className="text-[14px] font-semibold text-gray-800 mb-1.5">{p.title}</h3>
                 <p className="text-[12px] text-gray-400 leading-relaxed mb-3">{p.desc}</p>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full ${
-                  p.status === 'Available' ? 'bg-green-50 text-green-600 border border-green-200' : 'bg-gray-100 text-gray-400 border border-gray-200'
-                }`}>{p.status}</span>
+                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-green-50 text-green-600 border border-green-200">{p.status}</span>
               </div>
             ))}
           </div>
@@ -284,6 +286,72 @@ export default function LandingPage() {
               }`}>
                 {demoStatus === 'recording' ? 'Click to stop' : demoStatus === 'done' ? 'Done' : 'Click to try'}
               </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── REAL-TIME TRANSLATION ────────────────── */}
+      <section className="py-24 px-4 bg-gradient-to-b from-indigo-50/50 to-white">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 mb-6">
+            <span className="text-[12px] text-indigo-600 font-medium">New: Live Translation</span>
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900 mb-3">Speak English. Text appears in any language.</h2>
+          <p className="text-[15px] text-gray-400 mb-12 max-w-lg mx-auto">Real-time translation while you dictate. 60+ languages including Te Reo Māori. Domain-aware for legal, medical, and finance.</p>
+
+          <div className="card overflow-hidden max-w-md mx-auto shadow-lg shadow-black/[0.03]">
+            <div className="px-5 py-3 border-b border-black/[0.04] bg-gray-50/50 flex items-center justify-between">
+              <span className="text-[11px] text-gray-400 font-mono">English → Spanish (Legal)</span>
+              <span className="w-2 h-2 rounded-full bg-green-400" />
+            </div>
+            <div className="px-5 py-3 border-b border-black/[0.04]">
+              <p className="text-[10px] text-gray-300 uppercase tracking-wider mb-1.5">You speak</p>
+              <p className="text-[13px] text-gray-500 leading-relaxed">&ldquo;The defendant breached the fiduciary duty owed to the plaintiff under section twelve of the contract.&rdquo;</p>
+            </div>
+            <div className="px-5 py-4 bg-indigo-50/30">
+              <p className="text-[10px] text-indigo-400 uppercase tracking-wider mb-1.5">48co translates</p>
+              <p className="text-[14px] text-gray-800 leading-relaxed">&ldquo;El demandado incumplió el deber fiduciario adeudado al demandante en virtud del artículo doce del contrato.&rdquo;</p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-2 mt-8">
+            {['English','Spanish','French','German','Japanese','Chinese','Te Reo Māori','Korean','Arabic','Hindi','+ 50 more'].map(l => (
+              <span key={l} className="text-[11px] px-3 py-1 rounded-full bg-white border border-gray-100 text-gray-400">{l}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── TRUST / SECURITY ─────────────────────── */}
+      <section className="py-20 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-3">Built for professionals who handle sensitive data</h2>
+            <p className="text-[14px] text-gray-400">Lawyers, accountants, and doctors trust 48co with their work.</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="text-center p-5">
+              <div className="flex justify-center mb-3">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" strokeWidth="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              </div>
+              <h3 className="text-[14px] font-semibold text-gray-800 mb-1">Offline mode</h3>
+              <p className="text-[12px] text-gray-400 leading-relaxed">Run everything on your device. Zero data leaves your computer. Audit-ready for attorney-client privilege.</p>
+            </div>
+            <div className="text-center p-5">
+              <div className="flex justify-center mb-3">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" strokeWidth="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <h3 className="text-[14px] font-semibold text-gray-800 mb-1">Encrypted in transit</h3>
+              <p className="text-[12px] text-gray-400 leading-relaxed">All data encrypted with TLS 1.3. We never store your text, voice recordings, or documents on our servers.</p>
+            </div>
+            <div className="text-center p-5">
+              <div className="flex justify-center mb-3">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" strokeWidth="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              </div>
+              <h3 className="text-[14px] font-semibold text-gray-800 mb-1">Privacy policy</h3>
+              <p className="text-[12px] text-gray-400 leading-relaxed">Clear, plain-English privacy policy. Your data is yours. We don&apos;t sell it, train on it, or share it.</p>
             </div>
           </div>
         </div>
