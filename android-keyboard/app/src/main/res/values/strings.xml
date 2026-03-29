@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">48co Voice</string>
+    <string name="ime_name">48co Voice Keyboard</string>
+    <string name="subtype_en_us">English (US)</string>
+    <string name="subtype_en_nz">English (NZ)</string>
+
+    <!-- Setup screen -->
+    <string name="setup_title">Set Up 48co Voice Keyboard</string>
+    <string name="setup_welcome">Welcome to 48co Voice — the keyboard built for professionals.</string>
+    <string name="setup_step1_title">Step 1: Enable the keyboard</string>
+    <string name="setup_step1_desc">Open your device settings and enable \"48co Voice Keyboard\" as an input method.</string>
+    <string name="setup_step1_button">Open Keyboard Settings</string>
+    <string name="setup_step2_title">Step 2: Switch to 48co Voice</string>
+    <string name="setup_step2_desc">Tap any text field below, then switch your keyboard to 48co Voice.</string>
+    <string name="setup_step2_button">Select Input Method</string>
+    <string name="setup_test_hint">Type here to test your keyboard...</string>
+    <string name="setup_done_title">You\'re all set!</string>
+    <string name="setup_done_desc">48co Voice Keyboard is active. Tap the mic icon to dictate, or the grammar icon to check your writing.</string>
+    <string name="setup_not_enabled">Keyboard not yet enabled. Complete Step 1 first.</string>
+    <string name="setup_enabled">Keyboard is enabled. Proceed to Step 2.</string>
+
+    <!-- Keyboard -->
+    <string name="voice_input">Voice input</string>
+    <string name="grammar_check">Grammar check</string>
+    <string name="switch_keyboard">Switch keyboard</string>
+    <string name="listening">Listening...</string>
+    <string name="voice_error">Voice input unavailable</string>
+    <string name="grammar_no_errors">No grammar issues found</string>
+    <string name="grammar_corrected">Grammar corrected</string>
+</resources>

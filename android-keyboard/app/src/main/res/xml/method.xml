@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<input-method
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:isDefault="false"
+    android:supportsSwitchingToNextInputMethod="true">
+    <subtype
+        android:imeSubtypeLocale="en_US"
+        android:imeSubtypeMode="keyboard"
+        android:label="@string/subtype_en_us" />
+    <subtype
+        android:imeSubtypeLocale="en_NZ"
+        android:imeSubtypeMode="keyboard"
+        android:label="@string/subtype_en_nz" />
+</input-method>

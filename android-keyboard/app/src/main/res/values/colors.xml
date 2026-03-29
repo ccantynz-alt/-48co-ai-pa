@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 48co Brand Colors — Indigo accent -->
+    <color name="brand_primary">#4F46E5</color>
+    <color name="brand_primary_dark">#3730A3</color>
+    <color name="brand_primary_light">#818CF8</color>
+
+    <!-- Light theme keyboard -->
+    <color name="keyboard_bg_light">#E8E8EC</color>
+    <color name="key_bg_light">#FFFFFF</color>
+    <color name="key_text_light">#1C1B1F</color>
+    <color name="key_special_bg_light">#C9C8CD</color>
+    <color name="key_pressed_light">#D1D5DB</color>
+    <color name="key_shadow_light">#9E9EA6</color>
+
+    <!-- Dark theme keyboard -->
+    <color name="keyboard_bg_dark">#2C2C2E</color>
+    <color name="key_bg_dark">#4A4A4E</color>
+    <color name="key_text_dark">#FFFFFF</color>
+    <color name="key_special_bg_dark">#3A3A3C</color>
+    <color name="key_pressed_dark">#5A5A5E</color>
+    <color name="key_shadow_dark">#1C1C1E</color>
+
+    <!-- Status -->
+    <color name="brand_success">#059669</color>
+    <color name="brand_warning">#D97706</color>
+    <color name="brand_muted">#9CA3AF</color>
+
+    <!-- Functional -->
+    <color name="voice_active">#EF4444</color>
+    <color name="grammar_highlight">#F59E0B</color>
+    <color name="suggestion_bg">#F3F4F6</color>
+    <color name="suggestion_bg_dark">#3A3A3C</color>
+    <color name="divider_light">#D1D5DB</color>
+    <color name="divider_dark">#4A4A4E</color>
+</resources>
