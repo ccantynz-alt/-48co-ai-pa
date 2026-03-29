@@ -47,7 +47,6 @@ export default function PricingCards() {
         return
       }
 
-      // Redirect to Stripe's hosted checkout page
       window.location.href = data.url
     } catch {
       setMessage({ type: 'error', text: 'Network error. Check your connection and try again.' })
@@ -111,16 +110,16 @@ export default function PricingCards() {
       badge: 'MOST POPULAR',
       features: [
         'Unlimited AI grammar corrections',
-        'Unlimited voice-to-text',
+        'Unlimited voice-to-text dictation',
         'AI Rewrite Mode (tone + polish)',
         'Preserve My Voice (learns your style)',
         'Context-aware (email, Slack, code)',
         'Desktop app (Mac + Windows)',
         'Chrome extension (all websites)',
-        'iPhone + Android keyboard (coming)',
+        'iPhone + Android keyboard',
         'Offline mode (privacy-first)',
-        '50+ languages',
-        'Custom vocabulary + macros',
+        'Real-time translation (200+ languages)',
+        'Custom vocabulary',
       ],
       cta: 'Start 7-Day Free Trial',
       action: () => handleCheckout('pro'),
@@ -151,9 +150,9 @@ export default function PricingCards() {
     <>
       {message && (
         <div className={`mb-8 p-4 rounded-xl text-center text-[14px] font-medium ${
-          message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' :
+          message.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
           message.type === 'error' ? 'bg-red-50 text-red-700 border border-red-200' :
-          'bg-blue-50 text-blue-700 border border-blue-200'
+          'bg-navy-50 text-navy-700 border border-navy-200'
         }`}>
           {message.text}
         </div>
@@ -161,23 +160,25 @@ export default function PricingCards() {
 
       <div className="grid md:grid-cols-3 gap-6">
         {plans.map((plan) => (
-          <div key={plan.name} className={`rounded-2xl p-6 flex flex-col border ${
-            plan.highlight ? 'border-indigo-200 bg-indigo-50/30 shadow-lg shadow-indigo-500/5 relative' : 'border-gray-200'
+          <div key={plan.name} className={`rounded-xl p-6 flex flex-col border ${
+            plan.highlight ? 'border-gold-300 bg-gold-50/15 shadow-lg shadow-gold-500/5 relative ring-1 ring-gold-200' : 'border-gray-200'
           }`}>
             {plan.badge && (
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-[10px] font-bold tracking-wider px-3 py-1 rounded-full">
+              <span className={`absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-wider px-3 py-1 rounded-full ${
+                plan.name === 'Pro' ? 'bg-navy-900 text-white' : 'bg-gold-500 text-white'
+              }`}>
                 {plan.badge}
               </span>
             )}
-            <h2 className="text-lg font-bold text-gray-800 mb-1">{plan.name}</h2>
+            <h2 className="text-lg font-bold text-navy-900 mb-1">{plan.name}</h2>
             <div className="mb-5">
-              <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+              <span className="text-4xl font-bold text-navy-900">{plan.price}</span>
               <span className="text-[13px] text-gray-400 ml-1">{plan.period}</span>
             </div>
             <ul className="flex-1 space-y-2.5 mb-6">
               {plan.features.map((f, i) => (
-                <li key={i} className="text-[13px] text-gray-500 flex items-start gap-2">
-                  <svg className="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <li key={i} className="text-[13px] text-gray-600 flex items-start gap-2.5">
+                  <svg className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
                   {f}
                 </li>
               ))}
@@ -185,10 +186,10 @@ export default function PricingCards() {
             <button
               onClick={plan.action}
               disabled={loading === plan.planKey}
-              className={`block w-full text-center py-2.5 rounded-xl text-[13px] font-medium transition-all ${
+              className={`block w-full text-center py-3 rounded-lg text-[13px] font-semibold transition-all ${
                 plan.highlight
-                  ? 'bg-indigo-600 text-white hover:bg-indigo-500 disabled:bg-indigo-400'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:bg-gray-50'
+                  ? 'bg-navy-900 text-white hover:bg-navy-800 disabled:bg-navy-600'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:bg-gray-50'
               }`}
             >
               {loading === plan.planKey ? 'Redirecting to checkout...' : plan.cta}
@@ -198,11 +199,11 @@ export default function PricingCards() {
       </div>
 
       {/* Manage subscription link for existing customers */}
-      <div className="text-center mt-6">
+      <div className="text-center mt-8">
         <button
           onClick={handleManage}
           disabled={loading === 'manage'}
-          className="text-[13px] text-gray-400 hover:text-indigo-600 transition-colors"
+          className="text-[13px] text-gray-400 hover:text-navy-700 transition-colors font-medium"
         >
           {loading === 'manage' ? 'Opening billing portal...' : 'Already subscribed? Manage your plan'}
         </button>
