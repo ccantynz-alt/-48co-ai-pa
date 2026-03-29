@@ -2,22 +2,23 @@
 @config "../tailwind.config.js";
 
 :root {
-  /* Light, clean palette */
   --bg: #ffffff;
-  --bg-subtle: #f8f9fa;
-  --bg-muted: #f1f3f5;
-  --border: rgba(0, 0, 0, 0.08);
-  --border-strong: rgba(0, 0, 0, 0.12);
-  --text-primary: #111111;
-  --text-secondary: #555555;
-  --text-muted: #888888;
-  --text-faint: #bbbbbb;
-  --accent: #4f46e5;          /* indigo */
-  --accent-light: #6366f1;
-  --accent-bg: rgba(79, 70, 229, 0.06);
-  --success: #16a34a;
+  --bg-warm: #FAFAF8;
+  --bg-dark: #0B1A2E;
+  --bg-darker: #060F1C;
+  --border: rgba(0, 0, 0, 0.06);
+  --border-strong: rgba(0, 0, 0, 0.10);
+  --border-light: rgba(255, 255, 255, 0.08);
+  --text-primary: #111827;
+  --text-secondary: #4B5563;
+  --text-muted: #6B7280;
+  --text-faint: #9CA3AF;
+  --accent: #0B1A2E;
+  --accent-gold: #c48f24;
+  --accent-gold-light: #daa73b;
+  --success: #059669;
   --danger: #dc2626;
-  --warning: #ca8a04;
+  --warning: #d97706;
 }
 
 * {
@@ -29,8 +30,8 @@
 body {
   background: var(--bg);
   color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ── Extension ring states (dark overlay context) ─────── */
@@ -58,51 +59,55 @@ body {
 
 /* ── Animations ───────────────────────────────────────── */
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes typing-cursor {
-  0%, 50% { border-right-color: var(--accent); }
+  0%, 50% { border-right-color: var(--accent-gold); }
   51%, 100% { border-right-color: transparent; }
 }
 
-.animate-fade-up { animation: fade-up 0.5s ease-out both; }
-.animate-typing-cursor { border-right: 2px solid var(--accent); animation: typing-cursor 1s step-end infinite; }
+.animate-fade-up { animation: fade-up 0.6s ease-out both; }
+.animate-typing-cursor { border-right: 2px solid var(--accent-gold); animation: typing-cursor 1s step-end infinite; }
 
 /* Scroll reveal */
 .reveal {
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
 }
 .reveal.visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* Card */
+/* Card — premium feel */
 .card {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 12px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 .card:hover {
   border-color: var(--border-strong);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
 }
 
-/* Hero gradient — subtle warm */
-.hero-gradient {
-  background:
-    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(79, 70, 229, 0.06), transparent),
-    radial-gradient(ellipse 50% 30% at 80% 20%, rgba(16, 163, 74, 0.04), transparent),
-    var(--bg);
+/* Dark card variant */
+.card-dark {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.card-dark:hover {
+  border-color: rgba(255, 255, 255, 0.10);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 }
 
 /* Clean scrollbar */
-::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.08); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.15); }
