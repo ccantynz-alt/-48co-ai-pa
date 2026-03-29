@@ -1,5 +1,5 @@
 /**
- * AlecRae Voice Offscreen Document
+ * 48co Voice Offscreen Document
  * Handles microphone recording + Whisper API transcription.
  * Service workers cannot access getUserMedia, so this offscreen doc does it.
  */
@@ -20,7 +20,7 @@ chrome.runtime.onMessage.addListener((msg) => {
       chrome.runtime.sendMessage({
         type: 'TRANSCRIPTION_READY',
         text: '',
-        error: 'No Whisper API key set. Open AlecRae Voice popup → set your OpenAI API key.',
+        error: 'No Whisper API key set. Open 48co Voice popup → set your OpenAI API key.',
       })
       return
     }
@@ -64,7 +64,7 @@ async function startRecording() {
         chrome.runtime.sendMessage({
           type: 'TRANSCRIPTION_READY',
           text: '',
-          error: 'No Whisper API key. Open AlecRae Voice settings.',
+          error: 'No Whisper API key. Open 48co Voice settings.',
         })
         return
       }
@@ -85,7 +85,7 @@ async function startRecording() {
     chrome.runtime.sendMessage({ type: 'OFFSCREEN_STARTED' })
     mediaRecorder.start(250)
   } catch (err) {
-    console.error('[AlecRae Voice offscreen] Mic access error:', err)
+    console.error('[48co Voice offscreen] Mic access error:', err)
     releaseStream()
     chrome.runtime.sendMessage({
       type: 'TRANSCRIPTION_READY',
@@ -142,7 +142,7 @@ async function transcribeWithWhisper(audioBlob) {
     if (!response.ok) {
       const errText = await response.text().catch(() => 'Unknown')
       if (response.status === 401) {
-        throw new Error('Invalid API key. Check your OpenAI key in AlecRae Voice settings.')
+        throw new Error('Invalid API key. Check your OpenAI key in 48co Voice settings.')
       }
       if (response.status === 429) {
         throw new Error('Rate limited. Wait a moment and try again.')

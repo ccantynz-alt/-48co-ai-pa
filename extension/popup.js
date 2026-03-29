@@ -1,5 +1,5 @@
 /**
- * AlecRae Voice Popup Script
+ * 48co Voice Popup Script
  * Settings UI. Shows real recording state. Force-reset if stuck.
  * No optimistic updates — waits for actual state confirmation.
  */

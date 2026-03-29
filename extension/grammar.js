@@ -1,5 +1,5 @@
 /**
- * AlecRae Voice Grammar Checker
+ * 48co Voice Grammar Checker
  * Watches text fields on any page. When user pauses typing, checks grammar
  * via Claude API and shows inline corrections in a tooltip.
  *
@@ -19,7 +19,7 @@
   let correctionsToday = 0
   const maxFreeCorrections = 10
 
-  const API_BASE = 'https://alecrae.ai/api' // managed API
+  const API_BASE = 'https://48co.nz/api' // managed API
 
   // ── Init: load settings ────────────────────────────────
   chrome.storage.local.get(['grammarEnabled', 'authToken', 'claudeApiKey', 'correctionsToday', 'correctionsDate'], (data) => {
@@ -116,7 +116,7 @@
         hideTooltip()
       }
     } catch (err) {
-      console.warn('[AlecRae Voice grammar]', err.message)
+      console.warn('[48co Voice grammar]', err.message)
     }
   }
 
@@ -191,7 +191,7 @@
     }
 
     const tooltip = document.createElement('div')
-    tooltip.id = 'alecrae-grammar'
+    tooltip.id = '48co-grammar'
     tooltip.style.cssText = `
       position: fixed;
       z-index: 2147483647;
@@ -210,7 +210,7 @@
     const header = document.createElement('div')
     header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(0,0,0,0.06);background:#f8f9fa;'
     header.innerHTML = `
-      <span style="font-weight:600;font-size:12px;color:#4f46e5;">AlecRae Grammar</span>
+      <span style="font-weight:600;font-size:12px;color:#4f46e5;">48co Grammar</span>
       <span style="font-size:11px;color:#888;">${corrections.length} correction${corrections.length > 1 ? 's' : ''}</span>
     `
     tooltip.appendChild(header)
@@ -341,7 +341,7 @@
   }
 
   // ── Public API for popup ───────────────────────────────
-  window._alecRaeGrammar = {
+  window._48coGrammar = {
     get enabled() { return enabled },
     get correctionsToday() { return correctionsToday },
   }

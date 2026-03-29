@@ -1,19 +1,19 @@
-# CLAUDE.md — AlecRae Voice Engineering Standards & Rules
+# CLAUDE.md — 48co Voice Engineering Standards & Rules
 # Built by Claude. Designed for humans.
-# Last deep scan: March 28, 2026
+# Last deep scan: March 29, 2026
 # Status: WAR MODE — No more three-legged dog. Ship or die.
 
 ## Project Identity
-- **Product**: AlecRae Voice — AI Grammar + Voice-to-Text + Custom Keyboard
-- **Brand**: AlecRae (parent brand) — this repo builds the Voice product only
-- **Domain**: alecrae.ai (primary), alecrae.com (redirect)
-- **Other AlecRae products** (separate repos, not built here): AlecRae Law, AlecRae Accounting, AlecRae Oracle
+- **Product**: 48co Voice — AI Grammar + Voice-to-Text + Custom Keyboard
+- **Brand**: 48co (parent brand) — this repo builds the Voice product only
+- **Domain**: 48co.nz (primary)
+- **Other 48co products** (separate repos, not built here): 48co Law, 48co Accounting, 48co Oracle
 - **Built by**: Claude (Anthropic AI) — fully autonomous engineering
 - **Architecture**: Tauri 2.0 (Rust + React) — bleeding edge 2026
 - **Platforms**: Windows, Mac, iOS, Android, Chrome Extension, Web App
 - **Goal**: 80-90% ahead of every competitor. Not "as good as" — BETTER THAN. Grammarly, Wispr Flow, SuperWhisper, WhisperTyping — all of them.
 - **Target users**: Lawyers, accountants, doctors, executives, anyone who writes for a living. This is a professional tool, not a toy.
-- **Naming rule**: All user-facing text says "AlecRae Voice" (or just "AlecRae" in context). The old name "48co" is retired.
+- **Naming rule**: All user-facing text says "48co Voice" (or just "48co" in context).
 
 ## Project Owner Context
 - The owner is NOT a developer. Never assume coding knowledge.
@@ -39,7 +39,7 @@
 ### Deep Audit Results — March 28, 2026
 **Bugs found and fixed this session:**
 - CRITICAL: grammar.js crashed — referenced variables that were never declared (`correctionsToday`, `maxFreeCorrections`). Fixed.
-- CRITICAL: API URL hardcoded to dead domain `https://48co.nz/api`. Fixed to `https://alecrae.ai/api`.
+- CRITICAL: API URL hardcoded to dead domain `https://48co.nz/api`. Fixed to `https://48co.nz/api`.
 - HIGH: Grammar correction used deprecated `execCommand()` for text replacement. Fixed to Selection/Range API.
 - HIGH: Missing `.code-btn` CSS class in popup — add vocabulary buttons were unstyled. Fixed.
 - HIGH: Voice commands and coding mode code existed in `lib/` and `adapters/` but were never wired into content.js. Documented for next session.
@@ -145,7 +145,7 @@ Every change gets documented so the next session knows what happened.
 - **NEW**: This CLAUDE.md file is the single source of truth. Keep it updated every session.
 
 ### Rule 10: Daily Technology Scanning — Non-Negotiable
-Every session must verify AlecRae Voice uses the most advanced technology available:
+Every session must verify 48co Voice uses the most advanced technology available:
 - **Check AI model versions**: Are we on the latest Claude, Whisper, Deepgram models?
 - **Check competitor releases**: Has Grammarly, Wispr Flow, SuperWhisper, or any competitor shipped something new?
 - **Check dependency versions**: Are all npm packages and Rust crates on latest stable?
@@ -229,7 +229,7 @@ These are locked-in decisions. Do not deviate without documenting why.
 ## COMPETITIVE GAP ANALYSIS — What We Must Build
 
 ### vs Grammarly (Market Leader)
-| Feature | Grammarly | AlecRae Voice | Gap |
+| Feature | Grammarly | 48co Voice | Gap |
 |---------|-----------|------|-----|
 | Grammar checking | Yes (rule + AI) | Yes (Claude AI) | We're BETTER — AI-native |
 | Voice-to-text | No | Yes | We WIN |
@@ -244,7 +244,7 @@ These are locked-in decisions. Do not deviate without documenting why.
 | Payment/subscriptions | Yes (Stripe) | No | CRITICAL GAP |
 
 ### vs Wispr Flow
-| Feature | Wispr Flow | AlecRae Voice | Gap |
+| Feature | Wispr Flow | 48co Voice | Gap |
 |---------|-----------|------|-----|
 | Voice-to-text | Yes (cloud) | Yes (cloud + local) | We're BETTER — offline mode |
 | Real-time streaming | Yes | No | GAP — must add Deepgram/AssemblyAI |
@@ -253,7 +253,7 @@ These are locked-in decisions. Do not deviate without documenting why.
 | Price | $15/mo | $12/mo | We WIN |
 
 ### vs SuperWhisper
-| Feature | SuperWhisper | AlecRae Voice | Gap |
+| Feature | SuperWhisper | 48co Voice | Gap |
 |---------|-------------|------|-----|
 | Mac-native polish | Excellent | Good | GAP — improve Tauri UI/UX |
 | Real-time streaming | Yes | No | GAP — critical |
@@ -272,7 +272,7 @@ These are locked-in decisions. Do not deviate without documenting why.
 
 ---
 
-## ADVANCED FEATURES — What Makes AlecRae Voice 80-90% Ahead
+## ADVANCED FEATURES — What Makes 48co Voice 80-90% Ahead
 
 These are the features that no competitor combines in one product. Each one is a reason a professional says "I can't work without this."
 
@@ -352,7 +352,7 @@ These are the features that no competitor combines in one product. Each one is a
 - Why: ElevenLabs charges $22/mo for this alone. We bundle it.
 
 **RAG on Your Documents**
-- Connect AlecRae Voice to your document repository (local folders, Google Drive, SharePoint)
+- Connect 48co Voice to your document repository (local folders, Google Drive, SharePoint)
 - "Use the language from last year's report" — finds and inserts it
 - "What's our standard clause for indemnification?" — searches your docs and answers
 - Vector database (local ChromaDB or cloud Pinecone) for semantic search
@@ -368,7 +368,7 @@ These are the features that no competitor combines in one product. Each one is a
 
 ### What This Means vs Competitors
 
-| Feature | Grammarly | Wispr Flow | SuperWhisper | Otter.ai | AlecRae Voice |
+| Feature | Grammarly | Wispr Flow | SuperWhisper | Otter.ai | 48co Voice |
 |---------|-----------|------------|--------------|----------|---------------|
 | Grammar + AI rewrite | Yes | Basic | No | No | Yes (Claude) |
 | Voice-to-text | No | Yes | Yes | Yes | Yes |
@@ -409,7 +409,7 @@ tauri-app/                 -> Main desktop application (Tauri 2.0)
     main.jsx               -> Entry point
     styles.css             -> Tailwind
 
-app/                       -> Next.js website (alecrae.ai) — SINGLE BACKEND
+app/                       -> Next.js website (48co.nz) — SINGLE BACKEND
   api/                     -> Vercel serverless API routes (auth, grammar, rewrite, usage)
   page.jsx                 -> Homepage
   pricing/page.jsx         -> Pricing
@@ -519,6 +519,6 @@ shared-rust/               -> Shared Rust core (grammar, whisper bindings) via u
 
 This app is for lawyers drafting contracts. Accountants writing reports. Doctors dictating notes. Executives composing emails. These people don't have time for broken software. They don't care about our tech stack. They care that when they speak, the right words appear. When they write, their grammar is perfect. When they switch devices, it just works.
 
-Every decision we make must pass one test: **Would a lawyer pay $12/month for AlecRae Voice?**
+Every decision we make must pass one test: **Would a lawyer pay $12/month for 48co Voice?**
 
 If the answer is no, we haven't built it right yet. Keep going.

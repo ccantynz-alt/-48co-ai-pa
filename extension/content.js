@@ -1,5 +1,5 @@
 /**
- * AlecRae Voice Content Script — STREAMING VOICE-TO-TEXT
+ * 48co Voice Content Script — STREAMING VOICE-TO-TEXT
  *
  * Works like WhisperTyping: text appears in the chat box WORD BY WORD
  * as you speak. No popups. No overlays. No visible UI.
@@ -335,7 +335,7 @@
 
       const msg = messages[e.error] || `Mic error: ${e.error}`
       showToast(msg, 'error', 6000)
-      console.warn('[AlecRae Voice]', e.error, msg)
+      console.warn('[48co Voice]', e.error, msg)
 
       state.status = 'idle'
       recognition = null
@@ -347,7 +347,7 @@
       recognition.start()
     } catch (err) {
       showToast('Could not start microphone. Try refreshing the page.', 'error', 5000)
-      console.warn('[AlecRae Voice] Failed to start:', err)
+      console.warn('[48co Voice] Failed to start:', err)
       state.status = 'idle'
       recognition = null
     }
