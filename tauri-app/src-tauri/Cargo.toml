@@ -27,19 +27,19 @@ tauri-plugin-updater = "2"
 tauri-plugin-notification = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-enigo = "0.2"              # Cross-platform keyboard/mouse simulation
+enigo = "0.3"              # Cross-platform keyboard/mouse simulation (latest)
 reqwest = { version = "0.12", features = ["json", "multipart"] }
 tokio = { version = "1", features = ["full"] }
 cpal = "0.15"              # Cross-platform audio capture
 hound = "3.5"              # WAV encoding for Whisper API
 regex = "1"                # Text processing patterns
 once_cell = "1"            # Lazy static initialization
-whisper-rs = "0.12"        # whisper.cpp Rust bindings — on-device speech-to-text
-dirs = "5"                 # OS-standard directories for model storage
+whisper-rs = "0.13"        # whisper.cpp Rust bindings — on-device speech-to-text (latest)
+dirs = "6"                 # OS-standard directories for model storage (latest)
 rdev = "0.5"               # Global mouse + keyboard event capture (for custom hotkeys)
-candle-core = { version = "0.8", optional = true }       # Local LLM inference (future)
-candle-transformers = { version = "0.8", optional = true }
-candle-nn = { version = "0.8", optional = true }
+candle-core = { version = "0.9", optional = true }       # Local LLM inference (latest)
+candle-transformers = { version = "0.9", optional = true }
+candle-nn = { version = "0.9", optional = true }
 
 [features]
 default = []
