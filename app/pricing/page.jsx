@@ -13,21 +13,21 @@ export const metadata = {
 
 export default function PricingPage() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-navy-950">
       <Nav />
 
       <div className="max-w-5xl mx-auto px-4 pt-32 pb-16">
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-navy-900 mb-4">Straightforward pricing</h1>
-          <p className="text-gray-500 text-base max-w-md mx-auto">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Straightforward pricing</h1>
+          <p className="text-white/40 text-base max-w-md mx-auto">
             Free to start. No credit card needed. Upgrade when you&apos;re ready for unlimited AI.
           </p>
         </div>
 
         {/* Business Highlight */}
-        <div className="mb-12 p-5 rounded-xl bg-navy-50 border border-navy-100 text-center">
-          <p className="text-navy-800 text-[15px] font-semibold mb-1">Business: $29/mo for your whole team (up to 10)</p>
-          <p className="text-gray-500 text-[13px]">
+        <div className="mb-12 p-5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-center">
+          <p className="text-white/70 text-[15px] font-semibold mb-1">Business: $29/mo for your whole team (up to 10)</p>
+          <p className="text-white/30 text-[13px]">
             That&apos;s just $2.90 per user. Grammarly Business charges $15/user/mo — 5x more.
           </p>
         </div>
@@ -38,17 +38,17 @@ export default function PricingPage() {
         {/* vs Grammarly */}
         <div className="mt-24 max-w-3xl mx-auto">
           <div className="text-center mb-10">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">AlecRae Pro vs Grammarly Premium</h2>
-            <p className="text-[14px] text-gray-400">Same job, better AI, lower price.</p>
+            <h2 className="text-2xl font-bold text-white mb-2">AlecRae Pro vs Grammarly Premium</h2>
+            <p className="text-[14px] text-white/30">Same job, better AI, lower price.</p>
           </div>
 
-          <div className="border border-gray-200 rounded-xl overflow-hidden">
+          <div className="border border-white/[0.06] rounded-xl overflow-hidden">
             <table className="w-full text-[13px]">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
-                  <th className="text-left py-3 px-5 text-gray-400 font-normal">Feature</th>
-                  <th className="text-center py-3 px-5 text-indigo-600 font-semibold">AlecRae Pro</th>
-                  <th className="text-center py-3 px-5 text-gray-400 font-normal">Grammarly Premium</th>
+                <tr className="border-b border-white/[0.04] bg-white/[0.03]">
+                  <th className="text-left py-3 px-5 text-white/40 font-normal">Feature</th>
+                  <th className="text-center py-3 px-5 text-gold-400 font-semibold">AlecRae Pro</th>
+                  <th className="text-center py-3 px-5 text-white/40 font-normal">Grammarly Premium</th>
                 </tr>
               </thead>
               <tbody>
@@ -67,17 +67,17 @@ export default function PricingPage() {
                   { f: 'iPhone & Android keyboard', us: true, them: true },
                   { f: 'AI engine', us: 'Claude (latest)', them: 'Proprietary' },
                 ].map((row) => (
-                  <tr key={row.f} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                    <td className="py-3 px-5 text-gray-600">{row.f}</td>
+                  <tr key={row.f} className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
+                    <td className="py-3 px-5 text-white/30">{row.f}</td>
                     <td className="py-3 px-5 text-center font-medium">
-                      {row.us === true ? <span className="text-emerald-600">Yes</span> :
-                       row.us === false ? <span className="text-gray-300">No</span> :
-                       <span className="text-navy-900">{row.us}</span>}
+                      {row.us === true ? <span className="text-gold-400">Yes</span> :
+                       row.us === false ? <span className="text-white/15">No</span> :
+                       <span className="text-white">{row.us}</span>}
                     </td>
                     <td className="py-3 px-5 text-center">
-                      {row.them === true ? <span className="text-emerald-600">Yes</span> :
-                       row.them === false ? <span className="text-gray-300">No</span> :
-                       <span className="text-gray-400">{row.them}</span>}
+                      {row.them === true ? <span className="text-gold-400">Yes</span> :
+                       row.them === false ? <span className="text-white/15">No</span> :
+                       <span className="text-white/30">{row.them}</span>}
                     </td>
                   </tr>
                 ))}
@@ -88,7 +88,7 @@ export default function PricingPage() {
 
         {/* FAQ */}
         <div className="mt-24 max-w-2xl mx-auto">
-          <h2 className="text-2xl font-bold text-navy-900 mb-10 text-center">Frequently asked questions</h2>
+          <h2 className="text-2xl font-bold text-white mb-10 text-center">Frequently asked questions</h2>
           <div className="space-y-8">
             {[
               { q: 'How does the free tier work?', a: 'You get 10 AI grammar corrections per day in the Chrome extension, plus 60 minutes of voice dictation per month. No credit card required. The free tier never expires.' },
@@ -98,9 +98,9 @@ export default function PricingPage() {
               { q: 'Will it work on my phone?', a: 'iPhone and Android keyboard apps are coming soon. They\'ll replace your default keyboard and correct everything you type — texts, emails, notes, everything.' },
               { q: 'Can I cancel anytime?', a: 'Yes, instantly. No contracts, no cancellation fees, no questions asked. Monthly plans cancel at the end of the billing period. Annual plans can be refunded within 14 days.' },
             ].map((faq) => (
-              <div key={faq.q} className="border-b border-gray-100 pb-6">
-                <h3 className="text-[15px] text-navy-900 font-semibold mb-2">{faq.q}</h3>
-                <p className="text-[13px] text-gray-500 leading-relaxed">{faq.a}</p>
+              <div key={faq.q} className="border-b border-white/[0.04] pb-6">
+                <h3 className="text-[15px] text-white font-semibold mb-2">{faq.q}</h3>
+                <p className="text-[13px] text-white/25 leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>

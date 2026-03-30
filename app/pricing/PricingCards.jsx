@@ -150,9 +150,9 @@ export default function PricingCards() {
     <>
       {message && (
         <div className={`mb-8 p-4 rounded-xl text-center text-[14px] font-medium ${
-          message.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
-          message.type === 'error' ? 'bg-red-50 text-red-700 border border-red-200' :
-          'bg-navy-50 text-navy-700 border border-navy-200'
+          message.type === 'success' ? 'bg-white/[0.04] text-gold-400 border border-gold-400/20' :
+          message.type === 'error' ? 'bg-white/[0.04] text-red-400 border border-red-400/20' :
+          'bg-white/[0.04] text-white/50 border border-white/[0.06]'
         }`}>
           {message.text}
         </div>
@@ -161,24 +161,24 @@ export default function PricingCards() {
       <div className="grid md:grid-cols-3 gap-6">
         {plans.map((plan) => (
           <div key={plan.name} className={`rounded-xl p-6 flex flex-col border ${
-            plan.highlight ? 'border-gold-300 bg-gold-50/15 shadow-lg shadow-gold-500/5 relative ring-1 ring-gold-200' : 'border-gray-200'
+            plan.highlight ? 'border-gold-400/30 bg-gold-400/[0.04] shadow-lg shadow-gold-400/5 relative ring-1 ring-gold-400/20' : 'border-white/[0.06] bg-white/[0.03]'
           }`}>
             {plan.badge && (
               <span className={`absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-wider px-3 py-1 rounded-full ${
-                plan.name === 'Pro' ? 'bg-navy-900 text-white' : 'bg-gold-500 text-white'
+                plan.name === 'Pro' ? 'bg-gold-400 text-navy-950' : 'bg-gold-400 text-navy-950'
               }`}>
                 {plan.badge}
               </span>
             )}
-            <h2 className="text-lg font-bold text-navy-900 mb-1">{plan.name}</h2>
+            <h2 className="text-lg font-bold text-white mb-1">{plan.name}</h2>
             <div className="mb-5">
-              <span className="text-4xl font-bold text-navy-900">{plan.price}</span>
-              <span className="text-[13px] text-gray-400 ml-1">{plan.period}</span>
+              <span className="text-4xl font-bold text-white">{plan.price}</span>
+              <span className="text-[13px] text-white/30 ml-1">{plan.period}</span>
             </div>
             <ul className="flex-1 space-y-2.5 mb-6">
               {plan.features.map((f, i) => (
-                <li key={i} className="text-[13px] text-gray-600 flex items-start gap-2.5">
-                  <svg className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <li key={i} className="text-[13px] text-white/40 flex items-start gap-2.5">
+                  <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="#daa73b" viewBox="0 0 24 24" strokeWidth="2"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
                   {f}
                 </li>
               ))}
@@ -188,8 +188,8 @@ export default function PricingCards() {
               disabled={loading === plan.planKey}
               className={`block w-full text-center py-3 rounded-lg text-[13px] font-semibold transition-all ${
                 plan.highlight
-                  ? 'bg-navy-900 text-white hover:bg-navy-800 disabled:bg-navy-600'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:bg-gray-50'
+                  ? 'bg-gold-400 text-navy-950 hover:bg-gold-300 disabled:bg-gold-400/50'
+                  : 'border border-white/8 text-white/40 hover:text-white/70 hover:border-white/20 disabled:opacity-50'
               }`}
             >
               {loading === plan.planKey ? 'Redirecting to checkout...' : plan.cta}
@@ -203,7 +203,7 @@ export default function PricingCards() {
         <button
           onClick={handleManage}
           disabled={loading === 'manage'}
-          className="text-[13px] text-gray-400 hover:text-navy-700 transition-colors font-medium"
+          className="text-[13px] text-white/30 hover:text-white/60 transition-colors font-medium"
         >
           {loading === 'manage' ? 'Opening billing portal...' : 'Already subscribed? Manage your plan'}
         </button>
