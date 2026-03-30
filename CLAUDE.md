@@ -173,17 +173,24 @@ Every session must verify 48co Voice uses the most advanced technology available
 - **If something better exists — switch immediately.** No "we'll do it later." The standard is 80-90% ahead.
 - **Document every finding** in this file under the audit results section above.
 
-### Rule 11: Test Before Reporting — Zero Ping-Pong
-Never tell the user something works without verifying it first:
-- Read the actual code and trace the execution path
-- Check for undefined variables, missing imports, broken references
-- Verify message chains work from sender to receiver
-- Check that every file referenced in manifests/configs actually exists
-- If automated tests exist, run them
-- **MANDATORY: Before pushing ANY change, do a deep audit scan of every file being changed. Check for syntax errors, conflicting CSS, broken JSX, missing imports, and style conflicts. The owner works 24/7 and cannot debug broken deploys.**
-- **If you find a bug while testing — fix it immediately, then report**
+### Rule 11: Test Before Reporting — Zero Ping-Pong (CRITICAL — READ THIS EVERY TIME)
+Never tell the user something works without verifying it first. Finding ONE bug does not mean the job is done. There could be 10 problems. FIX THEM ALL before reporting.
+- **DEEP SCAN PROTOCOL (Mandatory before every "it's done" statement):**
+  1. Read EVERY file that was changed or could be affected by the change
+  2. Check for syntax errors, unclosed tags, missing imports, typos
+  3. Check for CSS conflicts — are any CSS variables, classes, or styles fighting each other?
+  4. Check for theme consistency — is the entire page using the same design system? No white sections on dark pages. No light text on light backgrounds.
+  5. Trace every component's imports — does every file it references exist?
+  6. Check the build config (next.config.js, tailwind.config.js, package.json) — are there version conflicts or missing dependencies?
+  7. Look at the FULL page from top to bottom — Nav, Hero, every section, Footer. Does it ALL look right together?
+  8. Check for stale cached CSS classes from previous sessions that conflict with new code
+  9. Check every other page that uses shared components (Nav, Footer) — did the change break them too?
+  10. Only after ALL of this passes: report to the user
+- **THE ONE-FIX TRAP**: When you find a bug and fix it, DO NOT immediately say "fixed!" There are almost always MORE problems. The fix you just applied might have been one of five issues. Scan everything else before reporting.
+- **If you find a bug while testing — fix it immediately, then KEEP SCANNING for more**
 - The user should never discover a bug that Claude should have caught
 - **NEVER say "it's done" or "it should work" — verify the build passes first. If you can't run the build, manually trace every JSX tag to ensure it closes properly, every CSS variable resolves, and every import exists.**
+- **The owner works 24/7 running an airport shuttle business. Every broken deploy wastes hours of their limited time. Treat every push like it's going to production in front of a room full of lawyers.**
 
 ### Rule 12: Mandatory Session Protocol
 Every session must follow this protocol:
