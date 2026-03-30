@@ -87,72 +87,76 @@ export default function LandingPage() {
 
       <Nav />
 
-      {/* ── HERO ────────────────────────────────────── */}
-      <section className="hero-gradient pt-36 pb-24 px-4">
-        <div className="max-w-3xl mx-auto text-center">
+      {/* ── HERO — Dark, prestigious ────────────────── */}
+      <section className="bg-navy-950 pt-36 pb-28 px-4 relative overflow-hidden">
+        {/* Subtle gradient glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-10%,rgba(218,167,59,0.08),transparent_70%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_80%_50%,rgba(79,70,229,0.06),transparent_60%)]" />
 
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 mb-8 animate-fade-up">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-            <span className="text-[12px] text-indigo-600 font-medium">Trusted by legal and financial professionals</span>
+        <div className="max-w-3xl mx-auto text-center relative z-10">
+
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] mb-10 animate-fade-up">
+            <span className="w-1.5 h-1.5 rounded-full bg-gold-400"></span>
+            <span className="text-[12px] text-white/50 font-medium tracking-wide">Trusted by legal and financial professionals</span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 mb-6 animate-fade-up" style={{ animationDelay: '0.1s' }}>
+          <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-bold tracking-tight text-white mb-6 animate-fade-up leading-[1.15]" style={{ animationDelay: '0.1s' }}>
             Every word you write,
             <br />
-            <span className="text-indigo-600">beyond reproach.</span>
+            <span className="text-gold-400">beyond reproach.</span>
           </h1>
 
-          <p className="text-lg text-gray-500 max-w-xl mx-auto leading-relaxed mb-10 animate-fade-up" style={{ animationDelay: '0.2s' }}>
+          <p className="text-[17px] text-white/35 max-w-lg mx-auto leading-relaxed mb-12 animate-fade-up" style={{ animationDelay: '0.2s' }}>
             AI-powered grammar correction and voice-to-text built for professionals who cannot afford errors in client communications, contracts, and financial reports.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-16 animate-fade-up" style={{ animationDelay: '0.3s' }}>
-            <a href="/download" className="px-8 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-[15px] font-medium transition-all shadow-sm">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-20 animate-fade-up" style={{ animationDelay: '0.3s' }}>
+            <a href="/download" className="px-8 py-3.5 rounded-xl bg-gold-400 hover:bg-gold-300 text-navy-950 text-[15px] font-semibold transition-all shadow-lg shadow-gold-400/20">
               Start Free Trial
             </a>
-            <a href="/security" className="px-8 py-3 rounded-xl border border-gray-200 text-gray-500 text-[15px] font-medium hover:border-gray-300 hover:text-gray-700 transition-all">
+            <a href="/security" className="px-8 py-3.5 rounded-xl border border-white/10 text-white/50 text-[15px] font-medium hover:border-white/20 hover:text-white/70 transition-all">
               View Security
             </a>
           </div>
 
-          {/* ── Demo Card ──────────────────────── */}
+          {/* ── Demo Card — dark variant ──────── */}
           <div className="max-w-xl mx-auto animate-fade-up" style={{ animationDelay: '0.4s' }}>
-            <div className="card overflow-hidden shadow-lg shadow-black/[0.03]">
-              <div className="flex items-center justify-between px-5 py-3 border-b border-black/[0.04] bg-gray-50/50">
+            <div className="rounded-2xl overflow-hidden bg-navy-900/80 border border-white/[0.06] shadow-2xl shadow-black/40">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.06] bg-navy-900/50">
                 <div className="flex items-center gap-2">
                   <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-red-400/70" />
-                    <div className="w-3 h-3 rounded-full bg-amber-400/70" />
-                    <div className="w-3 h-3 rounded-full bg-emerald-400/70" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-400/50" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-amber-400/50" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-400/50" />
                   </div>
-                  <span className="text-[12px] text-slate-400 font-mono font-medium">{typing.label}</span>
+                  <span className="text-[11px] text-white/25 font-mono">{typing.label}</span>
                 </div>
-                <span className={`w-2.5 h-2.5 rounded-full transition-colors ${typing.isTyping ? 'bg-red-400' : 'bg-emerald-400'}`} />
+                <span className={`w-2 h-2 rounded-full transition-colors ${typing.isTyping ? 'bg-red-400' : 'bg-emerald-400'}`} />
               </div>
 
-              <div className="px-5 py-3 border-b border-black/[0.04]">
-                <p className="text-[10px] text-gray-300 uppercase tracking-wider mb-1.5">Original draft</p>
-                <p className="text-[13px] text-gray-400 leading-relaxed line-through decoration-red-300/40">{typing.before}</p>
+              <div className="px-5 py-3 border-b border-white/[0.04]">
+                <p className="text-[10px] text-white/20 uppercase tracking-wider mb-1.5">Original draft</p>
+                <p className="text-[13px] text-white/30 leading-relaxed line-through decoration-red-400/30">{typing.before}</p>
               </div>
 
-              <div className="px-5 py-4 bg-indigo-50/30">
-                <p className="text-[10px] text-indigo-400 uppercase tracking-wider mb-1.5">AlecRae corrected</p>
-                <p className={`text-[14px] text-gray-800 leading-relaxed whitespace-pre-wrap min-h-[44px] ${typing.isTyping ? 'animate-typing-cursor pr-0.5' : ''}`}>
-                  {typing.after || <span className="text-gray-200">|</span>}
+              <div className="px-5 py-4 bg-gold-400/[0.04]">
+                <p className="text-[10px] text-gold-400/60 uppercase tracking-wider mb-1.5">AlecRae corrected</p>
+                <p className={`text-[14px] text-white/80 leading-relaxed whitespace-pre-wrap min-h-[44px] ${typing.isTyping ? 'animate-typing-cursor pr-0.5' : ''}`}>
+                  {typing.after || <span className="text-white/10">|</span>}
                 </p>
               </div>
             </div>
           </div>
 
-          <p className="text-[12px] text-gray-300 mt-8 animate-fade-up" style={{ animationDelay: '0.5s' }}>
+          <p className="text-[12px] text-white/20 mt-10 animate-fade-up" style={{ animationDelay: '0.5s' }}>
             Mac &middot; Windows &middot; Chrome Extension &middot; Free to start &middot; No credit card required
           </p>
         </div>
       </section>
 
       {/* ── TRUST BAR ─────────────────────────────── */}
-      <section className="py-8 px-4 border-b border-black/[0.04] bg-gray-50/50">
-        <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-8 text-[12px] text-gray-400">
+      <section className="py-6 px-4 border-b border-navy-800 bg-navy-900">
+        <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-8 text-[12px] text-white/30">
           <span className="flex items-center gap-2">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
             256-bit AES encryption
