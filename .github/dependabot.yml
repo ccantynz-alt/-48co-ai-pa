@@ -1,0 +1,56 @@
+version: 2
+updates:
+  # Website (Next.js / npm)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+    groups:
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+      nextjs:
+        patterns:
+          - "next"
+          - "eslint-config-next"
+      tailwind:
+        patterns:
+          - "tailwindcss"
+          - "@tailwindcss/*"
+
+  # Desktop app (Tauri / Cargo)
+  - package-ecosystem: "cargo"
+    directory: "/tauri-app/src-tauri"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "rust"
+
+  # Shared Rust library (Cargo)
+  - package-ecosystem: "cargo"
+    directory: "/shared-rust"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "rust"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "ci"

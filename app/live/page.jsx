@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import Link from 'next/link'
 import Nav from '../../components/Nav'
 import Footer from '../../components/Footer'
 import Waveform from '../../components/Waveform'
@@ -195,9 +196,9 @@ export default function LivePage() {
         <div className="text-center">
           <h2 className="text-lg font-bold text-navy-900 mb-2">Want AI grammar + rewrite?</h2>
           <p className="text-[13px] text-gray-500 mb-5">This demo uses free browser speech. The full app adds AI grammar correction, tone adjustment, and 99%+ accuracy.</p>
-          <a href="/download" className="inline-block px-6 py-3 rounded-lg bg-navy-900 text-white text-[13px] font-semibold hover:bg-navy-800 transition-all">
+          <Link href="/download" className="inline-block px-6 py-3 rounded-lg bg-navy-900 text-white text-[13px] font-semibold hover:bg-navy-800 transition-all">
             Download the Full App
-          </a>
+          </Link>
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import Nav from '../../components/Nav'
 import Footer from '../../components/Footer'
 
@@ -88,12 +89,12 @@ export default function DownloadPage() {
 
         {/* Also available */}
         <div className="flex flex-wrap justify-center gap-3 mb-20">
-          <a href="/install" className="text-[12px] px-4 py-2 rounded-lg border border-gray-200 text-gray-500 hover:border-navy-200 hover:text-navy-700 transition-all font-medium">
+          <Link href="/install" className="text-[12px] px-4 py-2 rounded-lg border border-gray-200 text-gray-500 hover:border-navy-200 hover:text-navy-700 transition-all font-medium">
             Chrome Extension
-          </a>
-          <a href="/live" className="text-[12px] px-4 py-2 rounded-lg border border-gray-200 text-gray-500 hover:border-navy-200 hover:text-navy-700 transition-all font-medium">
+          </Link>
+          <Link href="/live" className="text-[12px] px-4 py-2 rounded-lg border border-gray-200 text-gray-500 hover:border-navy-200 hover:text-navy-700 transition-all font-medium">
             Try in Browser (no download)
-          </a>
+          </Link>
         </div>
 
         {/* Setup Steps */}
@@ -156,7 +157,7 @@ export default function DownloadPage() {
           <div className="inline-block p-6 rounded-xl bg-[#FAFAF8] border border-gray-100">
             <p className="text-[14px] text-navy-900 font-semibold mb-1">Free to start. Pro is $12/mo.</p>
             <p className="text-[12px] text-gray-500">10 free grammar corrections per day. Upgrade for unlimited AI.</p>
-            <a href="/pricing" className="text-[12px] text-navy-700 hover:text-navy-900 font-semibold mt-3 inline-block transition-colors">See pricing &rarr;</a>
+            <Link href="/pricing" className="text-[12px] text-navy-700 hover:text-navy-900 font-semibold mt-3 inline-block transition-colors">See pricing &rarr;</Link>
           </div>
         </div>
       </div>
