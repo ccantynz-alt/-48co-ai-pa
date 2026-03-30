@@ -62,6 +62,7 @@ pub fn quarantine_threats(threats: &[Threat]) -> Result<usize, String> {
     for threat in threats {
         match &threat.action {
             ThreatAction::KillProcess(pid) => {
+                // Kill the process
                 #[cfg(windows)]
                 {
                     let result = std::process::Command::new("taskkill")
@@ -132,6 +133,7 @@ pub fn quarantine_threats(threats: &[Threat]) -> Result<usize, String> {
                         );
                     }
                     Err(e) => {
+                        // Try copy + delete if rename fails (cross-device)
                         if fs::copy(&source, &dest).is_ok() && fs::remove_file(&source).is_ok() {
                             manifest.entries.push(QuarantineEntry {
                                 id,
@@ -179,6 +181,45 @@ pub fn quarantine_threats(threats: &[Threat]) -> Result<usize, String> {
                         "[~]".yellow()
                     );
                 }
+            }
+
+            ThreatAction::UninstallProgram { name, .. } => {
+                println!(
+                    "  {} Skipped uninstall '{}' \u{2014} use --nuke for full removal",
+                    "[~]".yellow(),
+                    name
+                );
+            }
+
+            ThreatAction::DeleteScheduledTask { task_name } => {
+                println!(
+                    "  {} Skipped task '{}' \u{2014} use --nuke to delete",
+                    "[~]".yellow(),
+                    task_name
+                );
+            }
+
+            ThreatAction::DisableBrowserExtension { browser, ext_id } => {
+                println!(
+                    "  {} Skipped {} extension '{}' \u{2014} use --nuke or --fix-browser",
+                    "[~]".yellow(),
+                    browser,
+                    ext_id
+                );
+            }
+
+            ThreatAction::ResetProxy => {
+                println!(
+                    "  {} Skipped proxy reset \u{2014} use --nuke to fix",
+                    "[~]".yellow()
+                );
+            }
+
+            ThreatAction::RestoreDefender => {
+                println!(
+                    "  {} Skipped Defender restore \u{2014} use --nuke to fix",
+                    "[~]".yellow()
+                );
             }
 
             ThreatAction::ManualReview => {
@@ -271,6 +312,7 @@ pub fn restore_file(id: usize) -> Result<(), String> {
         ));
     }
 
+    // Ensure destination directory exists
     if let Some(parent) = dest.parent() {
         fs::create_dir_all(parent)
             .map_err(|e| format!("Failed to create destination directory: {}", e))?;
