@@ -180,8 +180,10 @@ Never tell the user something works without verifying it first:
 - Verify message chains work from sender to receiver
 - Check that every file referenced in manifests/configs actually exists
 - If automated tests exist, run them
+- **MANDATORY: Before pushing ANY change, do a deep audit scan of every file being changed. Check for syntax errors, conflicting CSS, broken JSX, missing imports, and style conflicts. The owner works 24/7 and cannot debug broken deploys.**
 - **If you find a bug while testing — fix it immediately, then report**
 - The user should never discover a bug that Claude should have caught
+- **NEVER say "it's done" or "it should work" — verify the build passes first. If you can't run the build, manually trace every JSX tag to ensure it closes properly, every CSS variable resolves, and every import exists.**
 
 ### Rule 12: Mandatory Session Protocol
 Every session must follow this protocol:
