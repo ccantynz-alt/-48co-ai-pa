@@ -14,7 +14,7 @@ pub fn print_banner() {
  | | | | | | \ \ /\ / /|  \| |
  | |_| | |_| |\ V  V / | |\  |
  |____/ \___/  \_/\_/  |_| \_|
-  Windows Security Scanner v0.1.0
+  Windows Security Scanner v0.2.0
 "#
         .cyan()
         .bold()
@@ -28,7 +28,7 @@ pub fn print_scan_start(scan_type: &str) {
         "Starting".white(),
         scan_type.yellow().bold()
     );
-    println!("{}", "\u{2500}".repeat(60).dimmed());
+    println!("{}", "─".repeat(60).dimmed());
 }
 
 pub fn print_module_start(module: &str) {
@@ -41,8 +41,8 @@ pub fn print_module_start(module: &str) {
 
 pub fn print_module_clean(module: &str) {
     println!(
-        "  {} {} \u{2014} {}",
-        "[\u{2713}]".green().bold(),
+        "  {} {} — {}",
+        "[✓]".green().bold(),
         module.white(),
         "Clean".green()
     );
@@ -57,7 +57,7 @@ pub fn print_threat(threat: &Threat) {
     };
 
     println!(
-        "  {} [{}] {} \u{2014} {}",
+        "  {} [{}] {} — {}",
         "[!]".red().bold(),
         severity_colored,
         threat.name.white().bold(),
@@ -69,9 +69,9 @@ pub fn print_threat(threat: &Threat) {
 }
 
 pub fn print_summary(threats: &[Threat]) {
-    println!("\n{}", "\u{2550}".repeat(60).dimmed());
+    println!("\n{}", "═".repeat(60).dimmed());
     println!("{}", "  SCAN SUMMARY".white().bold());
-    println!("{}", "\u{2550}".repeat(60).dimmed());
+    println!("{}", "═".repeat(60).dimmed());
 
     let critical = threats.iter().filter(|t| t.severity == Severity::Critical).count();
     let high = threats.iter().filter(|t| t.severity == Severity::High).count();
@@ -82,7 +82,7 @@ pub fn print_summary(threats: &[Threat]) {
     if total == 0 {
         println!(
             "\n  {} {}",
-            "\u{2713}".green().bold(),
+            "✓".green().bold(),
             "No threats detected. Your system looks clean.".green().bold()
         );
     } else {
@@ -90,28 +90,28 @@ pub fn print_summary(threats: &[Threat]) {
         if critical > 0 {
             println!(
                 "  {} Critical: {}",
-                "\u{25cf}".red().bold(),
+                "●".red().bold(),
                 critical.to_string().red().bold()
             );
         }
         if high > 0 {
             println!(
                 "  {} High:     {}",
-                "\u{25cf}".red(),
+                "●".red(),
                 high.to_string().red()
             );
         }
         if medium > 0 {
             println!(
                 "  {} Medium:   {}",
-                "\u{25cf}".yellow(),
+                "●".yellow(),
                 medium.to_string().yellow()
             );
         }
         if low > 0 {
             println!(
                 "  {} Low:      {}",
-                "\u{25cf}".white(),
+                "●".white(),
                 low.to_string().white()
             );
         }
@@ -121,11 +121,11 @@ pub fn print_summary(threats: &[Threat]) {
         );
         println!(
             "\n  {} Run {} to remove detected threats.",
-            "\u{2192}".cyan(),
+            "→".cyan(),
             "down --quarantine".yellow().bold()
         );
     }
-    println!("{}\n", "\u{2550}".repeat(60).dimmed());
+    println!("{}\n", "═".repeat(60).dimmed());
 }
 
 /// Write scan results to a log file
@@ -139,7 +139,7 @@ pub fn write_log(threats: &[Threat]) -> Result<PathBuf, String> {
     let mut file =
         fs::File::create(&log_path).map_err(|e| format!("Failed to create log file: {}", e))?;
 
-    writeln!(file, "DOWN Security Scanner \u{2014} Scan Report").ok();
+    writeln!(file, "DOWN Security Scanner — Scan Report").ok();
     writeln!(file, "Date: {}", Local::now().format("%Y-%m-%d %H:%M:%S")).ok();
     writeln!(file, "Threats found: {}", threats.len()).ok();
     writeln!(file, "{}", "=".repeat(60)).ok();
