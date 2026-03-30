@@ -32,7 +32,7 @@ pub fn start_recording() -> Result<(), String> {
                 buffer.lock().unwrap().extend_from_slice(data);
             }
         },
-        |err| eprintln!("[48co] Audio error: {}", err),
+        |err| eprintln!("[AlecRae Voice] Audio error: {}", err),
         None,
     ).map_err(|e| format!("Mic stream failed: {}", e))?;
 

@@ -1,9 +1,9 @@
 export const metadata = {
-  title: '48co vs Grammarly vs Wispr Flow vs SuperWhisper — 2026 Comparison',
-  description: 'Honest comparison of AI grammar and voice-to-text tools in 2026. See how 48co compares on price, features, privacy, and AI quality.',
+  title: 'AlecRae Voice vs Grammarly vs Wispr Flow vs SuperWhisper — 2026 Comparison',
+  description: 'Honest comparison of AI grammar and voice-to-text tools in 2026. See how AlecRae Voice compares on price, features, privacy, and AI quality.',
   openGraph: {
     title: 'Best AI Grammar & Voice-to-Text 2026 — Full Comparison',
-    description: '48co vs Grammarly vs Wispr Flow vs SuperWhisper. Price, features, privacy compared honestly.',
+    description: 'AlecRae Voice vs Grammarly vs Wispr Flow vs SuperWhisper. Price, features, privacy compared honestly.',
   },
 }
 
@@ -45,7 +45,7 @@ export default function ComparePage() {
       <div className="max-w-5xl mx-auto px-4 pt-28 pb-16">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-3">
-            How <span className="text-indigo-600">48co</span> compares
+            How <span className="text-indigo-600">AlecRae Voice</span> compares
           </h1>
           <p className="text-gray-400 text-base max-w-lg mx-auto">
             An honest comparison. We highlight where competitors beat us too.
@@ -58,7 +58,7 @@ export default function ComparePage() {
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50">
                 <th className="text-left py-3 px-4 text-gray-400 font-normal w-[180px]">Feature</th>
-                <th className="text-center py-3 px-4 text-indigo-600 font-bold">48co</th>
+                <th className="text-center py-3 px-4 text-indigo-600 font-bold">AlecRae Voice</th>
                 <th className="text-center py-3 px-4 text-gray-400 font-normal">Grammarly</th>
                 <th className="text-center py-3 px-4 text-gray-400 font-normal">Wispr Flow</th>
                 <th className="text-center py-3 px-4 text-gray-400 font-normal">SuperWhisper</th>
@@ -103,7 +103,7 @@ export default function ComparePage() {
           </div>
 
           <div className="rounded-2xl p-6 border-2 border-indigo-200 bg-indigo-50/30 md:col-span-2">
-            <h2 className="text-[15px] font-bold text-indigo-700 mb-4">Where 48co wins</h2>
+            <h2 className="text-[15px] font-bold text-indigo-700 mb-4">Where AlecRae Voice wins</h2>
             <div className="grid md:grid-cols-4 gap-4">
               <div>
                 <h3 className="text-[13px] text-gray-700 font-semibold mb-1">Grammar + Voice</h3>
@@ -128,7 +128,7 @@ export default function ComparePage() {
         {/* CTA */}
         <div className="mt-16 text-center">
           <a href="/download" className="inline-block px-8 py-3 rounded-xl bg-indigo-600 text-white text-[15px] font-medium hover:bg-indigo-500 transition-all shadow-sm">
-            Download 48co Free
+            Download AlecRae Voice Free
           </a>
           <p className="text-[12px] text-gray-300 mt-3">Mac + Windows + Chrome. Free tier available. No credit card.</p>
         </div>

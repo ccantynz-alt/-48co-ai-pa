@@ -4,9 +4,9 @@
 // Runs the Whisper model directly on the user's CPU/GPU.
 //
 // Model files are downloaded once and stored in the app data directory:
-//   Windows: %APPDATA%/48co/models/
-//   macOS:   ~/Library/Application Support/48co/models/
-//   Linux:   ~/.local/share/48co/models/
+//   Windows: %APPDATA%/alecrae-voice/models/
+//   macOS:   ~/Library/Application Support/alecrae-voice/models/
+//   Linux:   ~/.local/share/alecrae-voice/models/
 
 use std::path::PathBuf;
 
@@ -14,7 +14,7 @@ use std::path::PathBuf;
 pub fn models_dir() -> PathBuf {
     let base = dirs::data_dir()
         .unwrap_or_else(|| PathBuf::from("."))
-        .join("48co")
+        .join("alecrae-voice")
         .join("models");
     std::fs::create_dir_all(&base).ok();
     base
@@ -49,7 +49,7 @@ pub async fn download_model(model_name: &str) -> Result<PathBuf, String> {
         model_name
     );
 
-    println!("[48co] Downloading model: {} ...", model_name);
+    println!("[AlecRae Voice] Downloading model: {} ...", model_name);
 
     let client = reqwest::Client::new();
     let response = client
@@ -70,7 +70,7 @@ pub async fn download_model(model_name: &str) -> Result<PathBuf, String> {
     std::fs::write(&path, &bytes)
         .map_err(|e| format!("Save failed: {}", e))?;
 
-    println!("[48co] Model saved: {:?} ({:.1}MB)", path, bytes.len() as f64 / 1_048_576.0);
+    println!("[AlecRae Voice] Model saved: {:?} ({:.1}MB)", path, bytes.len() as f64 / 1_048_576.0);
 
     Ok(path)
 }

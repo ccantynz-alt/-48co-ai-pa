@@ -3,10 +3,10 @@ import Footer from '../../components/Footer'
 import PricingCards from './PricingCards'
 
 export const metadata = {
-  title: '48co Pricing — AI Grammar & Voice Plans | Free, Pro & Teams',
+  title: 'AlecRae Voice Pricing — AI Grammar & Voice Plans | Free, Pro & Teams',
   description: 'AI grammar correction + voice-to-text on every device. Free to start, Pro at $12/mo, Business $29/mo for 10 users. 60% cheaper than Grammarly.',
   openGraph: {
-    title: '48co Pricing — AI Grammar That Works Everywhere',
+    title: 'AlecRae Voice Pricing — AI Grammar That Works Everywhere',
     description: 'Free grammar checks, $12/mo Pro, $29/mo Business for 10 users. 60% cheaper than Grammarly Premium.',
   },
 }
@@ -38,7 +38,7 @@ export default function PricingPage() {
         {/* vs Grammarly */}
         <div className="mt-20 max-w-3xl mx-auto">
           <div className="text-center mb-10">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">48co Pro vs Grammarly Premium</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">AlecRae Pro vs Grammarly Premium</h2>
             <p className="text-[14px] text-gray-400">Same job, better AI, lower price.</p>
           </div>
 
@@ -47,7 +47,7 @@ export default function PricingPage() {
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50">
                   <th className="text-left py-3 px-5 text-gray-400 font-normal">Feature</th>
-                  <th className="text-center py-3 px-5 text-indigo-600 font-semibold">48co Pro</th>
+                  <th className="text-center py-3 px-5 text-indigo-600 font-semibold">AlecRae Pro</th>
                   <th className="text-center py-3 px-5 text-gray-400 font-normal">Grammarly Premium</th>
                 </tr>
               </thead>
@@ -92,7 +92,7 @@ export default function PricingPage() {
             {[
               { q: 'How does the free tier work?', a: 'You get 10 AI grammar corrections per day in the Chrome extension, plus 60 minutes of voice dictation per month. No credit card required. The free tier never expires.' },
               { q: 'What does Pro include that Free doesn\'t?', a: 'Unlimited corrections, unlimited voice, AI Rewrite Mode (polishes your tone), context-aware formatting, desktop app, offline mode, and the upcoming mobile keyboards.' },
-              { q: 'How is this better than Grammarly?', a: '48co uses Claude AI (the latest model) instead of rules-based checking. It also includes voice-to-text, works as a desktop app that types into ANY application (not just browsers), costs $12/mo vs $30/mo, and our Business plan is $29/mo for 10 users vs Grammarly\'s $150/mo.' },
+              { q: 'How is this better than Grammarly?', a: 'AlecRae Voice uses Claude AI (the latest model) instead of rules-based checking. It also includes voice-to-text, works as a desktop app that types into ANY application (not just browsers), costs $12/mo vs $30/mo, and our Business plan is $29/mo for 10 users vs Grammarly\'s $150/mo.' },
               { q: 'Do I need an API key?', a: 'No. All plans use our managed AI service. You just sign up and start using it.' },
               { q: 'Will it work on my phone?', a: 'iPhone and Android keyboard apps are coming soon. They\'ll replace your default keyboard and correct everything you type — texts, emails, notes, everything.' },
               { q: 'Can I cancel anytime?', a: 'Yes, instantly. No contracts, no cancellation fees, no questions asked. Monthly plans cancel at the end of the billing period. Annual plans can be refunded within 14 days.' },

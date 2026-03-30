@@ -1,6 +1,6 @@
 {
   "identifier": "default",
-  "description": "48co app capabilities",
+  "description": "AlecRae Voice app capabilities",
   "windows": ["settings"],
   "permissions": [
     "core:default",

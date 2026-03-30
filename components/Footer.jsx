@@ -4,7 +4,7 @@ export default function Footer() {
       <div className="max-w-5xl mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <span className="text-[15px] font-bold text-gray-800">48<span className="text-indigo-600">co</span></span>
+            <span className="text-[15px] font-bold text-gray-800">Alec<span className="text-indigo-600">Rae</span></span>
             <span className="text-[11px] text-gray-300">|</span>
             <span className="text-[12px] text-gray-400">AI Grammar & Voice</span>
           </div>

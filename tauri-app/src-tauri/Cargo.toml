@@ -1,12 +1,12 @@
 [package]
-name = "fortyeightco"
+name = "alecrae_voice"
 version = "1.0.0"
-description = "48co — AI Grammar + Voice-to-Text"
-authors = ["48co"]
+description = "AlecRae Voice — AI Grammar + Voice-to-Text"
+authors = ["AlecRae"]
 edition = "2021"
 
 [lib]
-name = "fortyeightco_lib"
+name = "alecrae_voice_lib"
 crate-type = ["lib", "cdylib", "staticlib"]
 
 [build-dependencies]

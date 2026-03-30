@@ -102,7 +102,7 @@ export default function LandingPage() {
           </h1>
 
           <p className="text-lg md:text-xl text-gray-400 max-w-xl mx-auto leading-relaxed mb-10 animate-fade-up" style={{ animationDelay: '0.2s' }}>
-            Speak or type — 48co fixes your grammar, polishes your tone, and types it perfectly. On every device, in every app.
+            Speak or type — AlecRae Voice fixes your grammar, polishes your tone, and types it perfectly. On every device, in every app.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center mb-16 animate-fade-up" style={{ animationDelay: '0.3s' }}>
@@ -135,7 +135,7 @@ export default function LandingPage() {
               </div>
 
               <div className="px-5 py-4 bg-indigo-50/30">
-                <p className="text-[10px] text-indigo-400 uppercase tracking-wider mb-1.5">48co corrects to</p>
+                <p className="text-[10px] text-indigo-400 uppercase tracking-wider mb-1.5">AlecRae corrects to</p>
                 <p className={`text-[14px] text-gray-800 leading-relaxed whitespace-pre-wrap min-h-[44px] ${typing.isTyping ? 'animate-typing-cursor pr-0.5' : ''}`}>
                   {typing.after || <span className="text-gray-200">|</span>}
                 </p>
@@ -208,7 +208,7 @@ export default function LandingPage() {
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-3">See the difference</h2>
-            <p className="text-[15px] text-gray-400">Real examples of 48co improving everyday writing.</p>
+            <p className="text-[15px] text-gray-400">Real examples of AlecRae Voice improving everyday writing.</p>
           </div>
 
           <div className="space-y-4">
@@ -224,7 +224,7 @@ export default function LandingPage() {
                     <p className="text-[13px] text-gray-400 leading-relaxed">{ex.before}</p>
                   </div>
                   <div className="p-5 bg-green-50/30">
-                    <p className="text-[10px] text-green-600 uppercase tracking-wider mb-2 font-medium">After 48co</p>
+                    <p className="text-[10px] text-green-600 uppercase tracking-wider mb-2 font-medium">After AlecRae</p>
                     <p className="text-[13px] text-gray-800 leading-relaxed">{ex.after}</p>
                   </div>
                 </div>
@@ -325,7 +325,7 @@ export default function LandingPage() {
             Join thousands who write with confidence. AI grammar that works on every device, in every app.
           </p>
           <a href="/download" className="inline-block px-10 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-[15px] font-medium transition-all shadow-sm">
-            Download 48co Free
+            Download AlecRae Voice Free
           </a>
           <p className="text-[12px] text-gray-300 mt-4">Mac + Windows + Chrome. Free tier. No credit card.</p>
         </div>

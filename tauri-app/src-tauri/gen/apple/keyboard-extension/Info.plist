@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleDisplayName</key>
-    <string>48co</string>
+    <string>AlecRae Voice</string>
     <key>CFBundleName</key>
-    <string>48co Keyboard</string>
+    <string>AlecRae Voice Keyboard</string>
     <key>CFBundleIdentifier</key>
-    <string>nz.co.48co.keyboard</string>
+    <string>nz.co.AlecRae Voice.keyboard</string>
     <key>CFBundleVersion</key>
     <string>1.0.0</string>
     <key>CFBundleShortVersionString</key>
@@ -33,8 +33,8 @@
         </dict>
     </dict>
     <key>NSMicrophoneUsageDescription</key>
-    <string>48co needs microphone access for voice-to-text dictation.</string>
+    <string>AlecRae Voice needs microphone access for voice-to-text dictation.</string>
     <key>NSSpeechRecognitionUsageDescription</key>
-    <string>48co uses speech recognition for voice-to-text.</string>
+    <string>AlecRae Voice uses speech recognition for voice-to-text.</string>
 </dict>
 </plist>
