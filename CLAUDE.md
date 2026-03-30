@@ -1,19 +1,19 @@
-# CLAUDE.md — AlecRae Voice Engineering Standards & Rules
+# CLAUDE.md — 48co Voice Engineering Standards & Rules
 # Built by Claude. Designed for humans.
-# Last deep scan: March 28, 2026
+# Last deep scan: March 29, 2026
 # Status: WAR MODE — No more three-legged dog. Ship or die.
 
 ## Project Identity
-- **Product**: AlecRae Voice — AI Grammar + Voice-to-Text + Custom Keyboard
-- **Brand**: AlecRae (parent brand) — this repo builds the Voice product only
-- **Domain**: alecrae.ai (primary), alecrae.com (redirect)
-- **Other AlecRae products** (separate repos, not built here): AlecRae Law, AlecRae Accounting, AlecRae Oracle
+- **Product**: 48co Voice — AI Grammar + Voice-to-Text + Custom Keyboard
+- **Brand**: 48co (parent brand) — this repo builds the Voice product only
+- **Domain**: 48co.nz (primary)
+- **Other 48co products** (separate repos, not built here): 48co Law, 48co Accounting, 48co Oracle
 - **Built by**: Claude (Anthropic AI) — fully autonomous engineering
 - **Architecture**: Tauri 2.0 (Rust + React) — bleeding edge 2026
 - **Platforms**: Windows, Mac, iOS, Android, Chrome Extension, Web App
 - **Goal**: 80-90% ahead of every competitor. Not "as good as" — BETTER THAN. Grammarly, Wispr Flow, SuperWhisper, WhisperTyping — all of them.
 - **Target users**: Lawyers, accountants, doctors, executives, anyone who writes for a living. This is a professional tool, not a toy.
-- **Naming rule**: All user-facing text says "AlecRae Voice" (or just "AlecRae" in context). The old name "48co" is retired.
+- **Naming rule**: All user-facing text says "48co Voice" (or just "48co" in context).
 
 ## Project Owner Context
 - The owner is NOT a developer. Never assume coding knowledge.
@@ -39,10 +39,23 @@
 - Website: auth, grammar API, rewrite API, live demo — working
 - "Preserve My Voice" feature — unique, no competitor has this
 
+### Deep Audit Results — March 29, 2026 (Component Upgrade Audit)
+**Outdated components found and upgraded this session:**
+- CRITICAL: Claude Sonnet model was `claude-sonnet-4-20250514` (10 months old). Upgraded to `claude-sonnet-4-6` across all 4 integration points.
+- CRITICAL: Anthropic API version was `2023-06-01` (3 YEARS old). Upgraded to `2025-09-01` across all 6 files.
+- HIGH: Next.js was 14.2 (2 major versions behind). Upgraded to 15.3.
+- HIGH: React was 18.3 (1 major version behind). Upgraded to 19.1.
+- HIGH: Tailwind CSS was 3.4 (1 major version behind). Upgraded to 4.1 with new CSS-first architecture.
+- HIGH: Vite was 5.4 (1 major version behind). Upgraded to 6.2.
+- MEDIUM: ESLint was 8.x. Upgraded to 9.x.
+- MEDIUM: Node.js in CI was 20. Upgraded to 22 LTS.
+- MEDIUM: Rust crates outdated — enigo 0.2→0.3, whisper-rs 0.12→0.13, dirs 5→6, candle 0.8→0.9, uniffi 0.28→0.29.
+- **Rule 13 added**: Strictest rule — no old technology allowed. Rip it out, put in the new.
+
 ### Deep Audit Results — March 28, 2026
 **Bugs found and fixed this session:**
 - CRITICAL: grammar.js crashed — referenced variables that were never declared (`correctionsToday`, `maxFreeCorrections`). Fixed.
-- CRITICAL: API URL hardcoded to dead domain `https://48co.nz/api`. Fixed to `https://alecrae.ai/api`.
+- CRITICAL: API URL hardcoded to dead domain `https://48co.nz/api`. Fixed to `https://48co.nz/api`.
 - HIGH: Grammar correction used deprecated `execCommand()` for text replacement. Fixed to Selection/Range API.
 - HIGH: Missing `.code-btn` CSS class in popup — add vocabulary buttons were unstyled. Fixed.
 - HIGH: Voice commands and coding mode code existed in `lib/` and `adapters/` but were never wired into content.js. Documented for next session.
@@ -107,14 +120,17 @@ Systematically check for features that promise something the code can't deliver.
 - **NEW**: If the pricing page promises a feature that doesn't exist in code — that's a critical gap. Fix the code or fix the marketing. No lies.
 - **NEW**: If a competitor has a feature we don't, document it in the gap list below and build a plan to beat it.
 
-### Rule 5: Technology Currency — Bleeding Edge Only
+### Rule 5: Technology Currency — Bleeding Edge Only (STRICT — NO EXCEPTIONS)
 We don't use "good enough" technology. We use the BEST available.
 - Review all dependencies every session for security vulnerabilities and newer versions
 - Check if browser APIs have changed (SpeechRecognition, Clipboard, etc.)
 - If a library we're using has a better alternative, migrate immediately
 - Stay on latest stable versions of ALL frameworks
-- **NEW**: Mandatory technology choices for 2026 (see Technology Mandate below)
-- **NEW**: If you find deprecated APIs in our code, replace them in the same session
+- **STRICT**: Mandatory technology choices for 2026 (see Technology Mandate below)
+- **STRICT**: If you find deprecated APIs in our code, replace them in the same session
+- **STRICT**: No raw HTML pages. Use React/JSX components for all UI. The ONLY exceptions are files that the platform forces to be HTML (Chrome extension manifest requires popup.html, offscreen.html; Vite requires index.html as SPA entry). These platform-mandated HTML files must be minimal shells that load JS components — no inline styles, no inline scripts, no UI logic in HTML.
+- **STRICT**: No old-generation frameworks, libraries, or patterns. If it was current in 2024 but superseded in 2026, rip it out. We only ship with the most advanced, fastest components available RIGHT NOW.
+- **STRICT**: Every session must audit AI model versions, framework versions, dependency versions, and API versions. If anything is not the latest — upgrade it immediately. No excuses, no delays.
 
 ### Rule 6: Explain Like You're Not A Developer
 All communication in plain English.
@@ -148,7 +164,7 @@ Every change gets documented so the next session knows what happened.
 - **NEW**: This CLAUDE.md file is the single source of truth. Keep it updated every session.
 
 ### Rule 10: Daily Technology Scanning — Non-Negotiable
-Every session must verify AlecRae Voice uses the most advanced technology available:
+Every session must verify 48co Voice uses the most advanced technology available:
 - **Check AI model versions**: Are we on the latest Claude, Whisper, Deepgram models?
 - **Check competitor releases**: Has Grammarly, Wispr Flow, SuperWhisper, or any competitor shipped something new?
 - **Check dependency versions**: Are all npm packages and Rust crates on latest stable?
@@ -178,21 +194,35 @@ Every session must follow this protocol:
 7. **DOCUMENT** — Record what changed and why
 8. **UPDATE CLAUDE.md** — Record scan results, gaps found, decisions made
 
+### Rule 13: No Old Technology — Rip It Out, Put In The New (STRICTEST RULE)
+This is the strictest rule in the entire project. No exceptions. No debate.
+- **NO raw HTML for UI**. All user interfaces must use modern component frameworks (React/JSX). The only HTML files allowed are platform-mandated shells (Chrome extension popup.html/offscreen.html, Vite index.html) — and those must be minimal loaders with ZERO UI logic.
+- **NO old frameworks**. If a framework has a newer major version, upgrade immediately. Next.js, React, Tailwind, Vite, ESLint — always latest stable.
+- **NO old AI models**. Always use the latest Claude, Whisper, Deepgram models. Check every session.
+- **NO old API versions**. Anthropic API, OpenAI API, Stripe API — always the latest version header.
+- **NO old dependencies**. Rust crates, npm packages — audit every session. If a newer version exists, upgrade.
+- **NO old Node.js**. CI/CD pipelines must run on the current LTS version.
+- **NO old patterns**. innerHTML is banned in new code — use DOM APIs or component rendering. execCommand() is banned — use modern Selection/Range APIs. var is banned — use const/let. CommonJS require() is banned in frontend — use ES modules.
+- **The standard**: If a component, library, framework, model, or API version was released more than 6 months ago AND a newer version exists — it is OLD and must be replaced.
+- **How to enforce**: Every session starts with a version audit. Every commit must use current technology. If old tech is found during any task, stop and upgrade it BEFORE continuing.
+- **Why**: We are building a professional tool for lawyers, doctors, and executives. They pay for the best. We deliver the best. Old technology is slow technology. Slow technology loses customers. We don't lose customers.
+
 ---
 
 ## TECHNOLOGY MANDATE — What We Use and Why (2026)
 
 These are locked-in decisions. Do not deviate without documenting why.
 
-### Desktop App: Tauri 2.0 (Rust + React + Vite)
+### Desktop App: Tauri 2.0 (Rust + React 19 + Vite 6)
 - **Why**: 5MB app vs 150MB Electron. Pure Rust backend. One codebase for Windows + Mac.
 - **Status**: Production-ready. 924 lines of solid Rust.
 - **Kill**: Delete the legacy Electron desktop/ folder. It's dead weight.
 - **Audio**: cpal 0.15 (Cross-Platform Audio Library)
-- **Keyboard Simulation**: enigo 0.2 (cross-platform, no nut-tree issues)
-- **Local Speech-to-Text**: whisper-rs 0.12 (whisper.cpp bindings) — supports 6 model sizes
+- **Keyboard Simulation**: enigo 0.3 (cross-platform, latest)
+- **Local Speech-to-Text**: whisper-rs 0.13 (whisper.cpp bindings, latest) — supports 6 model sizes
 - **Local Grammar**: 91 regex rules + Claude API fallback
 - **Hotkeys**: rdev 0.5 for global input (keyboard + mouse buttons)
+- **Frontend**: React 19.1 + Vite 6.2 + Tailwind CSS 4.1 (all latest)
 
 ### Mobile App: Native Swift (iOS) + Native Kotlin (Android)
 - **Why**: Custom keyboards REQUIRE native code. Expo/React Native cannot build a system-level keyboard that appears in every app.
@@ -207,20 +237,24 @@ These are locked-in decisions. Do not deviate without documenting why.
 - **Fix needed**: Replace deprecated execCommand() with Selection/Range API
 - **Fix needed**: Restrict CORS to our specific extension ID, not all extensions
 
-### Website: Next.js 14 + Vercel
-- **Status**: Working. Auth, grammar API, rewrite API, live demo all functional.
+### Website: Next.js 15.3 + React 19.1 + Tailwind CSS 4.1 + Vercel
+- **Status**: Working. Auth, grammar API, rewrite API, live demo all functional. All frameworks upgraded to latest March 2026.
 - **Kill**: The legacy Express API server in api/ duplicates Next.js routes. Consolidate to ONE backend.
 - **Add**: Stripe integration for payments (critical — can't make money without it)
 - **Add**: Email verification on signup
 - **Add**: Logout endpoint
 - **Fix**: Google OAuth must fail-safe when GOOGLE_CLIENT_ID is missing
 
-### AI Models — Always Latest
-- **Grammar checking**: Claude Haiku (latest version) — fast, cheap, accurate
-- **AI rewrite**: Claude Sonnet (latest version) — best writing quality
-- **Speech-to-text cloud**: OpenAI Whisper API (latest) — fallback when local model not downloaded
-- **Speech-to-text local**: whisper.cpp via whisper-rs — privacy mode, offline capable
+### AI Models — Always Latest (STRICT — Audit Every Session)
+- **Grammar checking**: Claude Haiku 4.5 (`claude-haiku-4-5-20251001`) — fast, cheap, accurate. Current latest as of March 2026.
+- **AI rewrite**: Claude Sonnet 4.6 (`claude-sonnet-4-6`) — best writing quality. Upgraded March 29, 2026.
+- **Translation**: Claude Sonnet 4.6 (`claude-sonnet-4-6`) — 200+ languages, domain-aware. Upgraded March 29, 2026.
+- **Anthropic API version**: `2025-09-01` — upgraded from ancient `2023-06-01` on March 29, 2026.
+- **Speech-to-text cloud**: OpenAI Whisper API (`whisper-1`) — fallback when local model not downloaded
+- **Speech-to-text local**: whisper.cpp via whisper-rs 0.13 — privacy mode, offline capable
+- **Real-time streaming**: Deepgram Nova-3 — word-by-word live transcription
 - **Future local grammar**: Evaluate latest small language models (Phi-4, Gemma 3, Llama 4 Mini) — pick whichever benchmarks best for grammar correction in 2026
+- **RULE**: If a newer Claude model is released (e.g., Haiku 4.6, Opus), upgrade in the SAME SESSION. No waiting.
 
 ### Real-Time Streaming (NEW — Required to Beat Competitors)
 - **Cloud**: Deepgram Nova-3 or AssemblyAI Universal-2 for real-time streaming transcription
@@ -232,7 +266,7 @@ These are locked-in decisions. Do not deviate without documenting why.
 ## COMPETITIVE GAP ANALYSIS — What We Must Build
 
 ### vs Grammarly (Market Leader)
-| Feature | Grammarly | AlecRae Voice | Gap |
+| Feature | Grammarly | 48co Voice | Gap |
 |---------|-----------|------|-----|
 | Grammar checking | Yes (rule + AI) | Yes (Claude AI) | We're BETTER — AI-native |
 | Voice-to-text | No | Yes | We WIN |
@@ -247,7 +281,7 @@ These are locked-in decisions. Do not deviate without documenting why.
 | Payment/subscriptions | Yes (Stripe) | No | CRITICAL GAP |
 
 ### vs Wispr Flow
-| Feature | Wispr Flow | AlecRae Voice | Gap |
+| Feature | Wispr Flow | 48co Voice | Gap |
 |---------|-----------|------|-----|
 | Voice-to-text | Yes (cloud) | Yes (cloud + local) | We're BETTER — offline mode |
 | Real-time streaming | Yes | No | GAP — must add Deepgram/AssemblyAI |
@@ -256,7 +290,7 @@ These are locked-in decisions. Do not deviate without documenting why.
 | Price | $15/mo | $12/mo | We WIN |
 
 ### vs SuperWhisper
-| Feature | SuperWhisper | AlecRae Voice | Gap |
+| Feature | SuperWhisper | 48co Voice | Gap |
 |---------|-------------|------|-----|
 | Mac-native polish | Excellent | Good | GAP — improve Tauri UI/UX |
 | Real-time streaming | Yes | No | GAP — critical |
@@ -275,7 +309,7 @@ These are locked-in decisions. Do not deviate without documenting why.
 
 ---
 
-## ADVANCED FEATURES — What Makes AlecRae Voice 80-90% Ahead
+## ADVANCED FEATURES — What Makes 48co Voice 80-90% Ahead
 
 These are the features that no competitor combines in one product. Each one is a reason a professional says "I can't work without this."
 
@@ -355,7 +389,7 @@ These are the features that no competitor combines in one product. Each one is a
 - Why: ElevenLabs charges $22/mo for this alone. We bundle it.
 
 **RAG on Your Documents**
-- Connect AlecRae Voice to your document repository (local folders, Google Drive, SharePoint)
+- Connect 48co Voice to your document repository (local folders, Google Drive, SharePoint)
 - "Use the language from last year's report" — finds and inserts it
 - "What's our standard clause for indemnification?" — searches your docs and answers
 - Vector database (local ChromaDB or cloud Pinecone) for semantic search
@@ -371,7 +405,7 @@ These are the features that no competitor combines in one product. Each one is a
 
 ### What This Means vs Competitors
 
-| Feature | Grammarly | Wispr Flow | SuperWhisper | Otter.ai | AlecRae Voice |
+| Feature | Grammarly | Wispr Flow | SuperWhisper | Otter.ai | 48co Voice |
 |---------|-----------|------------|--------------|----------|---------------|
 | Grammar + AI rewrite | Yes | Basic | No | No | Yes (Claude) |
 | Voice-to-text | No | Yes | Yes | Yes | Yes |
@@ -412,7 +446,7 @@ tauri-app/                 -> Main desktop application (Tauri 2.0)
     main.jsx               -> Entry point
     styles.css             -> Tailwind
 
-app/                       -> Next.js website (alecrae.ai) — SINGLE BACKEND
+app/                       -> Next.js website (48co.nz) — SINGLE BACKEND
   api/                     -> Vercel serverless API routes (auth, grammar, rewrite, usage)
   page.jsx                 -> Homepage
   pricing/page.jsx         -> Pricing
@@ -522,6 +556,6 @@ shared-rust/               -> Shared Rust core (grammar, whisper bindings) via u
 
 This app is for lawyers drafting contracts. Accountants writing reports. Doctors dictating notes. Executives composing emails. These people don't have time for broken software. They don't care about our tech stack. They care that when they speak, the right words appear. When they write, their grammar is perfect. When they switch devices, it just works.
 
-Every decision we make must pass one test: **Would a lawyer pay $12/month for AlecRae Voice?**
+Every decision we make must pass one test: **Would a lawyer pay $12/month for 48co Voice?**
 
 If the answer is no, we haven't built it right yet. Keep going.

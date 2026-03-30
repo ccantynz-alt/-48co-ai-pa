@@ -16,10 +16,9 @@ export default function Waveform({ isRecording }) {
           key={i}
           className={`w-[3px] rounded-full transition-all duration-300 ${
             isRecording
-              ? `${cls} bg-[#00f0ff]`
-              : 'bg-white/20'
+              ? `${cls} bg-gold-400`
+              : 'bg-white/10'
           }`}
-          // Static bars have varying heights for visual interest when idle
           style={isRecording ? {} : { height: `${4 + (i % 5) * 3}px` }}
         />
       ))}

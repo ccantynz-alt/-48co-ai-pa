@@ -1,0 +1,56 @@
+/// Known malicious or scareware process names (lowercase for matching).
+pub static KNOWN_BAD_PROCESSES: &[&str] = &[
+    // Fake antivirus / scareware
+    "pcprotect", "pcprotector", "winantivirus", "winfixer", "errorsafe",
+    "drivecleaner", "systemdoctor", "spyhunter", "regcure", "registrybooster",
+    "registrymechanic", "mypcbackup", "pckeeper", "mackeeper", "zeobit",
+    "totalav", "scanguard", "totaladblock", "segurazo", "segurazoservice",
+    "protectedsearch", "bytefence", "bytefenceservice", "ravantivirus", "ravservice",
+    // Fake system optimizers / cleaners
+    "ccleaner_cloud", "driverupdate", "driverupdater", "drivereasy",
+    "slimcleaner", "slimware", "reimage", "reimagerepair", "winzip_driver_updater",
+    "mypcrepair", "oneclickpc", "speedmypc", "iolo_system_mechanic",
+    "advanced_systemcare", "iobit_uninstaller", "smartpcfixer", "regclean",
+    "wisecleaner", "systweak", "restoro", "outbyte", "outbytepc", "fortect",
+    // Adware / browser hijackers
+    "conduit", "searchprotect", "delta_toolbar", "babylon_toolbar", "ask_toolbar",
+    "mindspark", "mywebsearch", "sweetim", "iminent", "snapdo", "qvo6",
+    "dosearches", "omniboxes", "trovi", "safefinder", "istartsurf",
+    "webssearches", "golsearch", "mystartsearch", "yoursearching",
+    "couponsalert", "jollywallet", "pricegong", "superfish", "browsefox",
+    "crossrider", "genieo", "opencandy", "installcore", "softpulse",
+    "amonetize", "outbrowse", "downloadsponsor",
+    // Known cryptominers
+    "xmrig", "xmr-stak", "cpuminer", "minerd", "minergate", "nicehash",
+    "claymore", "phoenixminer", "nbminer", "gminer", "t-rex", "lolminer",
+    "bfgminer", "cgminer", "ethminer", "coinhive",
+    // Remote access trojans
+    "darkcomet", "njrat", "netwire", "asyncrat", "quasarrat", "remcos",
+    "orcusrat", "nanocore", "blackshades", "poisonivy", "luminositylink",
+    "adwind", "imminent_monitor",
+    // Potentially unwanted programs
+    "bonzi", "bonzibuddy", "hotbar", "weatherbug_ad", "funmoods",
+    "pricefountain", "dealply", "savingsexplorer", "shopperz",
+    "browsersafeguard", "utorrentie", "bittorrent_ad",
+];
+
+pub static SUSPICIOUS_PATH_FRAGMENTS: &[&str] = &[
+    "\\temp\\", "\\tmp\\", "\\appdata\\local\\temp\\",
+    "\\appdata\\roaming\\temp\\", "$recycle.bin",
+    "\\system volume information\\", "\\programdata\\temp\\",
+    "\\users\\public\\",
+    "\\appdata\\local\\{", "\\appdata\\roaming\\{",
+];
+
+pub static KNOWN_SAFE_PROCESSES: &[&str] = &[
+    "svchost.exe", "csrss.exe", "wininit.exe", "winlogon.exe", "services.exe",
+    "lsass.exe", "smss.exe", "dwm.exe", "explorer.exe", "taskhostw.exe",
+    "sihost.exe", "ctfmon.exe", "fontdrvhost.exe", "runtimebroker.exe",
+    "searchhost.exe", "startmenuexperiencehost.exe", "textinputhost.exe",
+    "shellexperiencehost.exe", "applicationframehost.exe", "systemsettings.exe",
+    "securityhealthservice.exe", "securityhealthsystray.exe",
+    "msmpeng.exe", "nissrv.exe", "mrt.exe", "spoolsv.exe", "audiodg.exe",
+    "conhost.exe", "dllhost.exe", "msiexec.exe", "taskmgr.exe",
+    "cmd.exe", "powershell.exe", "pwsh.exe", "windowsterminal.exe",
+    "msedge.exe", "chrome.exe", "firefox.exe", "code.exe", "devenv.exe",
+];

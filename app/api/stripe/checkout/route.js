@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 /**
  * POST /api/stripe/checkout
  *
@@ -9,7 +10,7 @@
  */
 import { NextResponse } from 'next/server'
 import { sql } from '@vercel/postgres'
-import { stripe, PRICE_IDS, APP_URL } from '../../../../lib/stripe'
+import { getStripe, PRICE_IDS, APP_URL } from '../../../../lib/stripe'
 import { authenticate, initDb } from '../../../../lib/db'
 
 export async function POST(request) {
@@ -30,7 +31,7 @@ export async function POST(request) {
     // Reuse existing Stripe customer if they've paid before
     let customerId = user.stripe_customer_id
     if (!customerId) {
-      const customer = await stripe.customers.create({
+      const customer = await getStripe().customers.create({
         email: user.email,
         metadata: { user_id: user.user_id },
       })
@@ -38,7 +39,7 @@ export async function POST(request) {
       await sql`UPDATE users SET stripe_customer_id = ${customerId} WHERE id = ${user.user_id}`
     }
 
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       customer: customerId,
       mode: 'subscription',
       line_items: [{ price: priceId, quantity: 1 }],

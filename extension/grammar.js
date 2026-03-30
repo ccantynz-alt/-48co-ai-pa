@@ -1,5 +1,5 @@
 /**
- * AlecRae Voice Grammar Checker
+ * 48co Voice Grammar Checker
  * Watches text fields on any page. When user pauses typing, checks grammar
  * via Claude API and shows inline corrections in a tooltip.
  *
@@ -19,7 +19,7 @@
   let correctionsToday = 0
   const maxFreeCorrections = 10
 
-  const API_BASE = 'https://alecrae.ai/api' // managed API
+  const API_BASE = 'https://48co.nz/api' // managed API
 
   // ── Init: load settings ────────────────────────────────
   chrome.storage.local.get(['grammarEnabled', 'authToken', 'claudeApiKey', 'correctionsToday', 'correctionsDate'], (data) => {
@@ -116,7 +116,7 @@
         hideTooltip()
       }
     } catch (err) {
-      console.warn('[AlecRae Voice grammar]', err.message)
+      console.warn('[48co Voice grammar]', err.message)
     }
   }
 
@@ -156,7 +156,7 @@
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': claudeApiKey,
-          'anthropic-version': '2023-06-01',
+          'anthropic-version': '2025-09-01',
         },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
@@ -187,64 +187,80 @@
     hideTooltip()
 
     if (correctionsToday >= maxFreeCorrections && !claudeApiKey && !authToken) {
+      // Show limit-reached message instead of silently stopping
+      const tip = document.createElement('div')
+      tip.id = '48co-grammar'
+      tip.style.cssText = `
+        position:fixed;z-index:2147483647;max-width:320px;
+        font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+        font-size:13px;background:white;border:1px solid #e8e8f0;border-radius:14px;
+        box-shadow:0 8px 32px rgba(0,0,0,0.1),0 2px 8px rgba(0,0,0,0.04);
+        padding:16px 18px;text-align:center;color:#6a6a80;line-height:1.6;
+        opacity:0;transition:opacity 0.2s ease;
+      `
+      tip.innerHTML = `
+        <div style="font-weight:600;font-size:13px;color:#1a1a2e;margin-bottom:6px">Daily limit reached</div>
+        <div style="font-size:12px">Free plan: ${maxFreeCorrections} corrections per day.<br>Add a Claude API key in settings for unlimited.</div>
+      `
+      document.body.appendChild(tip)
+      activeTooltip = tip
+      const rect = el.getBoundingClientRect()
+      tip.style.top = Math.max(8, rect.top - tip.offsetHeight - 10) + 'px'
+      tip.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - tip.offsetWidth - 8)) + 'px'
+      requestAnimationFrame(() => { tip.style.opacity = '1' })
+      setTimeout(hideTooltip, 5000)
       return
     }
 
     const tooltip = document.createElement('div')
-    tooltip.id = 'alecrae-grammar'
+    tooltip.id = '48co-grammar'
     tooltip.style.cssText = `
-      position: fixed;
-      z-index: 2147483647;
-      max-width: 380px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
-      font-size: 13px;
-      background: white;
-      border: 1px solid rgba(0,0,0,0.1);
-      border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
-      padding: 0;
-      overflow: hidden;
+      position:fixed;z-index:2147483647;max-width:min(380px,85vw);
+      font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      font-size:13px;background:white;border:1px solid #e8e8f0;border-radius:14px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.1),0 2px 8px rgba(0,0,0,0.04);
+      padding:0;overflow:hidden;opacity:0;transition:opacity 0.2s ease,transform 0.2s ease;
+      transform:translateY(4px);
     `
 
     // Header
     const header = document.createElement('div')
-    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(0,0,0,0.06);background:#f8f9fa;'
+    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid #f0f0f5;background:#fafafe;'
     header.innerHTML = `
-      <span style="font-weight:600;font-size:12px;color:#4f46e5;">AlecRae Grammar</span>
-      <span style="font-size:11px;color:#888;">${corrections.length} correction${corrections.length > 1 ? 's' : ''}</span>
+      <span style="font-weight:600;font-size:12px;color:#4f46e5;letter-spacing:-0.01em">Corrections</span>
+      <span style="font-size:11px;color:#a0a0b8;font-weight:500">${corrections.length} found</span>
     `
     tooltip.appendChild(header)
 
     // Corrections list
     const list = document.createElement('div')
-    list.style.cssText = 'max-height:200px;overflow-y:auto;'
+    list.style.cssText = 'max-height:220px;overflow-y:auto;'
 
     corrections.slice(0, 5).forEach((c) => {
       const row = document.createElement('div')
-      row.style.cssText = 'padding:10px 14px;border-bottom:1px solid rgba(0,0,0,0.04);cursor:pointer;transition:background 0.15s;'
-      row.onmouseenter = () => { row.style.background = '#f0f0ff' }
+      row.style.cssText = 'padding:11px 16px;border-bottom:1px solid #f8f8fc;cursor:pointer;transition:background 0.15s ease;'
+      row.onmouseenter = () => { row.style.background = '#f8f7ff' }
       row.onmouseleave = () => { row.style.background = 'transparent' }
 
       row.innerHTML = `
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
-          <span style="color:#dc2626;text-decoration:line-through;font-size:12px;">${escapeHtml(c.original)}</span>
-          <span style="color:#888;font-size:10px;">&rarr;</span>
-          <span style="color:#16a34a;font-weight:500;font-size:12px;">${escapeHtml(c.corrected)}</span>
+          <span style="color:#dc2626;text-decoration:line-through;font-size:12px;font-weight:400">${escapeHtml(c.original)}</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#c0c0d0" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          <span style="color:#059669;font-weight:600;font-size:12px">${escapeHtml(c.corrected)}</span>
         </div>
-        <div style="font-size:11px;color:#888;">${escapeHtml(c.reason)}</div>
+        <div style="font-size:11px;color:#a0a0b8;font-weight:400">${escapeHtml(c.reason)}</div>
       `
 
-      // Click to apply correction
       row.addEventListener('click', () => {
         applyCorrection(el, c.original, c.corrected)
         correctionsToday++
         chrome.storage.local.set({ correctionsToday, correctionsDate: new Date().toDateString() })
-        row.style.background = '#f0fff4'
-        row.innerHTML = '<div style="font-size:12px;color:#16a34a;text-align:center;padding:4px 0;">Applied!</div>'
+        row.style.background = '#f0fdf4'
+        row.innerHTML = '<div style="font-size:12px;color:#059669;text-align:center;padding:4px 0;font-weight:500">Applied</div>'
         setTimeout(() => {
           row.remove()
           if (list.children.length === 0) hideTooltip()
-        }, 600)
+        }, 500)
       })
 
       list.appendChild(row)
@@ -255,9 +271,9 @@
     // "Fix All" button
     if (corrections.length > 1) {
       const fixAll = document.createElement('div')
-      fixAll.style.cssText = 'padding:10px 14px;text-align:center;border-top:1px solid rgba(0,0,0,0.06);cursor:pointer;transition:background 0.15s;'
-      fixAll.innerHTML = '<span style="font-size:12px;font-weight:500;color:#4f46e5;">Fix all</span>'
-      fixAll.onmouseenter = () => { fixAll.style.background = '#f0f0ff' }
+      fixAll.style.cssText = 'padding:11px 16px;text-align:center;border-top:1px solid #f0f0f5;cursor:pointer;transition:background 0.15s ease;'
+      fixAll.innerHTML = `<span style="font-size:12px;font-weight:600;color:#4f46e5">Apply all ${corrections.length} corrections</span>`
+      fixAll.onmouseenter = () => { fixAll.style.background = '#f8f7ff' }
       fixAll.onmouseleave = () => { fixAll.style.background = 'transparent' }
       fixAll.addEventListener('click', () => {
         corrections.forEach((c) => applyCorrection(el, c.original, c.corrected))
@@ -271,20 +287,22 @@
     document.body.appendChild(tooltip)
     activeTooltip = tooltip
 
-    // Position above the text field
-    const rect = el.getBoundingClientRect()
-    const tooltipRect = tooltip.getBoundingClientRect()
-    let top = rect.top - tooltipRect.height - 8
-    let left = rect.left
+    // Position above the text field with smooth entrance
+    requestAnimationFrame(() => {
+      const rect = el.getBoundingClientRect()
+      const tooltipRect = tooltip.getBoundingClientRect()
+      let top = rect.top - tooltipRect.height - 10
+      let left = rect.left
 
-    // If above viewport, show below
-    if (top < 8) top = rect.bottom + 8
-    // Keep within viewport
-    if (left + tooltipRect.width > window.innerWidth - 8) left = window.innerWidth - tooltipRect.width - 8
-    if (left < 8) left = 8
+      if (top < 8) top = rect.bottom + 10
+      if (left + tooltipRect.width > window.innerWidth - 8) left = window.innerWidth - tooltipRect.width - 8
+      if (left < 8) left = 8
 
-    tooltip.style.top = top + 'px'
-    tooltip.style.left = left + 'px'
+      tooltip.style.top = top + 'px'
+      tooltip.style.left = left + 'px'
+      tooltip.style.opacity = '1'
+      tooltip.style.transform = 'translateY(0)'
+    })
   }
 
   function hideTooltip() {
@@ -341,7 +359,7 @@
   }
 
   // ── Public API for popup ───────────────────────────────
-  window._alecRaeGrammar = {
+  window._48coGrammar = {
     get enabled() { return enabled },
     get correctionsToday() { return correctionsToday },
   }

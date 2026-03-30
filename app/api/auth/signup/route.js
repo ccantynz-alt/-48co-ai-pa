@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 import { sql } from '@vercel/postgres'
 import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
@@ -10,10 +11,10 @@ export async function POST(request) {
     const { email, password } = await request.json()
 
     if (!email || !password) return NextResponse.json({ error: 'Email and password required' }, { status: 400 })
-    if (password.length < 6) return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 })
+    if (password.length < 8) return NextResponse.json({ error: 'Password must be at least 8 characters for security' }, { status: 400 })
 
     const { rows: existing } = await sql`SELECT id FROM users WHERE email = ${email.toLowerCase()}`
-    if (existing.length > 0) return NextResponse.json({ error: 'Account already exists. Try logging in.' }, { status: 409 })
+    if (existing.length > 0) return NextResponse.json({ error: 'This email already has an account. Please sign in instead or use a different email.' }, { status: 409 })
 
     const id = nanoid()
     const hash = await bcrypt.hash(password, 10)

@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function Footer() {
   const year = new Date().getFullYear()
 
@@ -35,6 +37,7 @@ export default function Footer() {
               <a href="mailto:support@alecrae.ai" className="text-[12px] text-gray-400 hover:text-gray-700 transition-colors">Contact</a>
             </div>
           </div>
+        </div>
 
           {/* Trust */}
           <div>

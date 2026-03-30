@@ -1,0 +1,50 @@
+// UDL interface definition for fortyeightco-core
+// Used by uniffi to generate Swift (iOS) and Kotlin (Android) bindings.
+//
+// This file must stay in sync with the Rust exports in grammar.rs,
+// punctuation.rs, number_format.rs, and vocabulary.rs.
+
+namespace fortyeightco_core {
+
+    // ── Grammar module ──────────────────────────────────────────────────
+
+    /// Run local grammar check — returns list of corrections found in text.
+    sequence<GrammarCorrection> check_grammar([ByRef] string text);
+
+    /// Apply corrections to text, returning the corrected version.
+    string apply_corrections([ByRef] string text, sequence<GrammarCorrection> corrections);
+
+    /// Full grammar pipeline: check + fix + capitalize + clean up.
+    string fix_grammar([ByRef] string text);
+
+    // ── Punctuation module ──────────────────────────────────────────────
+
+    /// Convert spoken punctuation words to actual punctuation characters.
+    string process_punctuation([ByRef] string text);
+
+    // ── Number formatting module ────────────────────────────────────────
+
+    /// Convert spoken numbers to formatted digit equivalents.
+    string format_numbers([ByRef] string text);
+
+    // ── Vocabulary module ───────────────────────────────────────────────
+
+    /// Apply custom vocabulary replacements to text.
+    string apply_vocabulary([ByRef] string text, sequence<VocabEntry> vocab);
+
+    /// Create a VocabEntry from two strings.
+    VocabEntry create_vocab_entry(string from, string to);
+};
+
+// ── Record types ────────────────────────────────────────────────────────
+
+dictionary GrammarCorrection {
+    string original;
+    string corrected;
+    string reason;
+};
+
+dictionary VocabEntry {
+    string from;
+    string to;
+};

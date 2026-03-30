@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 import { sql } from '@vercel/postgres'
 import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
@@ -15,7 +16,10 @@ export async function POST(request) {
 
     const googleUser = await verifyResponse.json()
     const googleClientId = process.env.GOOGLE_CLIENT_ID
-    if (googleClientId && googleUser.aud !== googleClientId) {
+    if (!googleClientId) {
+      return NextResponse.json({ error: 'Google sign-in is not configured. Please contact support.' }, { status: 503 })
+    }
+    if (googleUser.aud !== googleClientId) {
       return NextResponse.json({ error: 'Google token not issued for this app' }, { status: 401 })
     }
 

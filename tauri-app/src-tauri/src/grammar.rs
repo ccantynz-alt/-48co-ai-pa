@@ -62,7 +62,7 @@ pub async fn rewrite(text: &str, claude_api_key: &str) -> Result<String, String>
     let client = reqwest::Client::new();
 
     let body = serde_json::json!({
-        "model": "claude-sonnet-4-20250514",
+        "model": "claude-sonnet-4-6",
         "max_tokens": 1024,
         "system": "You are a writing assistant. Rewrite the user's dictated text into clean, professional prose. Fix grammar, remove filler words (um, uh, like, you know), improve clarity. Keep the original meaning and tone. Do NOT add information the user didn't say. Return ONLY the rewritten text, nothing else.",
         "messages": [{"role": "user", "content": text}]
@@ -72,7 +72,7 @@ pub async fn rewrite(text: &str, claude_api_key: &str) -> Result<String, String>
         .post("https://api.anthropic.com/v1/messages")
         .header("Content-Type", "application/json")
         .header("x-api-key", claude_api_key)
-        .header("anthropic-version", "2023-06-01")
+        .header("anthropic-version", "2025-09-01")
         .json(&body)
         .timeout(std::time::Duration::from_secs(8))
         .send()

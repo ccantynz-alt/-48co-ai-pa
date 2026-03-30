@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import Link from 'next/link'
 import Waveform from '../components/Waveform'
 import Nav from '../components/Nav'
 import Footer from '../components/Footer'
@@ -120,13 +121,13 @@ export default function LandingPage() {
               <div className="flex items-center justify-between px-5 py-3 border-b border-black/[0.04] bg-gray-50/50">
                 <div className="flex items-center gap-2">
                   <div className="flex gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-red-400/60" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-amber-400/60" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-green-400/60" />
+                    <div className="w-3 h-3 rounded-full bg-red-400/70" />
+                    <div className="w-3 h-3 rounded-full bg-amber-400/70" />
+                    <div className="w-3 h-3 rounded-full bg-emerald-400/70" />
                   </div>
-                  <span className="text-[11px] text-gray-400 ml-2 font-mono">{typing.label}</span>
+                  <span className="text-[12px] text-slate-400 font-mono font-medium">{typing.label}</span>
                 </div>
-                <span className={`w-2 h-2 rounded-full ${typing.isTyping ? 'bg-red-400' : 'bg-green-400'}`} />
+                <span className={`w-2.5 h-2.5 rounded-full transition-colors ${typing.isTyping ? 'bg-red-400' : 'bg-emerald-400'}`} />
               </div>
 
               <div className="px-5 py-3 border-b border-black/[0.04]">
@@ -222,7 +223,7 @@ export default function LandingPage() {
             <p className="text-[15px] text-gray-400">More than a grammar checker. A complete writing assistant powered by the latest AI.</p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               { title: 'AI Grammar Correction', desc: 'Powered by Claude AI — catches grammar, spelling, punctuation, and word choice errors that rule-based tools miss.', color: 'text-indigo-600 bg-indigo-50' },
               { title: 'Context-Aware Tone', desc: 'Automatically detects the context — formal for client emails, precise for contracts, concise for internal memos.', color: 'text-emerald-600 bg-emerald-50' },
@@ -248,7 +249,7 @@ export default function LandingPage() {
             <p className="text-[15px] text-gray-400">Real corrections from professional documents. Every detail caught.</p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             {[
               {
                 before: 'The parties here by agree to ammend the indemnification clause to include consequencial damages as outlined in the addendum',
@@ -292,47 +293,47 @@ export default function LandingPage() {
           <h2 className="text-3xl font-bold text-gray-900 mb-3">Try voice dictation</h2>
           <p className="text-[15px] text-gray-400 mb-10">Click the microphone and speak. Runs entirely in your browser.</p>
 
-          <div className="card overflow-hidden shadow-lg shadow-black/[0.04]">
-            <div className="flex items-center justify-between px-5 py-3 border-b border-black/[0.04] bg-gray-50/50">
-              <span className="text-[12px] font-medium text-gray-500">Live Demo</span>
-              <span className={`text-[10px] px-2 py-0.5 rounded-full border ${
+          <div className="card overflow-hidden shadow-xl shadow-black/[0.04]">
+            <div className="flex items-center justify-between px-6 py-3.5 border-b border-slate-100 bg-slate-50/70">
+              <span className="text-[13px] font-semibold text-slate-500">Live Demo</span>
+              <span className={`text-[11px] px-2.5 py-0.5 rounded-full border font-medium ${
                 demoStatus === 'recording' ? 'border-red-200 text-red-500 bg-red-50' :
-                demoStatus === 'done' ? 'border-green-200 text-green-600 bg-green-50' :
-                'border-gray-200 text-gray-400'
+                demoStatus === 'done' ? 'border-emerald-200 text-emerald-600 bg-emerald-50' :
+                'border-slate-200 text-slate-400'
               }`}>
                 {demoStatus === 'recording' ? 'Listening...' : demoStatus === 'done' ? 'Done' : 'Ready'}
               </span>
             </div>
 
-            <div className="py-4 border-b border-black/[0.04]">
+            <div className="py-5 border-b border-slate-100">
               <Waveform isRecording={demoStatus === 'recording'} />
             </div>
 
             {demoTranscript && (
-              <div className="px-5 py-3 border-b border-black/[0.04] bg-indigo-50/30">
-                <p className="text-[13px] text-gray-700 leading-relaxed">{demoTranscript}</p>
+              <div className="px-6 py-4 border-b border-slate-100 bg-indigo-50/30">
+                <p className="text-[14px] text-slate-700 leading-relaxed">{demoTranscript}</p>
               </div>
             )}
 
-            <div className="py-8 flex flex-col items-center gap-3">
+            <div className="py-10 flex flex-col items-center gap-4">
               <button
                 onClick={handleDemoClick}
-                className={`w-14 h-14 rounded-full flex items-center justify-center transition-all cursor-pointer border-2 ${
-                  demoStatus === 'recording' ? 'border-red-400 bg-red-50 shadow-[0_0_20px_rgba(220,38,38,0.15)]' :
-                  demoStatus === 'done' ? 'border-green-400 bg-green-50' :
-                  'border-gray-200 bg-gray-50 hover:border-gray-300'
+                className={`w-16 h-16 rounded-full flex items-center justify-center transition-all cursor-pointer border-2 ${
+                  demoStatus === 'recording' ? 'border-red-400 bg-red-50 shadow-[0_0_24px_rgba(220,38,38,0.2)]' :
+                  demoStatus === 'done' ? 'border-emerald-400 bg-emerald-50' :
+                  'border-slate-200 bg-slate-50 hover:border-indigo-300 hover:bg-indigo-50'
                 }`}
               >
                 {demoStatus === 'recording' ? (
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="1.5"><path d="M2 12h2M6 8v8M10 5v14M14 9v6M18 7v10M22 12h-2"/></svg>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="1.5"><path d="M2 12h2M6 8v8M10 5v14M14 9v6M18 7v10M22 12h-2"/></svg>
                 ) : demoStatus === 'done' ? (
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 ) : (
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="1.5"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0014 0"/><line x1="12" y1="21" x2="12" y2="17"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" strokeWidth="1.5"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0014 0"/><line x1="12" y1="21" x2="12" y2="17"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
                 )}
               </button>
-              <span className={`text-[12px] ${
-                demoStatus === 'recording' ? 'text-red-500' : demoStatus === 'done' ? 'text-green-600' : 'text-gray-400'
+              <span className={`text-[13px] font-medium ${
+                demoStatus === 'recording' ? 'text-red-500' : demoStatus === 'done' ? 'text-emerald-600' : 'text-slate-400'
               }`}>
                 {demoStatus === 'recording' ? 'Click to stop' : demoStatus === 'done' ? 'Done' : 'Click to try'}
               </span>
@@ -347,7 +348,7 @@ export default function LandingPage() {
           <h2 className="text-3xl font-bold text-gray-900 mb-3">Straightforward pricing</h2>
           <p className="text-[15px] text-gray-400 mb-10">Start free. Upgrade when your practice requires unlimited AI corrections.</p>
 
-          <div className="grid md:grid-cols-3 gap-4 mb-10">
+          <div className="grid md:grid-cols-3 gap-5 mb-12">
             {[
               { name: 'Free', price: '$0', desc: 'Basic grammar and 60 min voice/month', highlight: false },
               { name: 'Professional', price: '$12/mo', desc: 'Unlimited AI corrections, voice, and offline mode', highlight: true },

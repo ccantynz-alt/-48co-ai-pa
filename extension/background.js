@@ -1,5 +1,5 @@
 /**
- * AlecRae Voice Background Service Worker
+ * 48co Voice Background Service Worker
  * Routes messages between content script, popup, and offscreen document.
  * Tracks which tab started recording so results go to the RIGHT tab.
  */
@@ -33,7 +33,7 @@ async function ensureOffscreen() {
     return true
   } catch (err) {
     offscreenCreating = null
-    console.error('[AlecRae] Failed to create offscreen:', err)
+    console.error('[48co] Failed to create offscreen:', err)
     return false
   }
 }
@@ -51,6 +51,7 @@ async function getState() {
     typeSpeed: 30,
     autoSubmit: false,
     whisperApiKey: '',
+    deepgramApiKey: '',
     engine: 'web-speech',
     language: 'en',
     pushToTalk: false,
@@ -115,7 +116,7 @@ chrome.commands.onCommand.addListener(async (command) => {
 // ── Message router ─────────────────────────────────────────────────
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   handleMessage(msg, sender).then(sendResponse).catch((err) => {
-    console.error('[AlecRae] Error:', err)
+    console.error('[48co] Error:', err)
     sendResponse({ error: err.message })
   })
   return true
@@ -181,6 +182,132 @@ async function handleMessage(msg, sender) {
       if (tab?.id) {
         chrome.tabs.sendMessage(tab.id, { type: 'TOGGLE_RECORDING' })
       }
+      return { ok: true }
+    }
+
+    // ── Deepgram streaming handlers ──────────────────────────────
+    case 'START_DEEPGRAM': {
+      // Track which tab started recording
+      if (sender.tab?.id) {
+        recordingTabId = sender.tab.id
+      } else {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+        if (tab?.id) recordingTabId = tab.id
+      }
+
+      const ok = await ensureOffscreen()
+      if (!ok) {
+        await sendToRecordingTab({
+          type: 'DEEPGRAM_FINAL',
+          text: '',
+          error: 'Failed to start recorder. Try reloading the extension.',
+        })
+        return { ok: false, error: 'offscreen failed' }
+      }
+
+      const dgState = await getState()
+      chrome.runtime.sendMessage({
+        type: 'DEEPGRAM_START',
+        apiKey: dgState.deepgramApiKey || '',
+        language: dgState.language || 'en',
+      })
+      await setState({ isRecording: true })
+      updateBadge('recording')
+      return { ok: true, engine: 'deepgram' }
+    }
+
+    case 'STOP_DEEPGRAM': {
+      chrome.runtime.sendMessage({ type: 'DEEPGRAM_STOP' })
+      await setState({ isRecording: false })
+      updateBadge('idle')
+      return { ok: true }
+    }
+
+    case 'DEEPGRAM_INTERIM': {
+      // Forward interim results from offscreen to the recording tab
+      await sendToRecordingTab({
+        type: 'DEEPGRAM_INTERIM',
+        text: msg.text || '',
+        error: msg.error || '',
+      })
+      return { ok: true }
+    }
+
+    case 'DEEPGRAM_FINAL': {
+      // Forward final results from offscreen to the recording tab
+      if (msg.error) {
+        updateBadge('error')
+        setTimeout(() => updateBadge('idle'), 3000)
+        await setState({ isRecording: false })
+      }
+      await sendToRecordingTab({
+        type: 'DEEPGRAM_FINAL',
+        text: msg.text || '',
+        error: msg.error || '',
+      })
+      return { ok: true }
+    }
+
+    // ── Deepgram streaming handlers ──────────────────────────────
+    case 'START_DEEPGRAM': {
+      // Track which tab started recording
+      if (sender.tab?.id) {
+        recordingTabId = sender.tab.id
+      } else {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+        if (tab?.id) recordingTabId = tab.id
+      }
+
+      const ok = await ensureOffscreen()
+      if (!ok) {
+        await sendToRecordingTab({
+          type: 'DEEPGRAM_FINAL',
+          text: '',
+          error: 'Failed to start recorder. Try reloading the extension.',
+        })
+        return { ok: false, error: 'offscreen failed' }
+      }
+
+      const dgState = await getState()
+      chrome.runtime.sendMessage({
+        type: 'DEEPGRAM_START',
+        apiKey: dgState.deepgramApiKey || '',
+        language: dgState.language || 'en',
+      })
+      await setState({ isRecording: true })
+      updateBadge('recording')
+      return { ok: true, engine: 'deepgram' }
+    }
+
+    case 'STOP_DEEPGRAM': {
+      chrome.runtime.sendMessage({ type: 'DEEPGRAM_STOP' })
+      await setState({ isRecording: false })
+      updateBadge('idle')
+      return { ok: true }
+    }
+
+    case 'DEEPGRAM_INTERIM': {
+      // Forward interim results from offscreen to the recording tab
+      await sendToRecordingTab({
+        type: 'DEEPGRAM_INTERIM',
+        text: msg.text || '',
+        error: msg.error || '',
+      })
+      return { ok: true }
+    }
+
+    case 'DEEPGRAM_FINAL': {
+      // Forward final results from offscreen to the recording tab
+      if (msg.error) {
+        updateBadge('error')
+        setTimeout(() => updateBadge('idle'), 3000)
+        await setState({ isRecording: false })
+      }
+      await sendToRecordingTab({
+        type: 'DEEPGRAM_FINAL',
+        text: msg.text || '',
+        error: msg.error || '',
+      })
       return { ok: true }
     }
 
@@ -257,6 +384,7 @@ chrome.runtime.onInstalled.addListener((details) => {
       typeSpeed: 30,
       autoSubmit: false,
       engine: 'web-speech',
+      deepgramApiKey: '',
       language: 'en',
       pushToTalk: false,
       vocabulary: [],

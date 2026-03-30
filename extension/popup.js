@@ -1,5 +1,5 @@
 /**
- * AlecRae Voice Popup Script
+ * 48co Voice Popup Script
  * Settings UI. Shows real recording state. Force-reset if stuck.
  * No optimistic updates — waits for actual state confirmation.
  */
@@ -52,22 +52,31 @@ async function detectSite() {
 const engineSelect = $('#engine')
 const apiKeyRow = $('#api-key-row')
 const apiKeyInput = $('#api-key')
+const deepgramKeyRow = $('#deepgram-key-row')
+const deepgramKeyInput = $('#deepgram-key')
 
-chrome.storage.local.get(['engine', 'whisperApiKey'], (data) => {
+chrome.storage.local.get(['engine', 'whisperApiKey', 'deepgramApiKey'], (data) => {
   if (data.engine) engineSelect.value = data.engine
   if (data.whisperApiKey) apiKeyInput.value = data.whisperApiKey
+  if (data.deepgramApiKey) deepgramKeyInput.value = data.deepgramApiKey
   apiKeyRow.style.display = (data.engine === 'whisper') ? 'flex' : 'none'
+  deepgramKeyRow.style.display = (data.engine === 'deepgram') ? 'flex' : 'none'
 })
 
 engineSelect.addEventListener('change', () => {
   const engine = engineSelect.value
   apiKeyRow.style.display = (engine === 'whisper') ? 'flex' : 'none'
+  deepgramKeyRow.style.display = (engine === 'deepgram') ? 'flex' : 'none'
   chrome.storage.local.set({ engine })
   chrome.runtime.sendMessage({ type: 'SET_STATE', updates: { engine } })
 })
 
 apiKeyInput.addEventListener('change', () => {
   chrome.storage.local.set({ whisperApiKey: apiKeyInput.value })
+})
+
+deepgramKeyInput.addEventListener('change', () => {
+  chrome.storage.local.set({ deepgramApiKey: deepgramKeyInput.value })
 })
 
 // Claude API key (for grammar + AI rewrite)
@@ -112,6 +121,46 @@ setupToggle($('#ptt-toggle'), 'pushToTalk')
 chrome.storage.local.get(['noiseSuppression', 'autoCoding'], (data) => {
   if (data.noiseSuppression !== false) $('#noise-toggle').classList.add('on')
   if (data.autoCoding !== false) $('#auto-coding-toggle').classList.add('on')
+})
+
+// ── Translation settings ──────────────────────────────────────────
+const translateToggle = $('#translate-toggle')
+const translateOptions = $('#translate-options')
+const translateTarget = $('#translate-target')
+const translateDomain = $('#translate-domain')
+const translateFormality = $('#translate-formality')
+
+chrome.storage.local.get(['translateEnabled', 'translateTarget', 'translateDomain', 'translateFormality'], (data) => {
+  if (data.translateEnabled) {
+    translateToggle.classList.add('on')
+    translateOptions.style.display = 'block'
+  }
+  if (data.translateTarget) translateTarget.value = data.translateTarget
+  if (data.translateDomain) translateDomain.value = data.translateDomain
+  if (data.translateFormality) translateFormality.value = data.translateFormality
+})
+
+translateToggle.addEventListener('click', () => {
+  translateToggle.classList.toggle('on')
+  const enabled = translateToggle.classList.contains('on')
+  translateOptions.style.display = enabled ? 'block' : 'none'
+  chrome.storage.local.set({ translateEnabled: enabled })
+  chrome.runtime.sendMessage({ type: 'SET_STATE', updates: { translateEnabled: enabled } })
+})
+
+translateTarget.addEventListener('change', () => {
+  chrome.storage.local.set({ translateTarget: translateTarget.value })
+  chrome.runtime.sendMessage({ type: 'SET_STATE', updates: { translateTarget: translateTarget.value } })
+})
+
+translateDomain.addEventListener('change', () => {
+  chrome.storage.local.set({ translateDomain: translateDomain.value })
+  chrome.runtime.sendMessage({ type: 'SET_STATE', updates: { translateDomain: translateDomain.value } })
+})
+
+translateFormality.addEventListener('change', () => {
+  chrome.storage.local.set({ translateFormality: translateFormality.value })
+  chrome.runtime.sendMessage({ type: 'SET_STATE', updates: { translateFormality: translateFormality.value } })
 })
 
 // ── Custom vocabulary manager ─────────────────────────────────────
