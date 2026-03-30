@@ -3,19 +3,17 @@
 
 :root {
   --bg: #ffffff;
-  --bg-warm: #FAFAF8;
-  --bg-dark: #0B1A2E;
-  --bg-darker: #060F1C;
+  --bg-subtle: #f9fafb;
+  --bg-muted: #f3f4f6;
   --border: rgba(0, 0, 0, 0.06);
-  --border-strong: rgba(0, 0, 0, 0.10);
-  --border-light: rgba(255, 255, 255, 0.08);
-  --text-primary: #111827;
-  --text-secondary: #4B5563;
-  --text-muted: #6B7280;
-  --text-faint: #9CA3AF;
-  --accent: #0B1A2E;
-  --accent-gold: #c48f24;
-  --accent-gold-light: #daa73b;
+  --border-strong: rgba(0, 0, 0, 0.12);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-faint: #cbd5e1;
+  --accent: #4f46e5;
+  --accent-light: #818cf8;
+  --accent-bg: rgba(79, 70, 229, 0.06);
   --success: #059669;
   --danger: #dc2626;
   --warning: #d97706;
@@ -30,11 +28,12 @@
 body {
   background: var(--bg);
   color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Extension ring states (dark overlay context) ─────── */
+/* ── Extension ring states ─────────────────────────────── */
 .ring-idle    { box-shadow: 0 0 0 2px rgba(0,0,0,0.15); }
 .ring-record  { box-shadow: 0 0 0 2px var(--danger), 0 0 16px var(--danger); animation: pulse_ring 1.2s ease-in-out infinite; }
 .ring-process { box-shadow: 0 0 0 2px var(--warning), 0 0 12px var(--warning); }
@@ -45,7 +44,7 @@ body {
   50%      { box-shadow: 0 0 0 4px var(--danger), 0 0 28px var(--danger); }
 }
 
-/* ── Waveform bars ────────────────────────────────────── */
+/* ── Waveform bars ─────────────────────────────────────── */
 @keyframes bar1 { 0%,100%{height:6px}  50%{height:22px} }
 @keyframes bar2 { 0%,100%{height:10px} 50%{height:30px} }
 @keyframes bar3 { 0%,100%{height:4px}  50%{height:26px} }
@@ -57,7 +56,7 @@ body {
 .bar4 { animation: bar4 1.0s ease-in-out infinite 0.05s; }
 .bar5 { animation: bar5 0.75s ease-in-out infinite 0.15s; }
 
-/* ── Animations ───────────────────────────────────────── */
+/* ── Animations ────────────────────────────────────────── */
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -68,46 +67,156 @@ body {
   51%, 100% { border-right-color: transparent; }
 }
 
-.animate-fade-up { animation: fade-up 0.6s ease-out both; }
-.animate-typing-cursor { border-right: 2px solid var(--accent-gold); animation: typing-cursor 1s step-end infinite; }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+.animate-fade-up { animation: fade-up 0.6s cubic-bezier(0.16,1,0.3,1) both; }
+.animate-typing-cursor { border-right: 2px solid var(--accent); animation: typing-cursor 1s step-end infinite; }
+.animate-float { animation: float 6s ease-in-out infinite; }
 
 /* Scroll reveal */
 .reveal {
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
 }
 .reveal.visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* Card — premium feel */
+/* ── Card ──────────────────────────────────────────────── */
 .card {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  border-radius: 16px;
+  transition: border-color 0.2s, box-shadow 0.3s, transform 0.3s;
 }
 .card:hover {
   border-color: var(--border-strong);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
 }
 
-/* Dark card variant */
-.card-dark {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+/* ── Feature card with icon ────────────────────────────── */
+.feature-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 24px;
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+  position: relative;
+  overflow: hidden;
 }
-.card-dark:hover {
-  border-color: rgba(255, 255, 255, 0.10);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.feature-card:hover {
+  border-color: rgba(79, 70, 229, 0.2);
+  box-shadow: 0 8px 32px rgba(79, 70, 229, 0.08);
+  transform: translateY(-3px);
+}
+.feature-card:hover::before {
+  opacity: 1;
 }
 
-/* Clean scrollbar */
-::-webkit-scrollbar { width: 5px; }
+/* ── Hero gradient — bold, confident ───────────────────── */
+.hero-gradient {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(79, 70, 229, 0.12), transparent 70%),
+    radial-gradient(ellipse 40% 40% at 85% 20%, rgba(99, 102, 241, 0.08), transparent 60%),
+    radial-gradient(ellipse 40% 40% at 15% 20%, rgba(16, 163, 74, 0.05), transparent 60%),
+    var(--bg);
+}
+
+/* ── Section divider accent ────────────────────────────── */
+.section-accent {
+  position: relative;
+}
+.section-accent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* ── Stat card ─────────────────────────────────────────── */
+.stat-number {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Button styles ─────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  border-radius: 14px;
+  background: var(--accent);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+  text-decoration: none;
+}
+.btn-primary:hover {
+  background: #4338ca;
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 15px;
+  font-weight: 500;
+  border: 1px solid var(--border-strong);
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.btn-secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+
+/* ── Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.08); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.15); }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
+
+/* ── Selection ─────────────────────────────────────────── */
+::selection {
+  background: rgba(79, 70, 229, 0.15);
+  color: var(--text-primary);
+}

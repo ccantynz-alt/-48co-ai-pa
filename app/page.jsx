@@ -6,7 +6,7 @@ import Waveform from '../components/Waveform'
 import Nav from '../components/Nav'
 import Footer from '../components/Footer'
 
-// ── Typing demo — shows AI rewrite in action ─────────────
+// ── Typing demo ─────────────────────────────────────────
 function useTypingDemo() {
   const phrases = [
     {
@@ -20,14 +20,9 @@ function useTypingDemo() {
       label: 'Professional Email',
     },
     {
-      before: 'the patients vitals are stable and there responding well to the new dosage we should of adjusted sooner',
-      after: 'The patient\'s vitals are stable and they\'re responding well to the new dosage. We should have adjusted sooner.',
-      label: 'Medical Notes',
-    },
-    {
-      before: 'pursuant to section 12 of the agreement the indemnification clause should of covered consequential damages but it dont',
-      after: 'Pursuant to Section 12 of the agreement, the indemnification clause should have covered consequential damages, but it does not.',
-      label: 'Contract Review',
+      before: 'the total revenue was twelve million four hundred thousand dollars which is a increase of 8.3 percent year on year',
+      after: 'The total revenue was $12,400,000, which is an increase of 8.3% year on year.',
+      label: 'Financial Report',
     },
   ]
 
@@ -71,7 +66,7 @@ export default function LandingPage() {
   const [demoStatus, setDemoStatus] = useState('idle')
   const [demoTranscript, setDemoTranscript] = useState('')
   const recognitionRef = useRef(null)
-  const r1 = useReveal(), r2 = useReveal(), r3 = useReveal(), r4 = useReveal(), r5 = useReveal(), r6 = useReveal()
+  const r1 = useReveal(), r2 = useReveal(), r3 = useReveal(), r4 = useReveal(), r5 = useReveal(), r6 = useReveal(), r7 = useReveal()
 
   useEffect(() => { return () => { if (recognitionRef.current) { recognitionRef.current.abort(); recognitionRef.current = null } } }, [])
 
@@ -92,168 +87,178 @@ export default function LandingPage() {
 
       <Nav />
 
-      {/* ── HERO — Dark, commanding, professional ──────── */}
-      <section className="bg-navy-950 pt-36 pb-24 px-4 relative overflow-hidden">
-        {/* Subtle gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-navy-900/50 via-transparent to-navy-950" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gold-500/[0.03] rounded-full blur-3xl" />
+      {/* ═══════════════════════════════════════════════
+          HERO — Big, bold, confident
+      ═══════════════════════════════════════════════ */}
+      <section className="hero-gradient pt-36 pb-24 px-4">
+        <div className="max-w-4xl mx-auto text-center">
 
-        <div className="max-w-3xl mx-auto text-center relative z-10">
-
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.06] border border-white/[0.08] mb-10 animate-fade-up">
-            <span className="w-1.5 h-1.5 rounded-full bg-gold-400"></span>
-            <span className="text-[12px] text-white/60 font-medium">AI Grammar + Voice-to-Text + Translation</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 mb-10 animate-fade-up">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="text-[13px] text-indigo-700 font-semibold tracking-tight">AI Grammar + Voice + Translation</span>
           </div>
 
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 animate-fade-up" style={{ animationDelay: '0.1s' }}>
-            Professional writing,
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight text-slate-900 mb-8 animate-fade-up leading-[1.05]" style={{ animationDelay: '0.1s' }}>
+            Everything you write,
             <br />
-            <span className="text-gold-400">perfected by AI.</span>
+            <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">perfected by AI.</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-white/50 max-w-xl mx-auto leading-relaxed mb-12 animate-fade-up" style={{ animationDelay: '0.2s' }}>
-            AI grammar correction, voice-to-text dictation, and real-time translation — built for lawyers, accountants, and medical professionals.
+          <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed mb-12 animate-fade-up" style={{ animationDelay: '0.2s' }}>
+            Grammar correction, voice-to-text, and real-time translation — in every app, on every device.
+            <span className="block mt-2 text-slate-400">Built for lawyers, accountants, and professionals who write for a living.</span>
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-16 animate-fade-up" style={{ animationDelay: '0.3s' }}>
-            <Link href="/download" className="px-8 py-3.5 rounded-lg bg-white text-navy-900 text-[15px] font-semibold transition-all hover:bg-gray-100 shadow-lg shadow-black/20">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-20 animate-fade-up" style={{ animationDelay: '0.3s' }}>
+            <a href="/download" className="btn-primary text-base px-10">
               Download Free
-            </Link>
-            <Link href="/live" className="px-8 py-3.5 rounded-lg border border-white/15 text-white/70 text-[15px] font-medium hover:border-white/25 hover:text-white transition-all">
+            </a>
+            <a href="/live" className="btn-secondary text-base px-10">
               Try in Browser
             </Link>
           </div>
 
-          {/* ── Demo Card ──────────────────────── */}
-          <div className="max-w-lg mx-auto animate-fade-up" style={{ animationDelay: '0.4s' }}>
-            <div className="rounded-xl overflow-hidden border border-white/[0.08] bg-navy-900/80 backdrop-blur-sm shadow-2xl shadow-black/30">
-              <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.06]">
-                <div className="flex items-center gap-2">
+          {/* Demo Card — floating effect */}
+          <div className="max-w-xl mx-auto animate-fade-up animate-float" style={{ animationDelay: '0.4s' }}>
+            <div className="card overflow-hidden shadow-xl shadow-indigo-500/[0.06] border-indigo-100/50">
+              <div className="flex items-center justify-between px-6 py-3.5 border-b border-black/[0.04] bg-slate-50/70">
+                <div className="flex items-center gap-3">
                   <div className="flex gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-white/10" />
-                    <div className="w-2 h-2 rounded-full bg-white/10" />
-                    <div className="w-2 h-2 rounded-full bg-white/10" />
+                    <div className="w-3 h-3 rounded-full bg-red-400/70" />
+                    <div className="w-3 h-3 rounded-full bg-amber-400/70" />
+                    <div className="w-3 h-3 rounded-full bg-emerald-400/70" />
                   </div>
-                  <span className="text-[11px] text-white/30 ml-2 font-mono">{typing.label}</span>
+                  <span className="text-[12px] text-slate-400 font-mono font-medium">{typing.label}</span>
                 </div>
-                <span className={`w-2 h-2 rounded-full ${typing.isTyping ? 'bg-gold-400' : 'bg-emerald-400'}`} />
+                <span className={`w-2.5 h-2.5 rounded-full transition-colors ${typing.isTyping ? 'bg-red-400' : 'bg-emerald-400'}`} />
               </div>
 
-              <div className="px-5 py-3 border-b border-white/[0.06]">
-                <p className="text-[10px] text-white/25 uppercase tracking-wider mb-1.5">Dictated</p>
-                <p className="text-[13px] text-white/35 leading-relaxed line-through decoration-red-400/30">{typing.before}</p>
+              <div className="px-6 py-4 border-b border-black/[0.04]">
+                <p className="text-[10px] text-red-400/80 uppercase tracking-widest mb-2 font-semibold">You wrote</p>
+                <p className="text-[14px] text-slate-400 leading-relaxed line-through decoration-red-300/40">{typing.before}</p>
               </div>
 
-              <div className="px-5 py-4 bg-white/[0.03]">
-                <p className="text-[10px] text-gold-400/60 uppercase tracking-wider mb-1.5">48co corrects to</p>
-                <p className={`text-[14px] text-white/90 leading-relaxed whitespace-pre-wrap min-h-[44px] ${typing.isTyping ? 'animate-typing-cursor pr-0.5' : ''}`}>
-                  {typing.after || <span className="text-white/15">|</span>}
+              <div className="px-6 py-5 bg-gradient-to-br from-indigo-50/40 to-violet-50/30">
+                <p className="text-[10px] text-indigo-500 uppercase tracking-widest mb-2 font-semibold">48co corrects to</p>
+                <p className={`text-[15px] text-slate-800 leading-relaxed whitespace-pre-wrap min-h-[48px] font-medium ${typing.isTyping ? 'animate-typing-cursor pr-0.5' : ''}`}>
+                  {typing.after || <span className="text-slate-200">|</span>}
                 </p>
               </div>
             </div>
           </div>
 
-          <p className="text-[12px] text-white/25 mt-10 animate-fade-up" style={{ animationDelay: '0.5s' }}>
-            Mac &middot; Windows &middot; iPhone &middot; Android &middot; Chrome Extension &middot; Free to start
+          <p className="text-[13px] text-slate-400 mt-12 animate-fade-up font-medium" style={{ animationDelay: '0.5s' }}>
+            Mac &middot; Windows &middot; iPhone &middot; Android &middot; Chrome &middot; Free to start
           </p>
         </div>
       </section>
 
-      {/* ── TRUSTED BY PROFESSIONALS ──────────────────── */}
-      <section className="py-16 px-4 border-b border-black/[0.04]">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-[12px] text-gray-400 uppercase tracking-widest font-medium mb-8">Built for professionals who demand precision</p>
-          <div className="flex flex-wrap justify-center gap-x-12 gap-y-4">
-            {['Law Firms', 'Accounting Practices', 'Medical Clinics', 'Executive Teams', 'Consulting Firms'].map(t => (
-              <span key={t} className="text-[14px] text-gray-300 font-medium">{t}</span>
-            ))}
-          </div>
+      {/* ═══════════════════════════════════════════════
+          STATS BAR
+      ═══════════════════════════════════════════════ */}
+      <section className="py-16 px-4 border-b border-slate-100">
+        <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {[
+            { stat: '60+', label: 'Languages' },
+            { stat: '5', label: 'Platforms' },
+            { stat: '<500ms', label: 'Streaming Latency' },
+            { stat: '$12', label: '/month Pro' },
+          ].map(s => (
+            <div key={s.label}>
+              <p className="text-3xl md:text-4xl font-extrabold stat-number mb-1">{s.stat}</p>
+              <p className="text-[13px] text-slate-400 font-medium">{s.label}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* ── WORKS EVERYWHERE ───────────────────────── */}
-      <section ref={r1} className="reveal py-24 px-4">
+      {/* ═══════════════════════════════════════════════
+          PLATFORMS
+      ═══════════════════════════════════════════════ */}
+      <section ref={r1} className="reveal py-28 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-navy-900 mb-4">One tool, every device</h2>
-            <p className="text-[15px] text-gray-500 max-w-lg mx-auto">Works wherever you write. Desktop, browser, phone — your AI assistant follows you.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Works everywhere you write</h2>
+            <p className="text-base text-slate-400 max-w-lg mx-auto">One tool for every device and every app. No copy-paste. No switching windows.</p>
           </div>
 
-          <div className="grid md:grid-cols-4 gap-4">
+          <div className="grid md:grid-cols-4 gap-5">
             {[
-              { title: 'Desktop App', desc: 'Mac + Windows. Types into any application with a global hotkey. Under 10MB.', status: 'Available',
-                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-navy-700"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg> },
-              { title: 'Chrome Extension', desc: 'Real-time grammar on every website. Gmail, Slack, Google Docs, and more.', status: 'Available',
-                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-navy-700"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg> },
-              { title: 'iPhone & iPad', desc: 'Custom keyboard with voice dictation and grammar. Works system-wide in every app.', status: 'Available',
-                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-navy-700"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> },
-              { title: 'Android', desc: 'Material Design keyboard with voice, grammar, and translation built in.', status: 'Available',
-                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-navy-700"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> },
-            ].map((p) => (
-              <div key={p.title} className="card p-6 text-center">
-                <div className="flex justify-center mb-4">{p.icon}</div>
-                <h3 className="text-[14px] font-semibold text-navy-900 mb-1.5">{p.title}</h3>
-                <p className="text-[12px] text-gray-500 leading-relaxed mb-3">{p.desc}</p>
-                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium">{p.status}</span>
+              { title: 'Desktop App', desc: 'Mac + Windows. Types into any app. 5MB, launches in 2 seconds.',
+                icon: <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-indigo-500"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg> },
+              { title: 'Chrome Extension', desc: 'Real-time grammar on every website. Gmail, Slack, Claude, ChatGPT.',
+                icon: <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-indigo-500"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/></svg> },
+              { title: 'iPhone & iPad', desc: 'Custom keyboard with voice and grammar. Works in every iOS app.',
+                icon: <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-indigo-500"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> },
+              { title: 'Android', desc: 'Material 3 keyboard with voice, grammar, and translation built in.',
+                icon: <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-indigo-500"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> },
+            ].map(p => (
+              <div key={p.title} className="feature-card text-center">
+                <div className="flex justify-center mb-5">{p.icon}</div>
+                <h3 className="text-[15px] font-bold text-slate-800 mb-2">{p.title}</h3>
+                <p className="text-[13px] text-slate-400 leading-relaxed">{p.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── KEY FEATURES ──────────────────────────── */}
-      <section ref={r2} className="reveal py-24 px-4 bg-[#FAFAF8]">
+      {/* ═══════════════════════════════════════════════
+          KEY FEATURES — Bold cards with accent tops
+      ═══════════════════════════════════════════════ */}
+      <section ref={r2} className="reveal py-28 px-4 bg-slate-50">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-navy-900 mb-4">Built for precision work</h2>
-            <p className="text-[15px] text-gray-500 max-w-lg mx-auto">Every feature designed for professionals who can&apos;t afford mistakes in their writing.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">More than just grammar</h2>
+            <p className="text-base text-slate-400 max-w-lg mx-auto">Six capabilities no competitor combines in one product.</p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { title: 'AI Grammar & Rewrite', desc: 'Catches every error — spelling, grammar, punctuation, word choice. Adjusts tone for contracts, emails, or clinical notes. Powered by Claude AI.', icon: '01' },
-              { title: 'Voice-to-Text Dictation', desc: 'Press a hotkey, speak naturally, get polished text. Choose cloud (Whisper) for accuracy or local processing for complete privacy.', icon: '02' },
-              { title: 'Real-Time Translation', desc: 'Speak in one language, text appears in another. 200+ languages. Domain-aware for legal, medical, and financial terminology.', icon: '03' },
-              { title: 'Custom Vocabulary', desc: 'Add industry terms the AI never gets wrong. "Per se" not "per say". "Fiduciary" not "fudiciary". Essential for specialist writing.', icon: '04' },
-              { title: 'Offline & Private', desc: 'Local Whisper model runs entirely on your device. Zero data leaves your computer. Audit-ready for attorney-client privilege.', icon: '05' },
-              { title: 'Number Dictation', desc: '"Twelve million four hundred fifty-three thousand dollars" becomes $12,453,000. Currency-aware: NZD, USD, GBP, EUR.', icon: '06' },
-            ].map((f) => (
-              <div key={f.title} className="card p-6">
-                <span className="text-[11px] font-bold text-gold-500 mb-3 block">{f.icon}</span>
-                <h3 className="text-[15px] font-semibold text-navy-900 mb-2">{f.title}</h3>
-                <p className="text-[13px] text-gray-500 leading-relaxed">{f.desc}</p>
+              { title: 'AI Grammar + Rewrite', desc: 'Catches every error — spelling, grammar, punctuation, word choice. Rewrites for tone: professional for contracts, casual for Slack. Powered by Claude AI.' },
+              { title: 'Voice-to-Text', desc: 'Press a hotkey, speak naturally, get perfect text. Three engines: Web Speech (free), Whisper (accurate), Deepgram Nova-3 (real-time streaming).' },
+              { title: 'Real-time Translation', desc: 'Speak in one language, text appears in another. 60+ languages including Te Reo Māori. Domain-aware for legal, medical, and finance.' },
+              { title: 'Custom Vocabulary', desc: 'Add industry terms the AI never gets wrong. "per se" not "per say". "fiduciary" not "fudiciary". Perfect for law, medicine, and accounting.' },
+              { title: 'Offline Mode', desc: 'Local Whisper model runs entirely on your device. Zero data leaves your computer. Audit-ready for attorney-client privilege.' },
+              { title: 'Number Dictation', desc: '"twelve million four hundred fifty-three thousand dollars" becomes $12,453,000. Currency-aware: NZD, USD, GBP, EUR.' },
+            ].map(f => (
+              <div key={f.title} className="feature-card">
+                <h3 className="text-[16px] font-bold text-slate-800 mb-3">{f.title}</h3>
+                <p className="text-[13px] text-slate-400 leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── BEFORE/AFTER ──────────────────────────── */}
-      <section ref={r3} className="reveal py-24 px-4">
+      {/* ═══════════════════════════════════════════════
+          BEFORE / AFTER — Side by side
+      ═══════════════════════════════════════════════ */}
+      <section ref={r3} className="reveal py-28 px-4">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-navy-900 mb-4">See the difference</h2>
-            <p className="text-[15px] text-gray-500">Real examples from legal, medical, and business writing.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">See the difference</h2>
+            <p className="text-base text-slate-400">Real examples — including legal and financial writing.</p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             {[
-              { context: 'Legal Brief', before: 'the defendant breached there fiduciary duty per say and we should of filed a motion in limine before the deposition', after: 'The defendant breached their fiduciary duty per se, and we should have filed a motion in limine before the deposition.' },
-              { context: 'Client Email', before: 'hey can u send me the report i need it for the board meeting tmrw and make sure the numbers add up thx', after: 'Hi, can you send me the report? I need it for the board meeting tomorrow. Please ensure the figures reconcile. Thanks.' },
-              { context: 'Medical Notes', before: 'the patients vitals are stable and there responding well to the new dosage we should of adjusted sooner', after: 'The patient\'s vitals are stable and they\'re responding well to the new dosage. We should have adjusted sooner.' },
+              { before: 'hey can u send me the report i need it for tmrw thx', after: 'Hey, can you send me the report? I need it for tomorrow. Thanks!', tag: 'Email' },
+              { before: 'the defendant breached there fiduciary duty per say and we should of filed a motion in limine before the deposition', after: 'The defendant breached their fiduciary duty per se, and we should have filed a motion in limine before the deposition.', tag: 'Legal' },
+              { before: 'the total revenue was twelve million four hundred thousand which is a increase of 8.3 percent year on year', after: 'The total revenue was $12,400,000, an increase of 8.3% year on year.', tag: 'Finance' },
             ].map((ex, i) => (
               <div key={i} className="card overflow-hidden">
-                <div className="px-5 py-2 border-b border-black/[0.04] bg-[#FAFAF8]">
-                  <span className="text-[10px] font-semibold text-navy-600 uppercase tracking-wider">{ex.context}</span>
+                <div className="px-5 py-2 border-b border-slate-100 bg-slate-50/50">
+                  <span className="text-[11px] font-semibold text-indigo-500 uppercase tracking-wider">{ex.tag}</span>
                 </div>
                 <div className="grid md:grid-cols-2">
-                  <div className="p-5 border-b md:border-b-0 md:border-r border-black/[0.04]">
-                    <p className="text-[10px] text-red-400/80 uppercase tracking-wider mb-2 font-medium">Before</p>
-                    <p className="text-[13px] text-gray-400 leading-relaxed">{ex.before}</p>
+                  <div className="p-6 border-b md:border-b-0 md:border-r border-slate-100">
+                    <p className="text-[10px] text-red-400 uppercase tracking-wider mb-2 font-bold">Before</p>
+                    <p className="text-[14px] text-slate-400 leading-relaxed">{ex.before}</p>
                   </div>
-                  <div className="p-5 bg-emerald-50/30">
-                    <p className="text-[10px] text-emerald-600 uppercase tracking-wider mb-2 font-medium">After 48co</p>
-                    <p className="text-[13px] text-navy-900 leading-relaxed">{ex.after}</p>
+                  <div className="p-6 bg-emerald-50/30">
+                    <p className="text-[10px] text-emerald-600 uppercase tracking-wider mb-2 font-bold">After 48co</p>
+                    <p className="text-[14px] text-slate-800 leading-relaxed font-medium">{ex.after}</p>
                   </div>
                 </div>
               </div>
@@ -262,53 +267,92 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── LIVE DEMO ─────────────────────────────── */}
-      <section ref={r4} className="reveal py-24 px-4 bg-[#FAFAF8]">
-        <div className="max-w-lg mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-navy-900 mb-4">Try voice-to-text now</h2>
-          <p className="text-[15px] text-gray-500 mb-10">Click the mic and speak. Runs in your browser — no download required.</p>
+      {/* ═══════════════════════════════════════════════
+          TRANSLATION SHOWCASE
+      ═══════════════════════════════════════════════ */}
+      <section ref={r4} className="reveal py-28 px-4 bg-gradient-to-b from-indigo-50/60 to-white">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-indigo-100 shadow-sm mb-8">
+            <span className="text-[13px] text-indigo-700 font-semibold">Live Translation</span>
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Speak English. Text appears in any language.</h2>
+          <p className="text-base text-slate-400 mb-14 max-w-lg mx-auto">Real-time translation while you dictate. Domain-aware for legal, medical, and finance terminology.</p>
 
-          <div className="card overflow-hidden shadow-lg shadow-black/[0.03]">
-            <div className="flex items-center justify-between px-5 py-3 border-b border-black/[0.04]">
-              <span className="text-[12px] font-medium text-gray-600">Live Demo</span>
-              <span className={`text-[10px] px-2.5 py-0.5 rounded-full border font-medium ${
+          <div className="card overflow-hidden max-w-lg mx-auto shadow-xl shadow-indigo-500/[0.06]">
+            <div className="px-6 py-3.5 border-b border-slate-100 bg-slate-50/70 flex items-center justify-between">
+              <span className="text-[12px] text-slate-500 font-mono font-medium">English &rarr; Spanish (Legal)</span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span className="text-[11px] text-emerald-600 font-medium">Live</span>
+              </span>
+            </div>
+            <div className="px-6 py-4 border-b border-slate-100">
+              <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-2 font-semibold">You speak</p>
+              <p className="text-[14px] text-slate-500 leading-relaxed italic">&ldquo;The defendant breached the fiduciary duty owed to the plaintiff under section twelve of the contract.&rdquo;</p>
+            </div>
+            <div className="px-6 py-5 bg-gradient-to-br from-indigo-50/40 to-violet-50/30">
+              <p className="text-[10px] text-indigo-500 uppercase tracking-widest mb-2 font-semibold">48co translates</p>
+              <p className="text-[15px] text-slate-800 leading-relaxed font-medium">&ldquo;El demandado incumplió el deber fiduciario adeudado al demandante en virtud del artículo doce del contrato.&rdquo;</p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-2 mt-10">
+            {['English','Spanish','French','German','Japanese','Chinese','Te Reo Māori','Korean','Arabic','Hindi','+ 50 more'].map(l => (
+              <span key={l} className="text-[12px] px-4 py-1.5 rounded-full bg-white border border-slate-100 text-slate-400 font-medium shadow-sm">{l}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
+          LIVE DEMO
+      ═══════════════════════════════════════════════ */}
+      <section ref={r5} className="reveal py-28 px-4">
+        <div className="max-w-lg mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Try voice-to-text now</h2>
+          <p className="text-base text-slate-400 mb-12">Click the mic and speak. Runs entirely in your browser.</p>
+
+          <div className="card overflow-hidden shadow-xl shadow-black/[0.04]">
+            <div className="flex items-center justify-between px-6 py-3.5 border-b border-slate-100 bg-slate-50/70">
+              <span className="text-[13px] font-semibold text-slate-500">Live Demo</span>
+              <span className={`text-[11px] px-2.5 py-0.5 rounded-full border font-medium ${
                 demoStatus === 'recording' ? 'border-red-200 text-red-500 bg-red-50' :
                 demoStatus === 'done' ? 'border-emerald-200 text-emerald-600 bg-emerald-50' :
-                'border-gray-200 text-gray-400'
+                'border-slate-200 text-slate-400'
               }`}>
                 {demoStatus === 'recording' ? 'Listening...' : demoStatus === 'done' ? 'Done' : 'Ready'}
               </span>
             </div>
 
-            <div className="py-4 border-b border-black/[0.04] bg-navy-950">
+            <div className="py-5 border-b border-slate-100">
               <Waveform isRecording={demoStatus === 'recording'} />
             </div>
 
             {demoTranscript && (
-              <div className="px-5 py-3 border-b border-black/[0.04] bg-navy-50/30">
-                <p className="text-[13px] text-navy-900 leading-relaxed">{demoTranscript}</p>
+              <div className="px-6 py-4 border-b border-slate-100 bg-indigo-50/30">
+                <p className="text-[14px] text-slate-700 leading-relaxed">{demoTranscript}</p>
               </div>
             )}
 
-            <div className="py-8 flex flex-col items-center gap-3">
+            <div className="py-10 flex flex-col items-center gap-4">
               <button
                 onClick={handleDemoClick}
-                className={`w-14 h-14 rounded-full flex items-center justify-center transition-all cursor-pointer border-2 ${
-                  demoStatus === 'recording' ? 'border-red-400 bg-red-50 shadow-[0_0_20px_rgba(220,38,38,0.12)]' :
+                className={`w-16 h-16 rounded-full flex items-center justify-center transition-all cursor-pointer border-2 ${
+                  demoStatus === 'recording' ? 'border-red-400 bg-red-50 shadow-[0_0_24px_rgba(220,38,38,0.2)]' :
                   demoStatus === 'done' ? 'border-emerald-400 bg-emerald-50' :
-                  'border-navy-200 bg-navy-50 hover:border-navy-300'
+                  'border-slate-200 bg-slate-50 hover:border-indigo-300 hover:bg-indigo-50'
                 }`}
               >
                 {demoStatus === 'recording' ? (
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="1.5"><path d="M2 12h2M6 8v8M10 5v14M14 9v6M18 7v10M22 12h-2"/></svg>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="1.5"><path d="M2 12h2M6 8v8M10 5v14M14 9v6M18 7v10M22 12h-2"/></svg>
                 ) : demoStatus === 'done' ? (
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 ) : (
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1e3554" strokeWidth="1.5"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0014 0"/><line x1="12" y1="21" x2="12" y2="17"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" strokeWidth="1.5"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0014 0"/><line x1="12" y1="21" x2="12" y2="17"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
                 )}
               </button>
-              <span className={`text-[12px] font-medium ${
-                demoStatus === 'recording' ? 'text-red-500' : demoStatus === 'done' ? 'text-emerald-600' : 'text-gray-400'
+              <span className={`text-[13px] font-medium ${
+                demoStatus === 'recording' ? 'text-red-500' : demoStatus === 'done' ? 'text-emerald-600' : 'text-slate-400'
               }`}>
                 {demoStatus === 'recording' ? 'Click to stop' : demoStatus === 'done' ? 'Done' : 'Click to try'}
               </span>
@@ -317,111 +361,78 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── REAL-TIME TRANSLATION ────────────────── */}
-      <section ref={r5} className="reveal py-24 px-4 bg-navy-950">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.06] border border-white/[0.08] mb-8">
-            <span className="text-[12px] text-gold-400 font-medium">Real-Time Translation</span>
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Speak English. Text appears in any language.</h2>
-          <p className="text-[15px] text-white/50 mb-12 max-w-lg mx-auto">200+ languages with domain-aware terminology for legal, medical, and financial contexts.</p>
-
-          <div className="card-dark overflow-hidden max-w-md mx-auto">
-            <div className="px-5 py-3 border-b border-white/[0.06] flex items-center justify-between">
-              <span className="text-[11px] text-white/30 font-mono">English &rarr; Spanish (Legal)</span>
-              <span className="w-2 h-2 rounded-full bg-gold-400" />
-            </div>
-            <div className="px-5 py-3 border-b border-white/[0.06]">
-              <p className="text-[10px] text-white/25 uppercase tracking-wider mb-1.5">You speak</p>
-              <p className="text-[13px] text-white/50 leading-relaxed">&ldquo;The defendant breached the fiduciary duty owed to the plaintiff under section twelve of the contract.&rdquo;</p>
-            </div>
-            <div className="px-5 py-4 bg-white/[0.03]">
-              <p className="text-[10px] text-gold-400/60 uppercase tracking-wider mb-1.5">48co translates</p>
-              <p className="text-[14px] text-white/90 leading-relaxed">&ldquo;El demandado incumplió el deber fiduciario adeudado al demandante en virtud del artículo doce del contrato.&rdquo;</p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-2 mt-10">
-            {['English','Spanish','French','German','Japanese','Chinese','Te Reo Māori','Korean','Arabic','Hindi','+ 190 more'].map(l => (
-              <span key={l} className="text-[11px] px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/40">{l}</span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── TRUST / SECURITY ─────────────────────── */}
-      <section ref={r6} className="reveal py-24 px-4">
+      {/* ═══════════════════════════════════════════════
+          TRUST / SECURITY
+      ═══════════════════════════════════════════════ */}
+      <section ref={r6} className="reveal py-24 px-4 bg-slate-900 text-white">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-bold text-navy-900 mb-4">Built for confidential work</h2>
-            <p className="text-[15px] text-gray-500">Your clients trust you with their most sensitive information. You can trust us with yours.</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Built for professionals who handle sensitive data</h2>
+            <p className="text-slate-400 text-base">Lawyers, accountants, and doctors trust 48co with their most confidential work.</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-6">
-              <div className="w-12 h-12 rounded-xl bg-navy-50 border border-navy-100 flex items-center justify-center mx-auto mb-4">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1e3554" strokeWidth="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            {[
+              { title: 'Offline mode', desc: 'Run everything on your device. Zero data leaves your computer. Audit-ready for attorney-client privilege.',
+                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> },
+              { title: 'Encrypted everywhere', desc: 'TLS 1.3 in transit. We never store your text, voice, or documents. Your API keys stay on your device.',
+                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
+              { title: 'Your data, your control', desc: 'Clear privacy policy. No data selling. No model training on your content. Delete your account and all data anytime.',
+                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> },
+            ].map(t => (
+              <div key={t.title} className="text-center">
+                <div className="flex justify-center mb-4">{t.icon}</div>
+                <h3 className="text-[16px] font-bold text-white mb-2">{t.title}</h3>
+                <p className="text-[13px] text-slate-400 leading-relaxed">{t.desc}</p>
               </div>
-              <h3 className="text-[15px] font-semibold text-navy-900 mb-2">Offline mode</h3>
-              <p className="text-[13px] text-gray-500 leading-relaxed">Run everything on your device. Zero data leaves your computer. Audit-ready for attorney-client privilege and HIPAA compliance.</p>
-            </div>
-            <div className="text-center p-6">
-              <div className="w-12 h-12 rounded-xl bg-navy-50 border border-navy-100 flex items-center justify-center mx-auto mb-4">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1e3554" strokeWidth="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              </div>
-              <h3 className="text-[15px] font-semibold text-navy-900 mb-2">End-to-end encryption</h3>
-              <p className="text-[13px] text-gray-500 leading-relaxed">All data encrypted with TLS 1.3. We never store your text, voice recordings, or documents on our servers.</p>
-            </div>
-            <div className="text-center p-6">
-              <div className="w-12 h-12 rounded-xl bg-navy-50 border border-navy-100 flex items-center justify-center mx-auto mb-4">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1e3554" strokeWidth="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-              </div>
-              <h3 className="text-[15px] font-semibold text-navy-900 mb-2">Your data stays yours</h3>
-              <p className="text-[13px] text-gray-500 leading-relaxed">Clear, plain-English privacy policy. We don&apos;t sell your data, train on it, or share it. Ever.</p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── PRICING TEASER ────────────────────────── */}
-      <section className="py-24 px-4 bg-[#FAFAF8]">
+      {/* ═══════════════════════════════════════════════
+          PRICING
+      ═══════════════════════════════════════════════ */}
+      <section ref={r7} className="reveal py-28 px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-navy-900 mb-4">Straightforward pricing</h2>
-          <p className="text-[15px] text-gray-500 mb-12">Free to start. No credit card needed. Upgrade when you need unlimited AI.</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Simple, honest pricing</h2>
+          <p className="text-base text-slate-400 mb-12">Free to start. No credit card needed.</p>
 
-          <div className="grid md:grid-cols-3 gap-4 mb-10">
+          <div className="grid md:grid-cols-3 gap-5 mb-12">
             {[
-              { name: 'Free', price: '$0', desc: 'Basic dictation and grammar', highlight: false },
-              { name: 'Pro', price: '$12/mo', desc: 'Unlimited AI grammar, voice, offline mode', highlight: true },
-              { name: 'Business', price: '$29/mo', desc: 'Up to 10 users. Just $2.90 each.', highlight: false },
-            ].map((p) => (
-              <div key={p.name} className={`card p-6 ${p.highlight ? 'border-gold-300 bg-gold-50/20 shadow-md shadow-gold-500/5 ring-1 ring-gold-200' : ''}`}>
-                <p className="text-[13px] font-semibold text-gray-500 mb-1">{p.name}</p>
-                <p className="text-3xl font-bold text-navy-900 mb-2">{p.price}</p>
-                <p className="text-[12px] text-gray-500">{p.desc}</p>
+              { name: 'Free', price: '$0', period: 'forever', desc: '10 corrections/day, 60 min voice/month', highlight: false },
+              { name: 'Pro', price: '$12', period: '/month', desc: 'Unlimited everything. Offline mode. Translation.', highlight: true },
+              { name: 'Business', price: '$29', period: '/month', desc: 'Up to 10 users. That\'s $2.90 each.', highlight: false },
+            ].map(p => (
+              <div key={p.name} className={`rounded-2xl p-8 text-center transition-all ${p.highlight ? 'bg-gradient-to-b from-indigo-600 to-violet-700 text-white shadow-xl shadow-indigo-500/20 scale-105' : 'bg-white border border-slate-200'}`}>
+                <p className={`text-[14px] font-semibold mb-3 ${p.highlight ? 'text-indigo-200' : 'text-slate-400'}`}>{p.name}</p>
+                <p className={`text-4xl font-extrabold mb-1 ${p.highlight ? 'text-white' : 'text-slate-900'}`}>{p.price}<span className={`text-lg font-normal ${p.highlight ? 'text-indigo-200' : 'text-slate-400'}`}>{p.period}</span></p>
+                <p className={`text-[13px] mt-3 ${p.highlight ? 'text-indigo-200' : 'text-slate-400'}`}>{p.desc}</p>
               </div>
             ))}
           </div>
 
-          <Link href="/pricing" className="text-[13px] text-navy-700 hover:text-navy-900 font-semibold transition-colors">
-            See full pricing &rarr;
-          </Link>
+          <a href="/pricing" className="text-[14px] text-indigo-600 hover:text-indigo-500 font-semibold transition-colors">
+            See full pricing &amp; comparison &rarr;
+          </a>
         </div>
       </section>
 
-      {/* ── CTA ───────────────────────────────────── */}
-      <section className="py-28 px-4 bg-navy-950">
+      {/* ═══════════════════════════════════════════════
+          FINAL CTA
+      ═══════════════════════════════════════════════ */}
+      <section className="py-28 px-4 bg-gradient-to-b from-slate-50 to-white">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-5">
-            Every word matters<br />in your profession.
+          <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight">
+            Never send a badly<br />written message again.
           </h2>
-          <p className="text-white/50 text-base mb-12 max-w-md mx-auto leading-relaxed">
-            Join professionals who write with confidence. AI grammar, voice dictation, and translation — on every device.
+          <p className="text-slate-400 text-lg mb-12 max-w-lg mx-auto leading-relaxed">
+            AI grammar, voice-to-text, and translation — on every device, in every app. Free to start.
           </p>
-          <Link href="/download" className="inline-block px-10 py-4 rounded-lg bg-white text-navy-900 text-[15px] font-semibold transition-all hover:bg-gray-100 shadow-lg shadow-black/20">
+          <a href="/download" className="btn-primary text-base px-12 py-4">
             Download 48co Free
-          </Link>
-          <p className="text-[12px] text-white/25 mt-5">Mac + Windows + Chrome + iOS + Android. Free tier. No credit card.</p>
+          </a>
+          <p className="text-[13px] text-slate-300 mt-6 font-medium">Mac + Windows + iPhone + Android + Chrome. No credit card required.</p>
         </div>
       </section>
 
