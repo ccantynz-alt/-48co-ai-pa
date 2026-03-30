@@ -34,6 +34,8 @@ pub enum ThreatCategory {
     SuspiciousNetwork,
     HostsTampering,
     DnsTampering,
+    DefenderTampering,
+    ProxyHijack,
 }
 
 impl fmt::Display for ThreatCategory {
@@ -51,6 +53,8 @@ impl fmt::Display for ThreatCategory {
             ThreatCategory::SuspiciousNetwork => write!(f, "Suspicious Network Activity"),
             ThreatCategory::HostsTampering => write!(f, "Hosts File Tampering"),
             ThreatCategory::DnsTampering => write!(f, "DNS Tampering"),
+            ThreatCategory::DefenderTampering => write!(f, "Windows Defender Tampering"),
+            ThreatCategory::ProxyHijack => write!(f, "Proxy Hijacking"),
         }
     }
 }
@@ -63,6 +67,16 @@ pub enum ThreatAction {
     QuarantineFile(String),
     /// Remove registry startup entry
     RemoveStartupEntry { key_path: String, value_name: String },
+    /// Uninstall a program using its uninstall command
+    UninstallProgram { uninstall_string: String, name: String },
+    /// Delete a scheduled task by name
+    DeleteScheduledTask { task_name: String },
+    /// Remove a browser extension
+    DisableBrowserExtension { browser: String, ext_id: String },
+    /// Reset proxy settings to direct connection
+    ResetProxy,
+    /// Re-enable Windows Defender
+    RestoreDefender,
     /// No automated action — manual review needed
     ManualReview,
 }
@@ -75,6 +89,17 @@ impl fmt::Display for ThreatAction {
             ThreatAction::RemoveStartupEntry { value_name, .. } => {
                 write!(f, "Remove startup entry: {}", value_name)
             }
+            ThreatAction::UninstallProgram { name, .. } => {
+                write!(f, "Uninstall program: {}", name)
+            }
+            ThreatAction::DeleteScheduledTask { task_name } => {
+                write!(f, "Delete scheduled task: {}", task_name)
+            }
+            ThreatAction::DisableBrowserExtension { browser, ext_id } => {
+                write!(f, "Remove {} extension: {}", browser, ext_id)
+            }
+            ThreatAction::ResetProxy => write!(f, "Reset proxy to direct connection"),
+            ThreatAction::RestoreDefender => write!(f, "Re-enable Windows Defender"),
             ThreatAction::ManualReview => write!(f, "Manual review recommended"),
         }
     }
