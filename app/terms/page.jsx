@@ -10,11 +10,11 @@ export default function TermsPage() {
   return (
     <main className="min-h-screen bg-white">
       <Nav />
-      <div className="max-w-3xl mx-auto px-6 pt-32 pb-20">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Terms of Service</h1>
-        <p className="text-sm text-gray-400 mb-12">Last updated: 29 March 2026</p>
+      <div className="max-w-3xl mx-auto px-6 pt-36 pb-20">
+        <h1 className="text-3xl font-bold text-navy-900 mb-2">Terms of Service</h1>
+        <p className="text-sm text-gray-400 mb-14">Last updated: 29 March 2026</p>
 
-        <div className="prose prose-gray prose-sm max-w-none [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900 [&_h2]:mt-10 [&_h2]:mb-4 [&_p]:text-gray-600 [&_p]:leading-relaxed [&_p]:mb-4 [&_ul]:text-gray-600 [&_ul]:mb-4 [&_li]:mb-1">
+        <div className="prose prose-gray prose-sm max-w-none [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-navy-900 [&_h2]:mt-10 [&_h2]:mb-4 [&_p]:text-gray-600 [&_p]:leading-relaxed [&_p]:mb-4 [&_ul]:text-gray-600 [&_ul]:mb-4 [&_li]:mb-1">
 
           <h2>Agreement</h2>
           <p>By using 48co Voice (&ldquo;the Service&rdquo;), you agree to these terms. If you do not agree, do not use the Service. The Service is provided by 48co Ltd, a New Zealand company.</p>
@@ -57,7 +57,7 @@ export default function TermsPage() {
           <p>These terms are governed by the laws of New Zealand. Any disputes will be resolved in the courts of New Zealand.</p>
 
           <h2>Contact</h2>
-          <p>Questions about these terms? Email <a href="mailto:support@48co.nz" className="text-indigo-600 hover:text-indigo-800">support@48co.nz</a>.</p>
+          <p>Questions about these terms? Email <a href="mailto:support@48co.nz" className="text-navy-700 hover:text-navy-900 font-medium">support@48co.nz</a>.</p>
         </div>
       </div>
       <Footer />

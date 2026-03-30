@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import Link from 'next/link'
 import Waveform from '../components/Waveform'
 import Nav from '../components/Nav'
 import Footer from '../components/Footer'
@@ -14,9 +15,9 @@ function useTypingDemo() {
       label: 'Legal Writing',
     },
     {
-      before: 'Hey can u send me the report asap i need it for the meeting tmrw thx',
-      after: 'Hey, can you send me the report ASAP? I need it for the meeting tomorrow. Thanks!',
-      label: 'Email Polish',
+      before: 'hey can u send me the report i need it for the board meeting tmrw and make sure the numbers add up thx',
+      after: 'Hi, can you send me the report? I need it for the board meeting tomorrow. Please ensure the figures reconcile. Thanks.',
+      label: 'Professional Email',
     },
     {
       before: 'the total revenue was twelve million four hundred thousand dollars which is a increase of 8.3 percent year on year',
@@ -114,7 +115,7 @@ export default function LandingPage() {
             </a>
             <a href="/live" className="btn-secondary text-base px-10">
               Try in Browser
-            </a>
+            </Link>
           </div>
 
           {/* Demo Card — floating effect */}

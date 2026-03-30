@@ -1,0 +1,26 @@
+# 48co Voice — Code Ownership
+# These owners are automatically requested for PR review.
+
+# Default — all files
+* @ccantynz-alt
+
+# Website (Next.js)
+/app/ @ccantynz-alt
+/components/ @ccantynz-alt
+/lib/ @ccantynz-alt
+
+# Desktop App (Tauri / Rust)
+/tauri-app/ @ccantynz-alt
+
+# Chrome Extension
+/extension/ @ccantynz-alt
+
+# Mobile
+/ios-keyboard/ @ccantynz-alt
+/android-keyboard/ @ccantynz-alt
+
+# Shared Rust Core
+/shared-rust/ @ccantynz-alt
+
+# CI/CD & Repo Config
+/.github/ @ccantynz-alt
