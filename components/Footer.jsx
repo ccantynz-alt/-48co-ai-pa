@@ -37,7 +37,6 @@ export default function Footer() {
               <a href="mailto:support@alecrae.ai" className="text-[12px] text-gray-400 hover:text-gray-700 transition-colors">Contact</a>
             </div>
           </div>
-        </div>
 
           {/* Trust */}
           <div>
