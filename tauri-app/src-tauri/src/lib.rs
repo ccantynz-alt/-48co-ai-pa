@@ -1,4 +1,4 @@
-// 48co — Tauri 2.0 Backend
+// AlecRae Voice — Tauri 2.0 Backend
 //
 // System tray app with global hotkey. Records voice, transcribes via Whisper,
 // types text into any focused application using OS-level keyboard simulation.
@@ -191,9 +191,9 @@ fn get_hotkey_options() -> Vec<serde_json::Value> {
 fn update_tray(app: &AppHandle, recording: bool) {
     if let Some(tray) = app.tray_by_id("main") {
         let _ = tray.set_tooltip(Some(if recording {
-            "48co — Recording..."
+            "AlecRae Voice — Recording..."
         } else {
-            "48co — Ready"
+            "AlecRae Voice — Ready"
         }));
     }
 }
@@ -217,11 +217,11 @@ pub fn run() {
             // Build tray menu (Tauri 2.0 API)
             let toggle_item = MenuItem::with_id(app, "toggle", "Start Recording", true, None::<&str>)?;
             let settings_item = MenuItem::with_id(app, "settings", "Settings", true, None::<&str>)?;
-            let quit_item = MenuItem::with_id(app, "quit", "Quit 48co", true, None::<&str>)?;
+            let quit_item = MenuItem::with_id(app, "quit", "Quit AlecRae Voice", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&toggle_item, &settings_item, &quit_item])?;
 
             let _tray = TrayIconBuilder::with_id("main")
-                .tooltip("48co — Ready")
+                .tooltip("AlecRae Voice — Ready")
                 .menu(&menu)
                 .on_menu_event(move |app, event| {
                     match event.id.as_ref() {
@@ -229,8 +229,8 @@ pub fn run() {
                             let handle = app.clone();
                             tauri::async_runtime::spawn(async move {
                                 match toggle_recording(handle).await {
-                                    Ok(msg) => println!("[48co] {}", msg),
-                                    Err(e) => eprintln!("[48co] Error: {}", e),
+                                    Ok(msg) => println!("[AlecRae Voice] {}", msg),
+                                    Err(e) => eprintln!("[AlecRae Voice] Error: {}", e),
                                 }
                             });
                         }
@@ -249,8 +249,8 @@ pub fn run() {
                         let handle = tray.app_handle().clone();
                         tauri::async_runtime::spawn(async move {
                             match toggle_recording(handle).await {
-                                Ok(msg) => println!("[48co] {}", msg),
-                                Err(e) => eprintln!("[48co] Error: {}", e),
+                                Ok(msg) => println!("[AlecRae Voice] {}", msg),
+                                Err(e) => eprintln!("[AlecRae Voice] Error: {}", e),
                             }
                         });
                     }
@@ -265,8 +265,8 @@ pub fn run() {
                     let h = app_handle.clone();
                     tauri::async_runtime::spawn(async move {
                         match toggle_recording(h).await {
-                            Ok(msg) => println!("[48co] {}", msg),
-                            Err(e) => eprintln!("[48co] Error: {}", e),
+                            Ok(msg) => println!("[AlecRae Voice] {}", msg),
+                            Err(e) => eprintln!("[AlecRae Voice] Error: {}", e),
                         }
                     });
                 }
@@ -279,13 +279,13 @@ pub fn run() {
                 let h = mouse_handle.clone();
                 tauri::async_runtime::spawn(async move {
                     match toggle_recording(h).await {
-                        Ok(msg) => println!("[48co] Mouse toggle: {}", msg),
-                        Err(e) => eprintln!("[48co] Mouse toggle error: {}", e),
+                        Ok(msg) => println!("[AlecRae Voice] Mouse toggle: {}", msg),
+                        Err(e) => eprintln!("[AlecRae Voice] Mouse toggle error: {}", e),
                     }
                 });
             });
 
-            println!("[48co] Ready. Ctrl+Shift+Space or mouse wheel click to record.");
+            println!("[AlecRae Voice] Ready. Ctrl+Shift+Space or mouse wheel click to record.");
 
             Ok(())
         })
@@ -304,5 +304,5 @@ pub fn run() {
             get_hotkey_options,
         ])
         .run(tauri::generate_context!())
-        .expect("error while running 48co");
+        .expect("error while running AlecRae Voice");
 }

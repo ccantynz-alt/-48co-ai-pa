@@ -27,7 +27,7 @@ export default function InstallPage() {
                 { step: '1', title: 'Download the extension', desc: 'Click below to download the extension package (.zip file).', action: true },
                 { step: '2', title: 'Open Chrome Extensions', desc: 'Go to chrome://extensions in your browser. Turn on "Developer mode" (top-right toggle).' },
                 { step: '3', title: 'Load the extension', desc: 'Unzip the downloaded file. Click "Load unpacked" and select the unzipped folder.' },
-                { step: '4', title: 'Start using it', desc: 'Open any website. Start typing in a text field. 48co will check your grammar automatically.' },
+                { step: '4', title: 'Start using it', desc: 'Open any website. Start typing in a text field. AlecRae Voice will check your grammar automatically.' },
               ].map((s) => (
                 <div key={s.step} className="flex items-start gap-4">
                   <span className="w-8 h-8 rounded-lg bg-navy-900 flex items-center justify-center text-white text-[13px] font-bold flex-shrink-0">
@@ -38,7 +38,7 @@ export default function InstallPage() {
                     <p className="text-[12px] text-gray-500 leading-relaxed">{s.desc}</p>
                     {s.action && (
                       <a
-                        href="/48co-extension.zip"
+                        href="/alecrae-extension.zip"
                         download
                         className="inline-block mt-3 px-5 py-2 rounded-lg bg-navy-900 text-white text-[12px] font-semibold hover:bg-navy-800 transition-all"
                       >

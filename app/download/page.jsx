@@ -18,8 +18,8 @@ export default function DownloadPage() {
   const STEPS = {
     mac: [
       'Click the Download button to get the .dmg file',
-      'Open it and drag 48co to your Applications folder',
-      'Launch 48co — it appears in your menu bar (top-right)',
+      'Open it and drag AlecRae Voice to your Applications folder',
+      'Launch AlecRae Voice — it appears in your menu bar (top-right)',
       'Allow Accessibility + Microphone when prompted',
       'Right-click the menu bar icon and sign in',
       'Press Cmd+Shift+Space anywhere to start dictating',
@@ -27,7 +27,7 @@ export default function DownloadPage() {
     windows: [
       'Click the Download button to get the installer',
       'Run it — click "Yes" if Windows asks permission',
-      '48co appears in your system tray (bottom-right near the clock)',
+      'AlecRae Voice appears in your system tray (bottom-right near the clock)',
       'Right-click the tray icon and sign in',
       'Press Ctrl+Shift+Space anywhere to start dictating',
     ],
@@ -39,9 +39,9 @@ export default function DownloadPage() {
 
       <div className="max-w-3xl mx-auto px-4 pt-32 pb-16">
         {/* Hero */}
-        <div className="text-center mb-14">
-          <h1 className="text-4xl md:text-5xl font-bold text-navy-900 mb-4">
-            Download <span className="text-gold-500">48co</span>
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            Download <span className="text-indigo-600">AlecRae Voice</span>
           </h1>
           <p className="text-gray-500 text-base max-w-md mx-auto">
             AI grammar, voice dictation, and translation that works in every app on your computer. Free to start.
@@ -51,8 +51,8 @@ export default function DownloadPage() {
         {/* Download Buttons */}
         <div className="flex flex-col md:flex-row gap-4 justify-center mb-14">
           <a
-            href="https://github.com/ccantynz-alt/-48co-ai-pa/releases/latest/download/48co-mac.dmg"
-            className={`flex items-center gap-4 px-8 py-5 rounded-xl border transition-all ${
+            href="https://github.com/ccantynz-alt/-48co-ai-pa/releases/latest/download/alecrae-voice-mac.dmg"
+            className={`flex items-center gap-4 px-8 py-4 rounded-2xl border transition-all ${
               platform === 'mac'
                 ? 'bg-navy-50 border-navy-200 shadow-md shadow-navy-500/5'
                 : 'border-gray-200 hover:border-gray-300'
@@ -69,8 +69,8 @@ export default function DownloadPage() {
           </a>
 
           <a
-            href="https://github.com/ccantynz-alt/-48co-ai-pa/releases/latest/download/48co-win.exe"
-            className={`flex items-center gap-4 px-8 py-5 rounded-xl border transition-all ${
+            href="https://github.com/ccantynz-alt/-48co-ai-pa/releases/latest/download/alecrae-voice-win.exe"
+            className={`flex items-center gap-4 px-8 py-4 rounded-2xl border transition-all ${
               platform === 'windows'
                 ? 'bg-navy-50 border-navy-200 shadow-md shadow-navy-500/5'
                 : 'border-gray-200 hover:border-gray-300'

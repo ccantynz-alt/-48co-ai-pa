@@ -2,64 +2,91 @@ import Nav from '../../components/Nav'
 import Footer from '../../components/Footer'
 
 export const metadata = {
-  title: 'Terms of Service — 48co Voice',
-  description: 'Terms of service for using 48co Voice AI grammar and voice-to-text product.',
+  title: 'Terms of Service — AlecRae Voice',
+  description: 'AlecRae Voice terms of service. Usage conditions, subscription terms, and liability.',
 }
 
 export default function TermsPage() {
   return (
     <main className="min-h-screen bg-white">
       <Nav />
-      <div className="max-w-3xl mx-auto px-6 pt-36 pb-20">
-        <h1 className="text-3xl font-bold text-navy-900 mb-2">Terms of Service</h1>
-        <p className="text-sm text-gray-400 mb-14">Last updated: 29 March 2026</p>
 
-        <div className="prose prose-gray prose-sm max-w-none [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-navy-900 [&_h2]:mt-10 [&_h2]:mb-4 [&_p]:text-gray-600 [&_p]:leading-relaxed [&_p]:mb-4 [&_ul]:text-gray-600 [&_ul]:mb-4 [&_li]:mb-1">
+      <div className="max-w-3xl mx-auto px-4 pt-32 pb-16">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Terms of Service</h1>
+        <p className="text-[13px] text-gray-400 mb-12">Last updated: 30 March 2026</p>
 
-          <h2>Agreement</h2>
-          <p>By using 48co Voice (&ldquo;the Service&rdquo;), you agree to these terms. If you do not agree, do not use the Service. The Service is provided by 48co Ltd, a New Zealand company.</p>
+        <div className="space-y-8 text-[14px] text-gray-500 leading-relaxed">
 
-          <h2>What You Get</h2>
-          <ul className="list-disc pl-6">
-            <li><strong>Free plan:</strong> 10 grammar corrections per day, 60 minutes of voice transcription per month, 5 AI rewrites per day.</li>
-            <li><strong>Pro plan ($12/month or $99/year):</strong> Unlimited grammar, voice, and rewrites. Offline mode. Preserve My Voice personalisation. Priority support.</li>
-            <li><strong>Business plan ($29/month per 10 users):</strong> Everything in Pro plus team management, admin dashboard, and priority onboarding.</li>
-          </ul>
+          <section>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">1. Acceptance</h2>
+            <p>By creating an account or using AlecRae Voice (the &ldquo;Service&rdquo;), you agree to these Terms of Service. The Service is operated by AlecRae Ltd, a New Zealand company. If you are using the Service on behalf of an organisation, you represent that you have authority to bind that organisation to these terms.</p>
+          </section>
 
-          <h2>Payments & Cancellation</h2>
-          <p>Paid plans are billed through Stripe. You can cancel at any time through your billing portal. When you cancel, your plan continues until the end of the current billing period, then reverts to Free. No refunds for partial months, but we offer a 30-day money-back guarantee for new subscribers.</p>
+          <section>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">2. The Service</h2>
+            <p>AlecRae Voice provides AI-powered grammar correction, voice-to-text transcription, and writing assistance. The Service is available as a desktop application, Chrome browser extension, and web application. We strive to provide accurate corrections, but the Service is an AI tool and may occasionally produce incorrect suggestions. You are responsible for reviewing all output before use in professional communications.</p>
+          </section>
 
-          <h2>Acceptable Use</h2>
-          <p>You agree not to:</p>
-          <ul className="list-disc pl-6">
-            <li>Reverse-engineer, decompile, or attempt to extract the source code of the Service.</li>
-            <li>Use the Service to generate spam, malware, or illegal content.</li>
-            <li>Share your account credentials with others (Business plan has multi-user access).</li>
-            <li>Exceed reasonable usage limits (we reserve the right to throttle excessive automated use).</li>
-          </ul>
+          <section>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">3. Accounts</h2>
+            <p>You must provide accurate information when creating an account. You are responsible for maintaining the confidentiality of your login credentials. Notify us immediately at <a href="mailto:support@alecrae.ai" className="text-indigo-600 hover:underline">support@alecrae.ai</a> if you suspect unauthorised access to your account.</p>
+          </section>
 
-          <h2>Your Content</h2>
-          <p>You own everything you create with 48co Voice. We do not claim any ownership or licence over your text, voice recordings, or any content you process through the Service. We process your content only to provide the Service and do not use it for any other purpose.</p>
+          <section>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">4. Subscriptions and billing</h2>
+            <p>Paid plans are billed monthly or annually via Stripe. Prices are displayed on our pricing page and are exclusive of applicable taxes. You may cancel at any time; cancellation takes effect at the end of the current billing period. Refunds for annual plans are available within 14 days of purchase. Free tier usage is subject to daily and monthly limits as described on the pricing page.</p>
+          </section>
 
-          <h2>Accuracy</h2>
-          <p>48co Voice uses AI to check grammar and transcribe speech. While we strive for high accuracy, AI is not perfect. You are responsible for reviewing all output before using it in professional contexts. We recommend reviewing all corrections before applying them to legal documents, financial reports, or medical records.</p>
+          <section>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">5. Acceptable use</h2>
+            <p>You agree not to:</p>
+            <ul className="list-disc ml-5 mt-2 space-y-1">
+              <li>Use the Service to process content that violates applicable law</li>
+              <li>Attempt to reverse-engineer, decompile, or extract source code from the Service</li>
+              <li>Circumvent usage limits or authentication mechanisms</li>
+              <li>Use the Service to develop a competing product</li>
+              <li>Share account credentials with unauthorised third parties</li>
+            </ul>
+          </section>
 
-          <h2>Availability</h2>
-          <p>We aim for 99.9% uptime but do not guarantee uninterrupted service. The local/offline modes of the desktop app work without an internet connection.</p>
+          <section>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">6. Intellectual property</h2>
+            <p>You retain all rights to the content you submit to the Service. We do not claim ownership of your text, audio, or documents. The AlecRae Voice software, website, and branding are the property of AlecRae Ltd.</p>
+          </section>
 
-          <h2>Limitation of Liability</h2>
-          <p>To the maximum extent permitted by law, 48co Ltd is not liable for any indirect, incidental, or consequential damages arising from your use of the Service. Our total liability is limited to the amount you paid us in the 12 months preceding the claim.</p>
+          <section>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">7. Limitation of liability</h2>
+            <p>The Service is provided &ldquo;as is.&rdquo; While we strive for accuracy, AlecRae Voice is an AI tool and may produce incorrect suggestions. We are not liable for errors in grammar corrections, transcription inaccuracies, or any consequences arising from reliance on the Service&apos;s output. Our total liability is limited to the amount you have paid for the Service in the 12 months preceding the claim.</p>
+          </section>
 
-          <h2>Changes</h2>
-          <p>We may update these terms from time to time. Material changes will be communicated via email. Continued use after changes constitutes acceptance.</p>
+          <section>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">8. Service availability</h2>
+            <p>We target 99.9% uptime for cloud services but do not guarantee uninterrupted availability. The offline mode of the desktop application operates independently of our servers and is not affected by service outages. We will provide reasonable notice of scheduled maintenance.</p>
+          </section>
 
-          <h2>Governing Law</h2>
-          <p>These terms are governed by the laws of New Zealand. Any disputes will be resolved in the courts of New Zealand.</p>
+          <section>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">9. Termination</h2>
+            <p>Either party may terminate this agreement at any time. We may suspend or terminate your account if you violate these terms. Upon termination, your data will be retained for 30 days and then permanently deleted unless you request earlier deletion.</p>
+          </section>
 
-          <h2>Contact</h2>
-          <p>Questions about these terms? Email <a href="mailto:support@48co.nz" className="text-navy-700 hover:text-navy-900 font-medium">support@48co.nz</a>.</p>
+          <section>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">10. Governing law</h2>
+            <p>These terms are governed by the laws of New Zealand. Any disputes will be resolved in the courts of New Zealand.</p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">11. Changes</h2>
+            <p>We may update these terms from time to time. Registered users will be notified by email of material changes at least 14 days before they take effect. Continued use of the Service after changes take effect constitutes acceptance of the updated terms.</p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">12. Contact</h2>
+            <p>For questions about these terms, contact <a href="mailto:legal@alecrae.ai" className="text-indigo-600 hover:underline">legal@alecrae.ai</a>.</p>
+          </section>
+
         </div>
       </div>
+
       <Footer />
     </main>
   )

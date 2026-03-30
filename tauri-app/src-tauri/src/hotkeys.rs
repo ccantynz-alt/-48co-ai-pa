@@ -1,6 +1,6 @@
 // Custom hotkey system — supports keyboard shortcuts AND mouse buttons
 //
-// This is what makes 48co different from WhisperTyping:
+// This is what makes AlecRae Voice different from WhisperTyping:
 // Users can choose ANY trigger they want — keyboard combo, mouse button, etc.
 //
 // Supported triggers:
@@ -100,7 +100,7 @@ where
         });
 
         if let Err(e) = result {
-            eprintln!("[48co] Mouse listener error: {:?}", e);
+            eprintln!("[AlecRae Voice] Mouse listener error: {:?}", e);
         }
     });
 }

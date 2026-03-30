@@ -85,9 +85,9 @@ export default function LivePage() {
 
       <div className="max-w-3xl mx-auto px-4 pt-32 pb-16">
         {/* Hero */}
-        <div className="text-center mb-14">
-          <h1 className="text-4xl md:text-5xl font-bold text-navy-900 mb-4">
-            Try <span className="text-gold-500">48co</span> live
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            Try <span className="text-indigo-600">AlecRae Voice</span> live
           </h1>
           <p className="text-gray-500 text-base max-w-md mx-auto">
             Click the mic, speak, see your words. Runs entirely in your browser — no download or sign-up needed.

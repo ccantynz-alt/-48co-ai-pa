@@ -1,8 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/nickelghost/tauri-v2-schemas/main/tauri.conf.json",
-  "productName": "48co",
+  "productName": "AlecRae Voice",
   "version": "1.0.0",
-  "identifier": "nz.co.48co",
+  "identifier": "ai.alecrae.voice",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:1420",
@@ -15,12 +15,12 @@
       "id": "main",
       "iconPath": "icons/icon.png",
       "iconAsTemplate": true,
-      "tooltip": "48co — Voice to Text"
+      "tooltip": "AlecRae Voice — Voice to Text"
     },
     "windows": [
       {
         "label": "settings",
-        "title": "48co Settings",
+        "title": "AlecRae Voice Settings",
         "url": "/",
         "width": 480,
         "height": 600,

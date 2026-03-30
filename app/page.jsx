@@ -6,23 +6,23 @@ import Waveform from '../components/Waveform'
 import Nav from '../components/Nav'
 import Footer from '../components/Footer'
 
-// ── Typing demo ─────────────────────────────────────────
+// ── Typing demo — shows AI correction in action ─────────────
 function useTypingDemo() {
   const phrases = [
     {
-      before: 'the defendant breached there fiduciary duty per say and we should of filed a motion in limine before the deposition',
-      after: 'The defendant breached their fiduciary duty per se, and we should have filed a motion in limine before the deposition.',
+      before: 'The defendant has failed to comply with there obligations under the contract and we beleive this constitutes a material breach',
+      after: 'The defendant has failed to comply with their obligations under the contract, and we believe this constitutes a material breach.',
       label: 'Legal Writing',
     },
     {
-      before: 'hey can u send me the report i need it for the board meeting tmrw and make sure the numbers add up thx',
-      after: 'Hi, can you send me the report? I need it for the board meeting tomorrow. Please ensure the figures reconcile. Thanks.',
-      label: 'Professional Email',
+      before: 'Revenue for the quater was $2.4M which is a increase of 12% compaired to the previous period however expenses have also rised',
+      after: 'Revenue for the quarter was $2.4M, which is an increase of 12% compared to the previous period; however, expenses have also risen.',
+      label: 'Financial Report',
     },
     {
-      before: 'the total revenue was twelve million four hundred thousand dollars which is a increase of 8.3 percent year on year',
-      after: 'The total revenue was $12,400,000, which is an increase of 8.3% year on year.',
-      label: 'Financial Report',
+      before: 'Please find attached the ammended engagement letter for your review we have updated the scope of services and the fee schedule accordingly',
+      after: 'Please find attached the amended engagement letter for your review. We have updated the scope of services and the fee schedule accordingly.',
+      label: 'Client Communication',
     },
   ]
 
@@ -33,7 +33,7 @@ function useTypingDemo() {
 
   useEffect(() => {
     if (phase === 'typing' && charIdx < phrase.after.length) {
-      const t = setTimeout(() => setCharIdx(c => c + 1), 22 + Math.random() * 12)
+      const t = setTimeout(() => setCharIdx(c => c + 1), 18 + Math.random() * 10)
       return () => clearTimeout(t)
     }
     if (phase === 'typing' && charIdx >= phrase.after.length) {
@@ -41,7 +41,7 @@ function useTypingDemo() {
       const t = setTimeout(() => {
         setPhase('next')
         setTimeout(() => { setIdx(i => (i + 1) % phrases.length); setCharIdx(0); setPhase('typing') }, 400)
-      }, 3000)
+      }, 3200)
       return () => clearTimeout(t)
     }
   }, [charIdx, phase, phrase.after.length, idx, phrases.length])
@@ -66,7 +66,7 @@ export default function LandingPage() {
   const [demoStatus, setDemoStatus] = useState('idle')
   const [demoTranscript, setDemoTranscript] = useState('')
   const recognitionRef = useRef(null)
-  const r1 = useReveal(), r2 = useReveal(), r3 = useReveal(), r4 = useReveal(), r5 = useReveal(), r6 = useReveal(), r7 = useReveal()
+  const r1 = useReveal(), r2 = useReveal(), r3 = useReveal(), r4 = useReveal(), r5 = useReveal(), r6 = useReveal()
 
   useEffect(() => { return () => { if (recognitionRef.current) { recognitionRef.current.abort(); recognitionRef.current = null } } }, [])
 
@@ -87,42 +87,39 @@ export default function LandingPage() {
 
       <Nav />
 
-      {/* ═══════════════════════════════════════════════
-          HERO — Big, bold, confident
-      ═══════════════════════════════════════════════ */}
+      {/* ── HERO ────────────────────────────────────── */}
       <section className="hero-gradient pt-36 pb-24 px-4">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-3xl mx-auto text-center">
 
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 mb-10 animate-fade-up">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="text-[13px] text-indigo-700 font-semibold tracking-tight">AI Grammar + Voice + Translation</span>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 mb-8 animate-fade-up">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+            <span className="text-[12px] text-indigo-600 font-medium">Trusted by legal and financial professionals</span>
           </div>
 
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight text-slate-900 mb-8 animate-fade-up leading-[1.05]" style={{ animationDelay: '0.1s' }}>
-            Everything you write,
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 mb-6 animate-fade-up" style={{ animationDelay: '0.1s' }}>
+            Every word you write,
             <br />
-            <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">perfected by AI.</span>
+            <span className="text-indigo-600">beyond reproach.</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed mb-12 animate-fade-up" style={{ animationDelay: '0.2s' }}>
-            Grammar correction, voice-to-text, and real-time translation — in every app, on every device.
-            <span className="block mt-2 text-slate-400">Built for lawyers, accountants, and professionals who write for a living.</span>
+          <p className="text-lg text-gray-500 max-w-xl mx-auto leading-relaxed mb-10 animate-fade-up" style={{ animationDelay: '0.2s' }}>
+            AI-powered grammar correction and voice-to-text built for professionals who cannot afford errors in client communications, contracts, and financial reports.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-20 animate-fade-up" style={{ animationDelay: '0.3s' }}>
-            <a href="/download" className="btn-primary text-base px-10">
-              Download Free
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-16 animate-fade-up" style={{ animationDelay: '0.3s' }}>
+            <a href="/download" className="px-8 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-[15px] font-medium transition-all shadow-sm">
+              Start Free Trial
             </a>
-            <a href="/live" className="btn-secondary text-base px-10">
-              Try in Browser
-            </Link>
+            <a href="/security" className="px-8 py-3 rounded-xl border border-gray-200 text-gray-500 text-[15px] font-medium hover:border-gray-300 hover:text-gray-700 transition-all">
+              View Security
+            </a>
           </div>
 
-          {/* Demo Card — floating effect */}
-          <div className="max-w-xl mx-auto animate-fade-up animate-float" style={{ animationDelay: '0.4s' }}>
-            <div className="card overflow-hidden shadow-xl shadow-indigo-500/[0.06] border-indigo-100/50">
-              <div className="flex items-center justify-between px-6 py-3.5 border-b border-black/[0.04] bg-slate-50/70">
-                <div className="flex items-center gap-3">
+          {/* ── Demo Card ──────────────────────── */}
+          <div className="max-w-xl mx-auto animate-fade-up" style={{ animationDelay: '0.4s' }}>
+            <div className="card overflow-hidden shadow-lg shadow-black/[0.03]">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-black/[0.04] bg-gray-50/50">
+                <div className="flex items-center gap-2">
                   <div className="flex gap-1.5">
                     <div className="w-3 h-3 rounded-full bg-red-400/70" />
                     <div className="w-3 h-3 rounded-full bg-amber-400/70" />
@@ -133,132 +130,155 @@ export default function LandingPage() {
                 <span className={`w-2.5 h-2.5 rounded-full transition-colors ${typing.isTyping ? 'bg-red-400' : 'bg-emerald-400'}`} />
               </div>
 
-              <div className="px-6 py-4 border-b border-black/[0.04]">
-                <p className="text-[10px] text-red-400/80 uppercase tracking-widest mb-2 font-semibold">You wrote</p>
-                <p className="text-[14px] text-slate-400 leading-relaxed line-through decoration-red-300/40">{typing.before}</p>
+              <div className="px-5 py-3 border-b border-black/[0.04]">
+                <p className="text-[10px] text-gray-300 uppercase tracking-wider mb-1.5">Original draft</p>
+                <p className="text-[13px] text-gray-400 leading-relaxed line-through decoration-red-300/40">{typing.before}</p>
               </div>
 
-              <div className="px-6 py-5 bg-gradient-to-br from-indigo-50/40 to-violet-50/30">
-                <p className="text-[10px] text-indigo-500 uppercase tracking-widest mb-2 font-semibold">48co corrects to</p>
-                <p className={`text-[15px] text-slate-800 leading-relaxed whitespace-pre-wrap min-h-[48px] font-medium ${typing.isTyping ? 'animate-typing-cursor pr-0.5' : ''}`}>
-                  {typing.after || <span className="text-slate-200">|</span>}
+              <div className="px-5 py-4 bg-indigo-50/30">
+                <p className="text-[10px] text-indigo-400 uppercase tracking-wider mb-1.5">AlecRae corrected</p>
+                <p className={`text-[14px] text-gray-800 leading-relaxed whitespace-pre-wrap min-h-[44px] ${typing.isTyping ? 'animate-typing-cursor pr-0.5' : ''}`}>
+                  {typing.after || <span className="text-gray-200">|</span>}
                 </p>
               </div>
             </div>
           </div>
 
-          <p className="text-[13px] text-slate-400 mt-12 animate-fade-up font-medium" style={{ animationDelay: '0.5s' }}>
-            Mac &middot; Windows &middot; iPhone &middot; Android &middot; Chrome &middot; Free to start
+          <p className="text-[12px] text-gray-300 mt-8 animate-fade-up" style={{ animationDelay: '0.5s' }}>
+            Mac &middot; Windows &middot; Chrome Extension &middot; Free to start &middot; No credit card required
           </p>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════
-          STATS BAR
-      ═══════════════════════════════════════════════ */}
-      <section className="py-16 px-4 border-b border-slate-100">
-        <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          {[
-            { stat: '60+', label: 'Languages' },
-            { stat: '5', label: 'Platforms' },
-            { stat: '<500ms', label: 'Streaming Latency' },
-            { stat: '$12', label: '/month Pro' },
-          ].map(s => (
-            <div key={s.label}>
-              <p className="text-3xl md:text-4xl font-extrabold stat-number mb-1">{s.stat}</p>
-              <p className="text-[13px] text-slate-400 font-medium">{s.label}</p>
-            </div>
-          ))}
+      {/* ── TRUST BAR ─────────────────────────────── */}
+      <section className="py-8 px-4 border-b border-black/[0.04] bg-gray-50/50">
+        <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-8 text-[12px] text-gray-400">
+          <span className="flex items-center gap-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            256-bit AES encryption
+          </span>
+          <span className="flex items-center gap-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            GDPR compliant
+          </span>
+          <span className="flex items-center gap-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+            SOC 2 in progress
+          </span>
+          <span className="flex items-center gap-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            Full offline mode available
+          </span>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════
-          PLATFORMS
-      ═══════════════════════════════════════════════ */}
-      <section ref={r1} className="reveal py-28 px-4">
+      {/* ── WHO IT'S FOR ──────────────────────────── */}
+      <section ref={r1} className="reveal py-24 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Works everywhere you write</h2>
-            <p className="text-base text-slate-400 max-w-lg mx-auto">One tool for every device and every app. No copy-paste. No switching windows.</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">Built for professionals who write for a living</h2>
+            <p className="text-[15px] text-gray-400 max-w-lg mx-auto">Every profession has its own language. AlecRae learns yours and ensures every document is flawless.</p>
           </div>
 
-          <div className="grid md:grid-cols-4 gap-5">
+          <div className="grid md:grid-cols-3 gap-6">
             {[
-              { title: 'Desktop App', desc: 'Mac + Windows. Types into any app. 5MB, launches in 2 seconds.',
-                icon: <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-indigo-500"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg> },
-              { title: 'Chrome Extension', desc: 'Real-time grammar on every website. Gmail, Slack, Claude, ChatGPT.',
-                icon: <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-indigo-500"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/></svg> },
-              { title: 'iPhone & iPad', desc: 'Custom keyboard with voice and grammar. Works in every iOS app.',
-                icon: <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-indigo-500"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> },
-              { title: 'Android', desc: 'Material 3 keyboard with voice, grammar, and translation built in.',
-                icon: <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-indigo-500"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> },
-            ].map(p => (
-              <div key={p.title} className="feature-card text-center">
-                <div className="flex justify-center mb-5">{p.icon}</div>
-                <h3 className="text-[15px] font-bold text-slate-800 mb-2">{p.title}</h3>
-                <p className="text-[13px] text-slate-400 leading-relaxed">{p.desc}</p>
+              {
+                title: 'Legal Professionals',
+                desc: 'Contracts, briefs, client correspondence, and court filings — corrected with precision. Confidentiality mode ensures privileged communications stay on your device.',
+                features: ['Legal terminology recognition', 'Confidential offline mode', 'Citation formatting'],
+              },
+              {
+                title: 'Accounting & Finance',
+                desc: 'Financial reports, engagement letters, and tax correspondence — polished to the standard your clients expect. Perfect number dictation every time.',
+                features: ['Financial term accuracy', 'Number formatting', 'Report template support'],
+              },
+              {
+                title: 'Executive Communication',
+                desc: 'Board reports, investor updates, and client proposals — every word carries weight. AlecRae ensures your writing matches your authority.',
+                features: ['Tone adjustment by context', 'AI rewrite modes', 'Preserve My Voice'],
+              },
+            ].map((p) => (
+              <div key={p.title} className="card p-7">
+                <h3 className="text-[16px] font-semibold text-gray-900 mb-2">{p.title}</h3>
+                <p className="text-[13px] text-gray-400 leading-relaxed mb-5">{p.desc}</p>
+                <ul className="space-y-2">
+                  {p.features.map((f) => (
+                    <li key={f} className="flex items-center gap-2 text-[12px] text-gray-500">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" strokeWidth="2"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════
-          KEY FEATURES — Bold cards with accent tops
-      ═══════════════════════════════════════════════ */}
-      <section ref={r2} className="reveal py-28 px-4 bg-slate-50">
+      {/* ── CAPABILITIES ─────────────────────────── */}
+      <section ref={r2} className="reveal py-24 px-4 bg-gray-50">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">More than just grammar</h2>
-            <p className="text-base text-slate-400 max-w-lg mx-auto">Six capabilities no competitor combines in one product.</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">Comprehensive writing intelligence</h2>
+            <p className="text-[15px] text-gray-400">More than a grammar checker. A complete writing assistant powered by the latest AI.</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { title: 'AI Grammar + Rewrite', desc: 'Catches every error — spelling, grammar, punctuation, word choice. Rewrites for tone: professional for contracts, casual for Slack. Powered by Claude AI.' },
-              { title: 'Voice-to-Text', desc: 'Press a hotkey, speak naturally, get perfect text. Three engines: Web Speech (free), Whisper (accurate), Deepgram Nova-3 (real-time streaming).' },
-              { title: 'Real-time Translation', desc: 'Speak in one language, text appears in another. 60+ languages including Te Reo Māori. Domain-aware for legal, medical, and finance.' },
-              { title: 'Custom Vocabulary', desc: 'Add industry terms the AI never gets wrong. "per se" not "per say". "fiduciary" not "fudiciary". Perfect for law, medicine, and accounting.' },
-              { title: 'Offline Mode', desc: 'Local Whisper model runs entirely on your device. Zero data leaves your computer. Audit-ready for attorney-client privilege.' },
-              { title: 'Number Dictation', desc: '"twelve million four hundred fifty-three thousand dollars" becomes $12,453,000. Currency-aware: NZD, USD, GBP, EUR.' },
-            ].map(f => (
-              <div key={f.title} className="feature-card">
-                <h3 className="text-[16px] font-bold text-slate-800 mb-3">{f.title}</h3>
-                <p className="text-[13px] text-slate-400 leading-relaxed">{f.desc}</p>
+              { title: 'AI Grammar Correction', desc: 'Powered by Claude AI — catches grammar, spelling, punctuation, and word choice errors that rule-based tools miss.', color: 'text-indigo-600 bg-indigo-50' },
+              { title: 'Context-Aware Tone', desc: 'Automatically detects the context — formal for client emails, precise for contracts, concise for internal memos.', color: 'text-emerald-600 bg-emerald-50' },
+              { title: 'Voice-to-Text Dictation', desc: 'Dictate at natural speaking speed with 99%+ accuracy. Ideal for lengthy documents, meeting notes, and correspondence.', color: 'text-blue-600 bg-blue-50' },
+              { title: 'Preserve My Voice', desc: 'AlecRae learns your writing style from samples. Corrections match your tone — not generic corporate language.', color: 'text-amber-600 bg-amber-50' },
+              { title: 'Confidential Offline Mode', desc: 'Full on-device processing. No data leaves your machine. Audit trail proves zero cloud transmission for compliance.', color: 'text-purple-600 bg-purple-50' },
+              { title: 'Works Everywhere', desc: 'Desktop app, Chrome extension, and upcoming mobile keyboards. Types directly into any application on any device.', color: 'text-rose-600 bg-rose-50' },
+            ].map((f) => (
+              <div key={f.title} className="card p-6">
+                <h3 className="text-[15px] font-semibold text-gray-800 mb-2">{f.title}</h3>
+                <p className="text-[13px] text-gray-400 leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════
-          BEFORE / AFTER — Side by side
-      ═══════════════════════════════════════════════ */}
-      <section ref={r3} className="reveal py-28 px-4">
+      {/* ── BEFORE/AFTER ──────────────────────────── */}
+      <section ref={r3} className="reveal py-24 px-4">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">See the difference</h2>
-            <p className="text-base text-slate-400">Real examples — including legal and financial writing.</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">Precision that matters</h2>
+            <p className="text-[15px] text-gray-400">Real corrections from professional documents. Every detail caught.</p>
           </div>
 
           <div className="space-y-5">
             {[
-              { before: 'hey can u send me the report i need it for tmrw thx', after: 'Hey, can you send me the report? I need it for tomorrow. Thanks!', tag: 'Email' },
-              { before: 'the defendant breached there fiduciary duty per say and we should of filed a motion in limine before the deposition', after: 'The defendant breached their fiduciary duty per se, and we should have filed a motion in limine before the deposition.', tag: 'Legal' },
-              { before: 'the total revenue was twelve million four hundred thousand which is a increase of 8.3 percent year on year', after: 'The total revenue was $12,400,000, an increase of 8.3% year on year.', tag: 'Finance' },
+              {
+                before: 'The parties here by agree to ammend the indemnification clause to include consequencial damages as outlined in the addendum',
+                after: 'The parties hereby agree to amend the indemnification clause to include consequential damages, as outlined in the addendum.',
+                context: 'Contract Amendment',
+              },
+              {
+                before: 'Revenue for Q3 was effected by the aquisition which resulted in a one-time charge of $2.1M that was not forseen in the original forcast',
+                after: 'Revenue for Q3 was affected by the acquisition, which resulted in a one-time charge of $2.1M that was not foreseen in the original forecast.',
+                context: 'Financial Report',
+              },
+              {
+                before: 'Dear Mr Thompson, Further to our discussion I am writing to confirm that we will procede with the engagment on the terms previously discussed',
+                after: 'Dear Mr. Thompson, further to our discussion, I am writing to confirm that we will proceed with the engagement on the terms previously discussed.',
+                context: 'Client Correspondence',
+              },
             ].map((ex, i) => (
               <div key={i} className="card overflow-hidden">
-                <div className="px-5 py-2 border-b border-slate-100 bg-slate-50/50">
-                  <span className="text-[11px] font-semibold text-indigo-500 uppercase tracking-wider">{ex.tag}</span>
+                <div className="px-5 py-2 border-b border-black/[0.04] bg-gray-50/50">
+                  <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">{ex.context}</span>
                 </div>
                 <div className="grid md:grid-cols-2">
-                  <div className="p-6 border-b md:border-b-0 md:border-r border-slate-100">
-                    <p className="text-[10px] text-red-400 uppercase tracking-wider mb-2 font-bold">Before</p>
-                    <p className="text-[14px] text-slate-400 leading-relaxed">{ex.before}</p>
+                  <div className="p-5 border-b md:border-b-0 md:border-r border-black/[0.04]">
+                    <p className="text-[10px] text-red-400 uppercase tracking-wider mb-2 font-medium">Draft</p>
+                    <p className="text-[13px] text-gray-400 leading-relaxed">{ex.before}</p>
                   </div>
-                  <div className="p-6 bg-emerald-50/30">
-                    <p className="text-[10px] text-emerald-600 uppercase tracking-wider mb-2 font-bold">After 48co</p>
-                    <p className="text-[14px] text-slate-800 leading-relaxed font-medium">{ex.after}</p>
+                  <div className="p-5 bg-green-50/30">
+                    <p className="text-[10px] text-green-600 uppercase tracking-wider mb-2 font-medium">Corrected</p>
+                    <p className="text-[13px] text-gray-800 leading-relaxed">{ex.after}</p>
                   </div>
                 </div>
               </div>
@@ -267,50 +287,11 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════
-          TRANSLATION SHOWCASE
-      ═══════════════════════════════════════════════ */}
-      <section ref={r4} className="reveal py-28 px-4 bg-gradient-to-b from-indigo-50/60 to-white">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-indigo-100 shadow-sm mb-8">
-            <span className="text-[13px] text-indigo-700 font-semibold">Live Translation</span>
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Speak English. Text appears in any language.</h2>
-          <p className="text-base text-slate-400 mb-14 max-w-lg mx-auto">Real-time translation while you dictate. Domain-aware for legal, medical, and finance terminology.</p>
-
-          <div className="card overflow-hidden max-w-lg mx-auto shadow-xl shadow-indigo-500/[0.06]">
-            <div className="px-6 py-3.5 border-b border-slate-100 bg-slate-50/70 flex items-center justify-between">
-              <span className="text-[12px] text-slate-500 font-mono font-medium">English &rarr; Spanish (Legal)</span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                <span className="text-[11px] text-emerald-600 font-medium">Live</span>
-              </span>
-            </div>
-            <div className="px-6 py-4 border-b border-slate-100">
-              <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-2 font-semibold">You speak</p>
-              <p className="text-[14px] text-slate-500 leading-relaxed italic">&ldquo;The defendant breached the fiduciary duty owed to the plaintiff under section twelve of the contract.&rdquo;</p>
-            </div>
-            <div className="px-6 py-5 bg-gradient-to-br from-indigo-50/40 to-violet-50/30">
-              <p className="text-[10px] text-indigo-500 uppercase tracking-widest mb-2 font-semibold">48co translates</p>
-              <p className="text-[15px] text-slate-800 leading-relaxed font-medium">&ldquo;El demandado incumplió el deber fiduciario adeudado al demandante en virtud del artículo doce del contrato.&rdquo;</p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-2 mt-10">
-            {['English','Spanish','French','German','Japanese','Chinese','Te Reo Māori','Korean','Arabic','Hindi','+ 50 more'].map(l => (
-              <span key={l} className="text-[12px] px-4 py-1.5 rounded-full bg-white border border-slate-100 text-slate-400 font-medium shadow-sm">{l}</span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════
-          LIVE DEMO
-      ═══════════════════════════════════════════════ */}
-      <section ref={r5} className="reveal py-28 px-4">
+      {/* ── LIVE DEMO ─────────────────────────────── */}
+      <section ref={r4} className="reveal py-24 px-4 bg-gray-50">
         <div className="max-w-lg mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Try voice-to-text now</h2>
-          <p className="text-base text-slate-400 mb-12">Click the mic and speak. Runs entirely in your browser.</p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-3">Try voice dictation</h2>
+          <p className="text-[15px] text-gray-400 mb-10">Click the microphone and speak. Runs entirely in your browser.</p>
 
           <div className="card overflow-hidden shadow-xl shadow-black/[0.04]">
             <div className="flex items-center justify-between px-6 py-3.5 border-b border-slate-100 bg-slate-50/70">
@@ -361,78 +342,45 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════
-          TRUST / SECURITY
-      ═══════════════════════════════════════════════ */}
-      <section ref={r6} className="reveal py-24 px-4 bg-slate-900 text-white">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Built for professionals who handle sensitive data</h2>
-            <p className="text-slate-400 text-base">Lawyers, accountants, and doctors trust 48co with their most confidential work.</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { title: 'Offline mode', desc: 'Run everything on your device. Zero data leaves your computer. Audit-ready for attorney-client privilege.',
-                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> },
-              { title: 'Encrypted everywhere', desc: 'TLS 1.3 in transit. We never store your text, voice, or documents. Your API keys stay on your device.',
-                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
-              { title: 'Your data, your control', desc: 'Clear privacy policy. No data selling. No model training on your content. Delete your account and all data anytime.',
-                icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> },
-            ].map(t => (
-              <div key={t.title} className="text-center">
-                <div className="flex justify-center mb-4">{t.icon}</div>
-                <h3 className="text-[16px] font-bold text-white mb-2">{t.title}</h3>
-                <p className="text-[13px] text-slate-400 leading-relaxed">{t.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════
-          PRICING
-      ═══════════════════════════════════════════════ */}
-      <section ref={r7} className="reveal py-28 px-4">
+      {/* ── PRICING TEASER ────────────────────────── */}
+      <section ref={r5} className="reveal py-24 px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Simple, honest pricing</h2>
-          <p className="text-base text-slate-400 mb-12">Free to start. No credit card needed.</p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-3">Straightforward pricing</h2>
+          <p className="text-[15px] text-gray-400 mb-10">Start free. Upgrade when your practice requires unlimited AI corrections.</p>
 
           <div className="grid md:grid-cols-3 gap-5 mb-12">
             {[
-              { name: 'Free', price: '$0', period: 'forever', desc: '10 corrections/day, 60 min voice/month', highlight: false },
-              { name: 'Pro', price: '$12', period: '/month', desc: 'Unlimited everything. Offline mode. Translation.', highlight: true },
-              { name: 'Business', price: '$29', period: '/month', desc: 'Up to 10 users. That\'s $2.90 each.', highlight: false },
-            ].map(p => (
-              <div key={p.name} className={`rounded-2xl p-8 text-center transition-all ${p.highlight ? 'bg-gradient-to-b from-indigo-600 to-violet-700 text-white shadow-xl shadow-indigo-500/20 scale-105' : 'bg-white border border-slate-200'}`}>
-                <p className={`text-[14px] font-semibold mb-3 ${p.highlight ? 'text-indigo-200' : 'text-slate-400'}`}>{p.name}</p>
-                <p className={`text-4xl font-extrabold mb-1 ${p.highlight ? 'text-white' : 'text-slate-900'}`}>{p.price}<span className={`text-lg font-normal ${p.highlight ? 'text-indigo-200' : 'text-slate-400'}`}>{p.period}</span></p>
-                <p className={`text-[13px] mt-3 ${p.highlight ? 'text-indigo-200' : 'text-slate-400'}`}>{p.desc}</p>
+              { name: 'Free', price: '$0', desc: 'Basic grammar and 60 min voice/month', highlight: false },
+              { name: 'Professional', price: '$12/mo', desc: 'Unlimited AI corrections, voice, and offline mode', highlight: true },
+              { name: 'Firm', price: '$29/mo', desc: 'Up to 10 practitioners. $2.90 per seat.', highlight: false },
+            ].map((p) => (
+              <div key={p.name} className={`card p-6 ${p.highlight ? 'border-indigo-200 bg-indigo-50/30 shadow-md shadow-indigo-500/5' : ''}`}>
+                <p className="text-[14px] font-semibold text-gray-600 mb-1">{p.name}</p>
+                <p className="text-3xl font-bold text-gray-900 mb-2">{p.price}</p>
+                <p className="text-[12px] text-gray-400">{p.desc}</p>
               </div>
             ))}
           </div>
 
-          <a href="/pricing" className="text-[14px] text-indigo-600 hover:text-indigo-500 font-semibold transition-colors">
-            See full pricing &amp; comparison &rarr;
+          <a href="/pricing" className="text-[13px] text-indigo-600 hover:text-indigo-500 font-medium transition-colors">
+            View full pricing and comparison &rarr;
           </a>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════
-          FINAL CTA
-      ═══════════════════════════════════════════════ */}
-      <section className="py-28 px-4 bg-gradient-to-b from-slate-50 to-white">
+      {/* ── CTA ───────────────────────────────────── */}
+      <section ref={r6} className="reveal py-24 px-4 bg-gray-50">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight">
-            Never send a badly<br />written message again.
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Your reputation depends on<br />every word you write.
           </h2>
-          <p className="text-slate-400 text-lg mb-12 max-w-lg mx-auto leading-relaxed">
-            AI grammar, voice-to-text, and translation — on every device, in every app. Free to start.
+          <p className="text-gray-400 text-[15px] mb-10 max-w-lg mx-auto leading-relaxed">
+            Professionals across legal, accounting, and executive roles rely on AlecRae Voice to ensure flawless written communication. Start your free trial today.
           </p>
-          <a href="/download" className="btn-primary text-base px-12 py-4">
-            Download 48co Free
+          <a href="/download" className="inline-block px-10 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-[15px] font-medium transition-all shadow-sm">
+            Start Free Trial
           </a>
-          <p className="text-[13px] text-slate-300 mt-6 font-medium">Mac + Windows + iPhone + Android + Chrome. No credit card required.</p>
+          <p className="text-[12px] text-gray-300 mt-4">Mac + Windows + Chrome. 7-day Pro trial. No credit card required.</p>
         </div>
       </section>
 

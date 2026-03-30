@@ -88,7 +88,7 @@ export default function App() {
     <div className="min-h-screen bg-white p-8" style={{ fontFamily: "'Inter', -apple-system, sans-serif" }}>
       <div className="max-w-sm mx-auto">
         <h1 className="text-xl font-bold text-gray-900 mb-1">
-          48<span className="text-indigo-600">co</span> Settings
+          AlecRae <span className="text-indigo-600">Voice</span> Settings
         </h1>
         <p className="text-sm text-gray-400 mb-8">Voice-to-text + AI grammar</p>
 

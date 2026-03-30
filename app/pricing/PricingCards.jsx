@@ -23,7 +23,7 @@ export default function PricingCards() {
     setLoading(plan)
     setMessage(null)
 
-    const token = localStorage.getItem('48co_token')
+    const token = localStorage.getItem('alecrae_token')
     if (!token) {
       setMessage({ type: 'error', text: 'Please sign in first, then come back to upgrade.' })
       setLoading(null)
@@ -57,7 +57,7 @@ export default function PricingCards() {
   async function handleManage() {
     setLoading('manage')
 
-    const token = localStorage.getItem('48co_token')
+    const token = localStorage.getItem('alecrae_token')
     if (!token) {
       setMessage({ type: 'error', text: 'Please sign in first.' })
       setLoading(null)
