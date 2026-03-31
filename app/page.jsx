@@ -172,7 +172,7 @@ export default function LandingPage() {
               { title: 'Context-Aware Tone', desc: 'Formal for client emails. Precise for contracts. Concise for internal memos. Detected automatically.' },
               { title: 'Preserve My Voice', desc: 'Learns your writing style from samples. Corrections match your tone — not generic corporate language.' },
               { title: 'Confidential Offline Mode', desc: 'Full on-device processing. No data leaves your machine. Audit trail for compliance.' },
-              { title: 'Every Platform', desc: 'Desktop app, Chrome extension, mobile keyboards. Types directly into any application.' },
+              { title: 'Every Platform', desc: 'Desktop app and Chrome extension. Mobile keyboards coming soon. Types directly into any application.' },
             ].map((f) => (
               <div key={f.title} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-6">
                 <h3 className="text-[14px] font-semibold text-white/70 mb-2">{f.title}</h3>

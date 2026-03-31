@@ -141,7 +141,7 @@ export default function DownloadPage() {
               { title: 'Works in Every App', desc: 'Types into any focused text field — browsers, Slack, VS Code, email, Word, anything.' },
               { title: 'Voice-to-Text Dictation', desc: 'Press a hotkey, speak naturally, text appears. 99%+ accuracy with Whisper in 200+ languages.' },
               { title: 'Context-Aware', desc: 'Automatically detects Gmail for professional tone, Slack for casual, code editors for technical.' },
-              { title: 'Real-Time Translation', desc: 'Speak English, text appears in 200+ languages. Domain-aware for legal, medical, and finance.' },
+              { title: 'Real-Time Translation (Coming Soon)', desc: 'Speak English, text appears in 200+ languages. Domain-aware for legal, medical, and finance.' },
               { title: 'Privacy First', desc: 'Local Whisper model for fully offline voice-to-text. Your voice and text never leave your device.' },
             ].map((f) => (
               <div key={f.title} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-5">

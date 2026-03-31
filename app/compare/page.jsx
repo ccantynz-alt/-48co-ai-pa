@@ -22,20 +22,21 @@ export default function ComparePage() {
     { name: 'Voice-to-Text', co: true, gram: false, wispr: true, sw: true, highlight: true },
     { name: 'Desktop App (any app)', co: true, gram: false, wispr: true, sw: true },
     { name: 'Chrome Extension', co: true, gram: true, wispr: false, sw: false },
-    { name: 'iPhone / iPad', co: true, gram: true, wispr: true, sw: true },
-    { name: 'Android', co: true, gram: true, wispr: true, sw: false },
+    { name: 'iPhone / iPad', co: 'Coming Soon', gram: true, wispr: true, sw: true },
+    { name: 'Android', co: 'Coming Soon', gram: true, wispr: true, sw: false },
     { name: 'Offline Mode', co: true, gram: false, wispr: false, sw: true },
     { name: 'Privacy (local-first)', co: true, gram: false, wispr: false, sw: true },
     { name: 'Windows + Mac', co: true, gram: true, wispr: true, sw: true },
     { name: '200+ Languages', co: true, gram: true, wispr: true, sw: true },
-    { name: 'Custom Vocabulary', co: true, gram: false, wispr: true, sw: true },
-    { name: 'Real-time Translation', co: true, gram: false, wispr: false, sw: false, highlight: true },
+    { name: 'Custom Vocabulary', co: 'Coming Soon', gram: false, wispr: true, sw: true },
+    { name: 'Real-time Translation', co: 'Coming Soon', gram: false, wispr: false, sw: false, highlight: true },
     { name: 'AI Engine', co: 'Claude', gram: 'Proprietary', wispr: 'Mixed', sw: 'Whisper' },
   ]
 
   function renderCell(val) {
     if (val === true) return <span className="text-gold-400 font-medium">Yes</span>
     if (val === false) return <span className="text-white/15">No</span>
+    if (val === 'Coming Soon') return <span className="text-gold-400/50 text-[11px] italic">Coming Soon</span>
     return <span className="text-white/30">{val}</span>
   }
 
@@ -117,7 +118,7 @@ export default function ComparePage() {
                 <p className="text-[12px] text-white/30">Business plan: $2.90/user. Grammarly charges $15/user ($150/mo for 10). We&apos;re 80% cheaper.</p>
               </div>
               <div>
-                <h3 className="text-[13px] text-white font-semibold mb-1">200+ Languages</h3>
+                <h3 className="text-[13px] text-white font-semibold mb-1">200+ Languages <span className="text-[10px] text-gold-400/50 italic font-normal">(coming soon)</span></h3>
                 <p className="text-[12px] text-white/30">Real-time translation with domain-aware terminology for legal, medical, and finance contexts.</p>
               </div>
             </div>
