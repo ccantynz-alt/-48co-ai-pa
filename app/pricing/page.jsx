@@ -63,8 +63,8 @@ export default function PricingPage() {
                   { f: 'Context-aware (app detection)', us: true, them: false },
                   { f: 'Desktop app (types into any app)', us: true, them: false },
                   { f: 'Offline mode (privacy-first)', us: true, them: false },
-                  { f: 'Real-time translation (200+ languages)', us: true, them: false },
-                  { f: 'iPhone & Android keyboard', us: true, them: true },
+                  { f: 'Real-time translation (200+ languages)', us: 'Coming Soon', them: false },
+                  { f: 'iPhone & Android keyboard', us: 'Coming Soon', them: true },
                   { f: 'AI engine', us: 'Claude (latest)', them: 'Proprietary' },
                 ].map((row) => (
                   <tr key={row.f} className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
@@ -95,7 +95,7 @@ export default function PricingPage() {
               { q: 'What does Pro include that Free doesn\'t?', a: 'Unlimited corrections, unlimited voice, AI Rewrite Mode (polishes your tone), context-aware formatting, desktop app, offline mode, and the upcoming mobile keyboards.' },
               { q: 'How is this better than Grammarly?', a: 'AlecRae Voice uses Claude AI (the latest model) instead of rules-based checking. It also includes voice-to-text, works as a desktop app that types into ANY application (not just browsers), costs $12/mo vs $30/mo, and our Business plan is $29/mo for 10 users vs Grammarly\'s $150/mo.' },
               { q: 'Do I need an API key?', a: 'No. All plans use our managed AI service. You just sign up and start using it.' },
-              { q: 'Will it work on my phone?', a: 'iPhone and Android keyboard apps are coming soon. They\'ll replace your default keyboard and correct everything you type — texts, emails, notes, everything.' },
+              { q: 'Will it work on my phone?', a: 'iPhone and Android keyboard apps are in development and coming soon. They\'ll replace your default keyboard and correct everything you type — texts, emails, notes, everything.' },
               { q: 'Can I cancel anytime?', a: 'Yes, instantly. No contracts, no cancellation fees, no questions asked. Monthly plans cancel at the end of the billing period. Annual plans can be refunded within 14 days.' },
             ].map((faq) => (
               <div key={faq.q} className="border-b border-white/[0.04] pb-6">
