@@ -7,7 +7,7 @@ export default function Nav() {
   const [open, setOpen] = useState(false)
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-navy-950/95 backdrop-blur-xl border-b border-white/10">
+    <nav className="fixed top-0 w-full z-50 bg-navy-950/95 backdrop-blur-xl border-b border-white/[0.10]">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
         <a href="/" className="flex items-center gap-2.5">
           <span className="text-[18px] font-bold tracking-tight text-white">
