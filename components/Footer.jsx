@@ -17,7 +17,7 @@ export default function Footer() {
 
           {/* Product */}
           <div>
-            <p className="text-[10px] font-semibold text-white/30 uppercase tracking-[0.15em] mb-4">Product</p>
+            <p className="text-[10px] font-semibold text-white/50 uppercase tracking-[0.15em] mb-4">Product</p>
             <div className="flex flex-col gap-2.5">
               <a href="/download" className="text-[12px] text-white/50 hover:text-white/80 transition-colors">Download</a>
               <a href="/install" className="text-[12px] text-white/50 hover:text-white/80 transition-colors">Chrome Extension</a>
@@ -29,7 +29,7 @@ export default function Footer() {
 
           {/* Company */}
           <div>
-            <p className="text-[10px] font-semibold text-white/30 uppercase tracking-[0.15em] mb-4">Company</p>
+            <p className="text-[10px] font-semibold text-white/50 uppercase tracking-[0.15em] mb-4">Company</p>
             <div className="flex flex-col gap-2.5">
               <a href="/security" className="text-[12px] text-white/50 hover:text-white/80 transition-colors">Security</a>
               <a href="/privacy" className="text-[12px] text-white/50 hover:text-white/80 transition-colors">Privacy Policy</a>
@@ -40,7 +40,7 @@ export default function Footer() {
 
           {/* Trust */}
           <div>
-            <p className="text-[10px] font-semibold text-white/30 uppercase tracking-[0.15em] mb-4">Trust</p>
+            <p className="text-[10px] font-semibold text-white/50 uppercase tracking-[0.15em] mb-4">Trust</p>
             <div className="flex flex-col gap-2.5">
               <span className="text-[12px] text-white/40">256-bit AES encryption</span>
               <span className="text-[12px] text-white/40">GDPR compliant</span>

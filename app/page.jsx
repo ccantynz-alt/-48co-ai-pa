@@ -68,8 +68,8 @@ export default function LandingPage() {
       <Nav />
 
       {/* ── HERO ──────────────────────────────────── */}
-      <section className="pt-40 pb-32 px-6 md:px-8 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_-5%,rgba(218,167,59,0.07),transparent_70%)]" />
+      <section className="pt-44 pb-32 px-6 md:px-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_-5%,rgba(218,167,59,0.12),transparent_70%)]" />
 
         <div className="max-w-3xl mx-auto text-center relative z-10">
           <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-bold tracking-tight text-white mb-6 animate-fade-up leading-[1.15]">
@@ -83,7 +83,7 @@ export default function LandingPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center mb-20 animate-fade-up" style={{ animationDelay: '0.25s' }}>
-            <a href="/download" className="px-8 py-3.5 rounded-xl bg-gold-400 hover:bg-gold-300 text-navy-950 text-[15px] font-semibold transition-all">
+            <a href="/download" className="px-8 py-3.5 rounded-xl bg-gold-400 hover:bg-gold-300 text-navy-950 text-[15px] font-semibold transition-all shadow-lg shadow-gold-400/20">
               Start Free Trial
             </a>
             <a href="/security" className="px-8 py-3.5 rounded-xl border border-white/15 text-white/60 text-[15px] font-medium hover:border-white/25 hover:text-white/80 transition-all">
@@ -172,7 +172,7 @@ export default function LandingPage() {
               { title: 'Context-Aware Tone', desc: 'Formal for client emails. Precise for contracts. Concise for internal memos. Detected automatically.' },
               { title: 'Preserve My Voice', desc: 'Learns your writing style from samples. Corrections match your tone — not generic corporate language.' },
               { title: 'Confidential Offline Mode', desc: 'Full on-device processing. No data leaves your machine. Audit trail for compliance.' },
-              { title: 'Every Platform', desc: 'Desktop app, Chrome extension, mobile keyboards. Types directly into any application.' },
+              { title: 'Every Platform', desc: 'Desktop app and Chrome extension. Mobile keyboards coming soon. Types directly into any application.' },
             ].map((f) => (
               <div key={f.title} className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-6">
                 <h3 className="text-[14px] font-semibold text-white mb-2">{f.title}</h3>
@@ -236,7 +236,7 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-3 gap-4">
             {[
               { name: 'Free', price: '$0', desc: 'Basic grammar. 60 min voice/month.' },
-              { name: 'Professional', price: '$12', period: '/mo', desc: 'Unlimited corrections, voice, offline mode.' },
+              { name: 'Professional', price: '$12', period: '/mo', desc: 'Unlimited corrections, voice, offline mode.', highlight: true },
               { name: 'Firm', price: '$29', period: '/mo', desc: 'Up to 10 practitioners. $2.90 per seat.' },
             ].map((p) => (
               <div key={p.name} className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-8 text-center">
@@ -262,7 +262,7 @@ export default function LandingPage() {
           <p className="text-white/50 text-[15px] mb-10 max-w-md mx-auto leading-relaxed">
             Start your free trial today. No credit card required.
           </p>
-          <a href="/download" className="inline-block px-10 py-3.5 rounded-xl bg-gold-400 hover:bg-gold-300 text-navy-950 text-[15px] font-semibold transition-all">
+          <a href="/download" className="inline-block px-10 py-3.5 rounded-xl bg-gold-400 hover:bg-gold-300 text-navy-950 text-[15px] font-semibold transition-all shadow-lg shadow-gold-400/20">
             Get Started
           </a>
         </div>

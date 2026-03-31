@@ -59,9 +59,9 @@ export default function InstallPage() {
             {[
               { title: 'AI Grammar Check', desc: 'Scans every text field you type in. Shows corrections in a clean tooltip. Click to fix.' },
               { title: 'Voice-to-Text', desc: 'Press middle-click or Ctrl+Shift+Space to dictate. Text streams into the focused field as you speak.' },
-              { title: 'Live Translation', desc: 'Speak English, text appears in 200+ languages. Domain-aware for legal, medical, and finance.' },
-              { title: 'Real-Time Streaming', desc: 'Deepgram Nova-3 engine option for sub-500ms latency. Words appear as you speak.' },
-              { title: 'Custom Vocabulary', desc: 'Add specialist terms the AI should never get wrong — legal Latin, medical terms, client names.' },
+              { title: 'Live Translation (Coming Soon)', desc: 'Speak English, text appears in 200+ languages. Domain-aware for legal, medical, and finance.' },
+              { title: 'Real-Time Streaming (Coming Soon)', desc: 'Deepgram Nova-3 engine option for sub-500ms latency. Words appear as you speak.' },
+              { title: 'Custom Vocabulary (Coming Soon)', desc: 'Add specialist terms the AI should never get wrong — legal Latin, medical terms, client names.' },
               { title: 'Works Everywhere', desc: 'Gmail, Claude, ChatGPT, Slack, Google Docs, LinkedIn — any website with a text field.' },
             ].map((f) => (
               <div key={f.title} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-5">

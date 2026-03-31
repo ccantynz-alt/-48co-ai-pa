@@ -13,7 +13,7 @@ export default function Nav() {
           <span className="text-[18px] font-bold tracking-tight text-white">
             Alec<span className="text-gold-400">Rae</span>
           </span>
-          <span className="text-[9px] text-white/30 font-semibold tracking-[0.2em] uppercase hidden sm:inline">Voice</span>
+          <span className="text-[9px] text-white/50 font-semibold tracking-[0.2em] uppercase hidden sm:inline">Voice</span>
         </a>
 
         <div className="hidden md:flex items-center gap-8">
@@ -43,7 +43,7 @@ export default function Nav() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-navy-950 border-t border-white/[0.06] px-6 py-5 flex flex-col gap-4">
+        <div className="md:hidden bg-navy-950 border-t border-white/10 px-6 py-5 flex flex-col gap-4">
           <Link href="/compare" className="text-[14px] text-white/50 hover:text-white transition-colors font-medium py-1">Compare</Link>
           <Link href="/pricing" className="text-[14px] text-white/50 hover:text-white transition-colors font-medium py-1">Pricing</Link>
           <Link href="/security" className="text-[14px] text-white/50 hover:text-white transition-colors font-medium py-1">Security</Link>
