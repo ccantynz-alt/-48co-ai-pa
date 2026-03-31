@@ -133,7 +133,7 @@ export default function LandingPage() {
             Professionals who write for a living
           </h2>
 
-          <div className="grid md:grid-cols-3 gap-px bg-white/[0.04] rounded-2xl overflow-hidden border border-white/[0.04]">
+          <div className="grid md:grid-cols-3 gap-4">
             {[
               {
                 title: 'Legal',
@@ -148,7 +148,7 @@ export default function LandingPage() {
                 desc: 'Board reports, investor updates, client proposals. Your writing matches your authority.',
               },
             ].map((p) => (
-              <div key={p.title} className="bg-navy-950 p-8">
+              <div key={p.title} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-8">
                 <h3 className="text-[15px] font-semibold text-white/80 mb-3">{p.title}</h3>
                 <p className="text-[13px] text-white/25 leading-relaxed">{p.desc}</p>
               </div>
@@ -165,7 +165,7 @@ export default function LandingPage() {
             Comprehensive writing intelligence
           </h2>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               { title: 'AI Grammar Correction', desc: 'Powered by Claude AI. Catches grammar, spelling, punctuation, and word choice errors that rule-based tools miss.' },
               { title: 'Voice-to-Text Dictation', desc: 'Dictate at natural speaking speed. 99%+ accuracy in 50+ languages. Cloud or fully offline.' },
@@ -174,7 +174,7 @@ export default function LandingPage() {
               { title: 'Confidential Offline Mode', desc: 'Full on-device processing. No data leaves your machine. Audit trail for compliance.' },
               { title: 'Every Platform', desc: 'Desktop app, Chrome extension, mobile keyboards. Types directly into any application.' },
             ].map((f) => (
-              <div key={f.title} className="border-l border-white/[0.06] pl-6">
+              <div key={f.title} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-6">
                 <h3 className="text-[14px] font-semibold text-white/70 mb-2">{f.title}</h3>
                 <p className="text-[13px] text-white/20 leading-relaxed">{f.desc}</p>
               </div>
@@ -233,13 +233,13 @@ export default function LandingPage() {
           <p className="text-[11px] text-gold-400/60 uppercase tracking-[0.2em] mb-4">Pricing</p>
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-16">Straightforward</h2>
 
-          <div className="grid md:grid-cols-3 gap-px bg-white/[0.04] rounded-2xl overflow-hidden border border-white/[0.04]">
+          <div className="grid md:grid-cols-3 gap-4">
             {[
               { name: 'Free', price: '$0', desc: 'Basic grammar. 60 min voice/month.' },
               { name: 'Professional', price: '$12', period: '/mo', desc: 'Unlimited corrections, voice, offline mode.' },
               { name: 'Firm', price: '$29', period: '/mo', desc: 'Up to 10 practitioners. $2.90 per seat.' },
             ].map((p) => (
-              <div key={p.name} className="bg-navy-950 p-8 text-center">
+              <div key={p.name} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-8 text-center">
                 <p className="text-[12px] text-white/30 font-medium mb-3">{p.name}</p>
                 <p className="text-3xl font-bold text-white mb-1">{p.price}<span className="text-[14px] text-white/20 font-normal">{p.period || ''}</span></p>
                 <p className="text-[12px] text-white/20 mt-3">{p.desc}</p>
