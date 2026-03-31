@@ -4,13 +4,13 @@ export default function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="bg-navy-950 border-t border-white/10 py-16">
+    <footer className="bg-navy-950 border-t border-white/[0.08] py-16">
       <div className="max-w-5xl mx-auto px-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <span className="text-[16px] font-bold text-white">Alec<span className="text-gold-400">Rae</span></span>
-            <p className="text-[12px] text-white/50 mt-3 leading-relaxed">
+            <p className="text-[12px] text-white/45 mt-3 leading-relaxed">
               AI-powered grammar correction and voice-to-text for professionals who demand precision.
             </p>
           </div>
@@ -19,11 +19,11 @@ export default function Footer() {
           <div>
             <p className="text-[10px] font-semibold text-white/50 uppercase tracking-[0.15em] mb-4">Product</p>
             <div className="flex flex-col gap-2.5">
-              <a href="/download" className="text-[12px] text-white/50 hover:text-white transition-colors">Download</a>
-              <a href="/install" className="text-[12px] text-white/50 hover:text-white transition-colors">Chrome Extension</a>
-              <a href="/pricing" className="text-[12px] text-white/50 hover:text-white transition-colors">Pricing</a>
-              <a href="/compare" className="text-[12px] text-white/50 hover:text-white transition-colors">Compare</a>
-              <a href="/live" className="text-[12px] text-white/50 hover:text-white transition-colors">Live Demo</a>
+              <a href="/download" className="text-[12px] text-white/50 hover:text-white/80 transition-colors">Download</a>
+              <a href="/install" className="text-[12px] text-white/50 hover:text-white/80 transition-colors">Chrome Extension</a>
+              <a href="/pricing" className="text-[12px] text-white/50 hover:text-white/80 transition-colors">Pricing</a>
+              <a href="/compare" className="text-[12px] text-white/50 hover:text-white/80 transition-colors">Compare</a>
+              <a href="/live" className="text-[12px] text-white/50 hover:text-white/80 transition-colors">Live Demo</a>
             </div>
           </div>
 
@@ -31,10 +31,10 @@ export default function Footer() {
           <div>
             <p className="text-[10px] font-semibold text-white/50 uppercase tracking-[0.15em] mb-4">Company</p>
             <div className="flex flex-col gap-2.5">
-              <a href="/security" className="text-[12px] text-white/50 hover:text-white transition-colors">Security</a>
-              <a href="/privacy" className="text-[12px] text-white/50 hover:text-white transition-colors">Privacy Policy</a>
-              <a href="/terms" className="text-[12px] text-white/50 hover:text-white transition-colors">Terms of Service</a>
-              <a href="mailto:support@alecrae.ai" className="text-[12px] text-white/50 hover:text-white transition-colors">Contact</a>
+              <a href="/security" className="text-[12px] text-white/50 hover:text-white/80 transition-colors">Security</a>
+              <a href="/privacy" className="text-[12px] text-white/50 hover:text-white/80 transition-colors">Privacy Policy</a>
+              <a href="/terms" className="text-[12px] text-white/50 hover:text-white/80 transition-colors">Terms of Service</a>
+              <a href="mailto:support@alecrae.ai" className="text-[12px] text-white/50 hover:text-white/80 transition-colors">Contact</a>
             </div>
           </div>
 
@@ -51,15 +51,15 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="pt-6 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-[11px] text-white/30">
             &copy; {year} AlecRae Ltd. Built in New Zealand. All rights reserved.
           </p>
           <div className="flex items-center gap-5 text-[11px] text-white/30">
-            <a href="/privacy" className="hover:text-white/60 transition-colors">Privacy</a>
-            <a href="/terms" className="hover:text-white/60 transition-colors">Terms</a>
-            <a href="/security" className="hover:text-white/60 transition-colors">Security</a>
-            <a href="mailto:support@alecrae.ai" className="hover:text-white/60 transition-colors">support@alecrae.ai</a>
+            <a href="/privacy" className="hover:text-white/40 transition-colors">Privacy</a>
+            <a href="/terms" className="hover:text-white/40 transition-colors">Terms</a>
+            <a href="/security" className="hover:text-white/40 transition-colors">Security</a>
+            <a href="mailto:support@alecrae.ai" className="hover:text-white/40 transition-colors">support@alecrae.ai</a>
           </div>
         </div>
       </div>
