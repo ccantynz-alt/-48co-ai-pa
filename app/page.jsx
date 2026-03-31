@@ -63,13 +63,13 @@ export default function LandingPage() {
   const r1 = useReveal(), r2 = useReveal(), r3 = useReveal(), r4 = useReveal(), r5 = useReveal()
 
   return (
-    <main className="min-h-screen bg-navy-950 overflow-x-hidden">
+    <main className="min-h-screen bg-navy-950">
 
       <Nav />
 
       {/* ── HERO ──────────────────────────────────── */}
-      <section className="pt-44 pb-32 px-6 md:px-8 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_-5%,rgba(218,167,59,0.12),transparent_70%)]" />
+      <section className="pt-48 pb-32 px-6 md:px-8 relative">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(218,167,59,0.15),transparent_70%)]" />
 
         <div className="max-w-3xl mx-auto text-center relative z-10">
           <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-bold tracking-tight text-white mb-6 animate-fade-up leading-[1.15]">
@@ -78,46 +78,46 @@ export default function LandingPage() {
             <span className="text-gold-400">beyond reproach.</span>
           </h1>
 
-          <p className="text-[17px] text-white/60 max-w-lg mx-auto leading-relaxed mb-12 animate-fade-up" style={{ animationDelay: '0.15s' }}>
+          <p className="text-lg text-white/70 max-w-lg mx-auto leading-relaxed mb-12 animate-fade-up" style={{ animationDelay: '0.15s' }}>
             AI-powered grammar correction and voice-to-text for lawyers, accountants, and executives who cannot afford errors.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center mb-20 animate-fade-up" style={{ animationDelay: '0.25s' }}>
-            <a href="/download" className="px-8 py-3.5 rounded-xl bg-gold-400 hover:bg-gold-300 text-navy-950 text-[15px] font-semibold transition-all shadow-lg shadow-gold-400/20">
+            <a href="/download" className="px-8 py-3.5 rounded-xl bg-gold-400 hover:bg-gold-300 text-navy-950 text-[15px] font-semibold transition-all shadow-lg shadow-gold-400/25">
               Start Free Trial
             </a>
-            <a href="/security" className="px-8 py-3.5 rounded-xl border border-white/15 text-white/60 text-[15px] font-medium hover:border-white/25 hover:text-white/80 transition-all">
+            <a href="/security" className="px-8 py-3.5 rounded-xl border-2 border-white/30 text-white/70 text-[15px] font-medium hover:border-white/50 hover:text-white transition-all">
               View Security
             </a>
           </div>
 
           {/* Demo Card */}
           <div className="max-w-xl mx-auto animate-fade-up" style={{ animationDelay: '0.35s' }}>
-            <div className="rounded-2xl overflow-hidden bg-white/[0.04] border border-white/[0.10]">
-              <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.08]">
-                <span className="text-[11px] text-white/40 font-mono">{typing.label}</span>
+            <div className="rounded-2xl overflow-hidden bg-navy-800 border border-white/20 shadow-2xl shadow-black/40">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-white/15">
+                <span className="text-[11px] text-white/50 font-mono">{typing.label}</span>
                 <span className={`w-2 h-2 rounded-full ${typing.isTyping ? 'bg-gold-400' : 'bg-white/30'}`} />
               </div>
-              <div className="px-5 py-3 border-b border-white/[0.06]">
-                <p className="text-[13px] text-white/35 leading-relaxed line-through decoration-white/15">{typing.before}</p>
+              <div className="px-5 py-3 border-b border-white/10">
+                <p className="text-[13px] text-white/40 leading-relaxed line-through decoration-white/20">{typing.before}</p>
               </div>
               <div className="px-5 py-4">
-                <p className={`text-[14px] text-white/80 leading-relaxed whitespace-pre-wrap min-h-[44px]`}>
+                <p className="text-[14px] text-white/90 leading-relaxed whitespace-pre-wrap min-h-[44px]">
                   {typing.after || <span className="text-white/20">|</span>}
                 </p>
               </div>
             </div>
           </div>
 
-          <p className="text-[11px] text-white/30 mt-10 tracking-wide">
+          <p className="text-[12px] text-white/40 mt-10 tracking-wide">
             Mac &middot; Windows &middot; Chrome &middot; Free to start
           </p>
         </div>
       </section>
 
       {/* ── TRUST BAR ─────────────────────────────── */}
-      <section className="py-5 px-6 md:px-8 border-y border-white/[0.08]">
-        <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-10 text-[11px] text-white/40 tracking-wide">
+      <section className="py-5 px-6 md:px-8 border-y border-white/15">
+        <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-10 text-[12px] text-white/50 tracking-wide font-medium">
           <span>256-bit encryption</span>
           <span>GDPR compliant</span>
           <span>SOC 2 in progress</span>
@@ -128,12 +128,12 @@ export default function LandingPage() {
       {/* ── WHO IT'S FOR ──────────────────────────── */}
       <section ref={r1} className="reveal py-28 px-6 md:px-8">
         <div className="max-w-4xl mx-auto">
-          <p className="text-[11px] text-gold-400/80 uppercase tracking-[0.2em] text-center mb-4">Built for precision</p>
+          <p className="text-[12px] text-gold-400 uppercase tracking-[0.2em] text-center mb-4 font-semibold">Built for precision</p>
           <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-16">
             Professionals who write for a living
           </h2>
 
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-3 gap-5">
             {[
               {
                 title: 'Legal',
@@ -148,9 +148,9 @@ export default function LandingPage() {
                 desc: 'Board reports, investor updates, client proposals. Your writing matches your authority.',
               },
             ].map((p) => (
-              <div key={p.title} className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-8">
-                <h3 className="text-[15px] font-semibold text-white mb-3">{p.title}</h3>
-                <p className="text-[13px] text-white/50 leading-relaxed">{p.desc}</p>
+              <div key={p.title} className="rounded-xl border border-white/20 bg-navy-800 p-8">
+                <h3 className="text-base font-semibold text-white mb-3">{p.title}</h3>
+                <p className="text-sm text-white/60 leading-relaxed">{p.desc}</p>
               </div>
             ))}
           </div>
@@ -158,14 +158,14 @@ export default function LandingPage() {
       </section>
 
       {/* ── CAPABILITIES ─────────────────────────── */}
-      <section ref={r2} className="reveal py-28 px-6 md:px-8 border-t border-white/[0.08]">
+      <section ref={r2} className="reveal py-28 px-6 md:px-8 border-t border-white/15">
         <div className="max-w-4xl mx-auto">
-          <p className="text-[11px] text-gold-400/80 uppercase tracking-[0.2em] text-center mb-4">Capabilities</p>
+          <p className="text-[12px] text-gold-400 uppercase tracking-[0.2em] text-center mb-4 font-semibold">Capabilities</p>
           <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-16">
             Comprehensive writing intelligence
           </h2>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
               { title: 'AI Grammar Correction', desc: 'Powered by Claude AI. Catches grammar, spelling, punctuation, and word choice errors that rule-based tools miss.' },
               { title: 'Voice-to-Text Dictation', desc: 'Dictate at natural speaking speed. 99%+ accuracy in 50+ languages. Cloud or fully offline.' },
@@ -174,9 +174,9 @@ export default function LandingPage() {
               { title: 'Confidential Offline Mode', desc: 'Full on-device processing. No data leaves your machine. Audit trail for compliance.' },
               { title: 'Every Platform', desc: 'Desktop app and Chrome extension. Mobile keyboards coming soon. Types directly into any application.' },
             ].map((f) => (
-              <div key={f.title} className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-6">
-                <h3 className="text-[14px] font-semibold text-white mb-2">{f.title}</h3>
-                <p className="text-[13px] text-white/50 leading-relaxed">{f.desc}</p>
+              <div key={f.title} className="rounded-xl border border-white/20 bg-navy-800 p-6">
+                <h3 className="text-sm font-semibold text-white mb-2">{f.title}</h3>
+                <p className="text-sm text-white/60 leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -184,14 +184,14 @@ export default function LandingPage() {
       </section>
 
       {/* ── BEFORE/AFTER ──────────────────────────── */}
-      <section ref={r3} className="reveal py-28 px-6 md:px-8 border-t border-white/[0.08]">
+      <section ref={r3} className="reveal py-28 px-6 md:px-8 border-t border-white/15">
         <div className="max-w-3xl mx-auto">
-          <p className="text-[11px] text-gold-400/80 uppercase tracking-[0.2em] text-center mb-4">Precision</p>
+          <p className="text-[12px] text-gold-400 uppercase tracking-[0.2em] text-center mb-4 font-semibold">Precision</p>
           <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-16">
             Every detail caught
           </h2>
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             {[
               {
                 before: 'The parties here by agree to ammend the indemnification clause to include consequencial damages as outlined in the addendum',
@@ -209,16 +209,18 @@ export default function LandingPage() {
                 context: 'Client Letter',
               },
             ].map((ex, i) => (
-              <div key={i} className="rounded-xl border border-white/[0.10] overflow-hidden">
-                <div className="px-5 py-2 border-b border-white/[0.08]">
-                  <span className="text-[10px] text-white/35 font-medium uppercase tracking-wider">{ex.context}</span>
+              <div key={i} className="rounded-xl border border-white/20 overflow-hidden bg-navy-800 shadow-lg shadow-black/30">
+                <div className="px-5 py-2.5 border-b border-white/15 bg-navy-700/30">
+                  <span className="text-[11px] text-white/50 font-semibold uppercase tracking-wider">{ex.context}</span>
                 </div>
                 <div className="grid md:grid-cols-2">
-                  <div className="p-5 border-b md:border-b-0 md:border-r border-white/[0.08]">
-                    <p className="text-[13px] text-white/40 leading-relaxed">{ex.before}</p>
+                  <div className="p-5 border-b md:border-b-0 md:border-r border-white/15">
+                    <p className="text-[11px] text-red-400/80 uppercase tracking-wider mb-2 font-semibold">Before</p>
+                    <p className="text-sm text-white/50 leading-relaxed">{ex.before}</p>
                   </div>
                   <div className="p-5">
-                    <p className="text-[13px] text-white/80 leading-relaxed">{ex.after}</p>
+                    <p className="text-[11px] text-gold-400 uppercase tracking-wider mb-2 font-semibold">After</p>
+                    <p className="text-sm text-white/90 leading-relaxed">{ex.after}</p>
                   </div>
                 </div>
               </div>
@@ -228,41 +230,45 @@ export default function LandingPage() {
       </section>
 
       {/* ── PRICING ───────────────────────────────── */}
-      <section ref={r4} className="reveal py-28 px-6 md:px-8 border-t border-white/[0.08]">
+      <section ref={r4} className="reveal py-28 px-6 md:px-8 border-t border-white/15">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[11px] text-gold-400/80 uppercase tracking-[0.2em] mb-4">Pricing</p>
+          <p className="text-[12px] text-gold-400 uppercase tracking-[0.2em] mb-4 font-semibold">Pricing</p>
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-16">Straightforward</h2>
 
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-3 gap-5">
             {[
               { name: 'Free', price: '$0', desc: 'Basic grammar. 60 min voice/month.' },
               { name: 'Professional', price: '$12', period: '/mo', desc: 'Unlimited corrections, voice, offline mode.', highlight: true },
               { name: 'Firm', price: '$29', period: '/mo', desc: 'Up to 10 practitioners. $2.90 per seat.' },
             ].map((p) => (
-              <div key={p.name} className="rounded-xl border border-white/[0.10] bg-white/[0.04] p-8 text-center">
-                <p className="text-[12px] text-white/50 font-medium mb-3">{p.name}</p>
-                <p className="text-3xl font-bold text-white mb-1">{p.price}<span className="text-[14px] text-white/40 font-normal">{p.period || ''}</span></p>
-                <p className="text-[12px] text-white/45 mt-3">{p.desc}</p>
+              <div key={p.name} className={`rounded-xl border p-8 text-center ${
+                p.highlight
+                  ? 'border-gold-400/50 bg-gold-400/10 shadow-xl shadow-gold-400/10 ring-1 ring-gold-400/30'
+                  : 'border-white/20 bg-navy-800'
+              }`}>
+                <p className="text-sm text-white/60 font-medium mb-3">{p.name}</p>
+                <p className="text-3xl font-bold text-white mb-1">{p.price}<span className="text-sm text-white/50 font-normal">{p.period || ''}</span></p>
+                <p className="text-sm text-white/50 mt-3">{p.desc}</p>
               </div>
             ))}
           </div>
 
-          <a href="/pricing" className="inline-block mt-8 text-[13px] text-white/45 hover:text-white/70 transition-colors">
+          <a href="/pricing" className="inline-block mt-8 text-sm text-white/60 hover:text-white/80 transition-colors">
             View full pricing &rarr;
           </a>
         </div>
       </section>
 
       {/* ── CTA ───────────────────────────────────── */}
-      <section ref={r5} className="reveal py-28 px-6 md:px-8 border-t border-white/[0.08]">
+      <section ref={r5} className="reveal py-28 px-6 md:px-8 border-t border-white/15">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-5">
             Your reputation depends on<br />every word you write.
           </h2>
-          <p className="text-white/50 text-[15px] mb-10 max-w-md mx-auto leading-relaxed">
+          <p className="text-white/60 text-base mb-10 max-w-md mx-auto leading-relaxed">
             Start your free trial today. No credit card required.
           </p>
-          <a href="/download" className="inline-block px-10 py-3.5 rounded-xl bg-gold-400 hover:bg-gold-300 text-navy-950 text-[15px] font-semibold transition-all shadow-lg shadow-gold-400/20">
+          <a href="/download" className="inline-block px-10 py-3.5 rounded-xl bg-gold-400 hover:bg-gold-300 text-navy-950 text-[15px] font-semibold transition-all shadow-lg shadow-gold-400/25">
             Get Started
           </a>
         </div>
