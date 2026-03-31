@@ -68,7 +68,7 @@ export default function LandingPage() {
       <Nav />
 
       {/* ── HERO ──────────────────────────────────── */}
-      <section className="pt-40 pb-32 px-4 relative overflow-hidden">
+      <section className="pt-40 pb-32 px-6 md:px-8 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_-5%,rgba(218,167,59,0.07),transparent_70%)]" />
 
         <div className="max-w-3xl mx-auto text-center relative z-10">
@@ -116,7 +116,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── TRUST BAR ─────────────────────────────── */}
-      <section className="py-5 px-4 border-y border-white/[0.04]">
+      <section className="py-5 px-6 md:px-8 border-y border-white/[0.04]">
         <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-10 text-[11px] text-white/20 tracking-wide">
           <span>256-bit encryption</span>
           <span>GDPR compliant</span>
@@ -126,7 +126,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── WHO IT'S FOR ──────────────────────────── */}
-      <section ref={r1} className="reveal py-28 px-4">
+      <section ref={r1} className="reveal py-28 px-6 md:px-8">
         <div className="max-w-4xl mx-auto">
           <p className="text-[11px] text-gold-400/60 uppercase tracking-[0.2em] text-center mb-4">Built for precision</p>
           <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-16">
@@ -158,7 +158,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── CAPABILITIES ─────────────────────────── */}
-      <section ref={r2} className="reveal py-28 px-4 border-t border-white/[0.04]">
+      <section ref={r2} className="reveal py-28 px-6 md:px-8 border-t border-white/[0.04]">
         <div className="max-w-4xl mx-auto">
           <p className="text-[11px] text-gold-400/60 uppercase tracking-[0.2em] text-center mb-4">Capabilities</p>
           <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-16">
@@ -184,7 +184,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── BEFORE/AFTER ──────────────────────────── */}
-      <section ref={r3} className="reveal py-28 px-4 border-t border-white/[0.04]">
+      <section ref={r3} className="reveal py-28 px-6 md:px-8 border-t border-white/[0.04]">
         <div className="max-w-3xl mx-auto">
           <p className="text-[11px] text-gold-400/60 uppercase tracking-[0.2em] text-center mb-4">Precision</p>
           <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-16">
@@ -228,7 +228,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── PRICING ───────────────────────────────── */}
-      <section ref={r4} className="reveal py-28 px-4 border-t border-white/[0.04]">
+      <section ref={r4} className="reveal py-28 px-6 md:px-8 border-t border-white/[0.04]">
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-[11px] text-gold-400/60 uppercase tracking-[0.2em] mb-4">Pricing</p>
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-16">Straightforward</h2>
@@ -254,7 +254,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── CTA ───────────────────────────────────── */}
-      <section ref={r5} className="reveal py-28 px-4 border-t border-white/[0.04]">
+      <section ref={r5} className="reveal py-28 px-6 md:px-8 border-t border-white/[0.04]">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-5">
             Your reputation depends on<br />every word you write.
