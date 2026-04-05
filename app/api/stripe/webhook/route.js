@@ -39,6 +39,13 @@ export async function POST(request) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object
+
+        // Check if this is a marketplace purchase
+        if (session.metadata?.type === 'marketplace_purchase') {
+          await handleMarketplacePurchase(session)
+          break
+        }
+
         const customerId = session.customer
         await activatePlan(customerId)
         break
@@ -76,6 +83,36 @@ export async function POST(request) {
     console.error('Webhook error:', err)
     return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 })
   }
+}
+
+async function handleMarketplacePurchase(session) {
+  const purchaseId = session.metadata?.purchase_id
+  const listingId = session.metadata?.listing_id
+
+  if (!purchaseId || !listingId) return
+
+  // Update purchase status
+  await sql`
+    UPDATE purchases SET
+      status = 'paid',
+      stripe_payment_id = ${session.payment_intent || session.id}
+    WHERE id = ${purchaseId}
+  `
+
+  // Mark listing as sold
+  await sql`UPDATE listings SET status = 'sold' WHERE id = ${listingId}`
+
+  // Update domain status
+  await sql`
+    UPDATE domains SET status = 'sold'
+    WHERE id = (
+      SELECT gs.domain_id FROM generated_sites gs
+      JOIN listings l ON l.site_id = gs.id
+      WHERE l.id = ${listingId}
+    )
+  `
+
+  console.log(`Marketplace purchase completed: ${purchaseId}, listing: ${listingId}`)
 }
 
 async function activatePlan(customerId) {
