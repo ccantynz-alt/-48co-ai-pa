@@ -1,3 +1,256 @@
+# CLAUDE.md — THE BIBLE
+# Built by Claude. Designed for humans. Commanded by Craig.
+# Last updated: April 7, 2026
+# Status: MAXIMUM AGGRESSION — Dominate or die.
+
+# =============================================================================
+# PART 1 — SALEONLINE.CO.NZ: THE DOMINATION MANDATE
+# =============================================================================
+# This section is the IRON BIBLE for saleonline.co.nz.
+# READ THIS BEFORE EVERY BUILD. READ THIS BEFORE EVERY CHANGE.
+# If you haven't read it this session, stop and read it now.
+
+## THE MISSION
+SaleOnline.co.nz is the most aggressive automated website factory in Australasia.
+We generate, sell, and host AI-built websites for NZ and AU businesses at a scale
+and quality no human-built competitor can match. We rank #1 on Google for every
+target keyword. We beat every competitor on speed, quality, price, and features.
+**Second place is failure. First place is everything.**
+
+## THE BOSS — CRAIG AUTHORISES ALL MAJOR CHANGES
+Craig is the owner. Craig runs the 24/7 airport shuttle business. Craig is not a
+developer. Craig's time is precious. But Craig is the boss, and these rules apply:
+
+### What Requires Craig's Explicit Authorisation (NO EXCEPTIONS)
+- Changing the core product direction or business model
+- Adding or removing revenue streams or pricing
+- Changing the marketplace domain (saleonline.co.nz)
+- Deleting or rewriting major features that already work
+- Deploying to production (staging is free to ship)
+- Adding new third-party paid services or subscriptions
+- Changing Stripe pricing, plans, or products
+- Publishing anything to social media or email lists
+- Registering or purchasing domains on Craig's behalf
+- Taking any action that costs money
+- Rebranding, renaming, or changing visual identity
+- Legal or compliance changes (terms, privacy, GDPR, etc.)
+
+### What Claude Can Do Autonomously (No Approval Needed)
+- Fix bugs
+- Refactor code for quality and speed
+- Upgrade dependencies to latest versions
+- Add new industry templates
+- Improve SEO, performance, accessibility
+- Write tests
+- Generate websites and list them on the marketplace
+- Scan for new available domains
+- Update documentation
+- Kill dead code
+- Deploy to staging
+- Write new content and improve existing pages
+
+**When in doubt: build it on staging, commit it, and tell Craig what you did in
+plain English. If it's risky, ask first. If it's reversible, ship it.**
+
+## THE 15 COMMANDMENTS OF SALEONLINE
+
+### Commandment 1: Read The Bible First — No Exceptions
+Every session, every task, every build: read this file FIRST. If you skip it,
+you will make the same mistakes as the previous website. This is not optional.
+This is the reason SaleOnline exists and the reason it will dominate.
+
+### Commandment 2: First Place Is Everything
+We rank #1 on Google for every target keyword or we fix it until we do.
+- Every page ships with perfect SEO (meta, schema, OG tags, sitemap, robots)
+- Every page scores 100/100 on Lighthouse (performance, accessibility, best practices, SEO)
+- Every page passes Core Web Vitals: LCP < 1.2s, INP < 100ms, CLS < 0.05
+- Every industry page targets specific long-tail keywords with search intent
+- Every generated website includes local SEO, schema.org markup, and Google Business integration
+- We monitor our rankings daily. If we drop, we fix it the same session.
+
+### Commandment 3: Speed Is A Weapon
+Slow software loses. We are the fastest or we are dead.
+- Homepage First Contentful Paint under 800ms on 4G
+- Marketplace browse page loads under 1s globally via Vercel Edge
+- AI content generation returns under 3 seconds per page
+- Full website generation (domain → deployed site) under 60 seconds
+- Database queries under 50ms (indexed, prepared, cached)
+- Static assets served from CDN with 1-year immutable cache
+- Images served as AVIF with WebP fallback
+- Zero render-blocking JavaScript on marketing pages
+
+### Commandment 4: Aggressive Technology — Bleeding Edge Only
+No old technology. Rip it out, put in the new. See Rule 13 below for the strict version.
+Mandatory stack for SaleOnline (as of April 2026):
+- Next.js 16.x (latest) with Turbopack
+- React 19.1+ with Server Components
+- Tailwind CSS 4.1+ with CSS-first architecture
+- TypeScript or modern JSX — no old patterns
+- Vercel Postgres for transactional data
+- Claude Sonnet 4.6 (claude-sonnet-4-6) for content generation
+- Claude Haiku 4.5 (claude-haiku-4-5-20251001) for fast utility tasks
+- Anthropic API version 2025-09-01 or later
+- Stripe latest API version
+- WHOIS protocol (free) for domain checks — NO paid domain APIs unless Craig approves
+- Vercel Edge Functions for low-latency API routes
+- Node.js 22 LTS or later
+
+### Commandment 5: Parallel Agents — Maximum Velocity
+When building new features, launch multiple agents in parallel to maximize output:
+- One agent researching the latest competitor offerings
+- One agent auditing existing code for issues
+- One agent building the new feature
+- One agent writing tests
+- One agent optimising performance
+Do not work serially when parallel is possible. Time is the only finite resource.
+
+### Commandment 6: Zero Bugs In Production — Test Before Ship
+We do not ship broken code. Period.
+- Every commit must pass `next build` before pushing
+- Every new page must be manually traced for broken imports, typos, missing components
+- Every API route must handle errors gracefully with user-friendly messages
+- Every form must validate input server-side AND client-side
+- Every payment flow must be tested end-to-end with Stripe test mode
+- Every database migration must be reversible
+- If a bug is found in production, it becomes priority #1 and is fixed the same session
+
+### Commandment 7: Annihilate Competitors — Know Them Cold
+Every session, audit the competition:
+- Wix, Squarespace, Webflow (global)
+- Shopify (for e-commerce site sales)
+- Flippa (for domain/site flipping marketplaces)
+- Empire Flippers (for established site sales)
+- Carrd, Framer (for simple landing pages)
+- Any new AI site builders released this month
+Document what they do well. Document what they charge. Document what they lack.
+Then build the feature that makes us 80-90% better.
+
+### Commandment 8: Aggressive Marketing Infrastructure
+Every page on saleonline.co.nz is built to convert AND rank:
+- Dedicated landing pages for every industry + city combination
+- Dedicated landing pages for every competitor comparison (vs Wix, vs Squarespace, vs Flippa)
+- Auto-generated blog posts on "Best {industry} websites in {city}"
+- Schema.org LocalBusiness, Product, Offer, and FAQPage markup on every listing
+- OpenGraph + Twitter cards for every listing (auto-generated preview images)
+- XML sitemap auto-updated on every new listing
+- robots.txt optimized for search crawlers
+- Internal linking strategy: every industry page links to relevant city pages and vice versa
+- Programmatic SEO: generate thousands of keyword-targeted landing pages
+
+### Commandment 9: Security Is Non-Negotiable
+We handle payments, personal data, and business assets. Security is existential.
+- All auth endpoints rate-limited
+- Passwords bcrypt hashed (10+ rounds)
+- Session tokens cryptographically random, 30-day expiry, revocable
+- All API routes validate input and sanitize output
+- CSP headers on every response, strict origins
+- No secrets in git history (check every commit)
+- Database files in .gitignore
+- Stripe webhooks verify signatures
+- Admin routes require ADMIN_SECRET
+- CORS locked down to known origins
+- SQL injection prevented via parameterized queries
+- XSS prevented via React auto-escaping + CSP
+- HTTPS only, HSTS enabled
+- Regular security audits (every session)
+
+### Commandment 10: Explain Everything In Plain English
+Craig is not a developer. Every change must be explained like this:
+- "Before, users saw X. Now they see Y. This matters because Z."
+- Never say "refactored the state machine" — say "fixed the marketplace loading getting stuck"
+- Every commit message explains WHAT and WHY in plain English
+- Every PR description leads with the business impact, not the code
+
+### Commandment 11: One Source Of Truth — This File
+Everything important lives in CLAUDE.md:
+- Current architecture
+- Known issues
+- Decisions and reasoning
+- Competitor analysis
+- Session audit results
+- Tech mandate
+If it's not in this file, it doesn't exist. Update this file every session.
+
+### Commandment 12: Kill Dead Code Without Mercy
+If code is unused, delete it. If a feature is abandoned, remove it. If a dependency
+is unused, uninstall it. Dead code is technical debt that slows us down and
+confuses future sessions.
+
+### Commandment 13: Measure Everything
+We do not ship features without measurement:
+- Every page has analytics (privacy-respecting)
+- Every conversion funnel is tracked (view → detail → checkout → purchase)
+- Every AI generation is logged (cost, duration, tokens, success)
+- Every error is logged and alerted
+- Every deploy has rollback capability
+- Dashboards visible to Craig at a glance
+
+### Commandment 14: Autonomous But Accountable
+Claude has permission to build, fix, audit, and deploy without asking Craig for
+every small thing. But Claude is accountable:
+- Every session ends with a summary of what was done
+- Every major decision is documented in this file with reasoning
+- Every risky action requires Craig's approval BEFORE being taken
+- Every failure is reported honestly, not hidden
+
+### Commandment 15: Mandatory Session Protocol For SaleOnline
+Every session that touches SaleOnline must follow this protocol:
+1. **READ** — Read this CLAUDE.md file (this section specifically)
+2. **SCAN** — Check saleonline.co.nz for broken pages, bugs, security issues, SEO regressions
+3. **AUDIT** — Check dependencies for newer versions, check AI models for upgrades, check competitors for new features
+4. **FIX** — Repair everything found before building new
+5. **BUILD** — Launch parallel agents for the new work
+6. **TEST** — Run `next build` and manually trace every change
+7. **DEPLOY** — Push to staging, test, then (with Craig's approval for prod) deploy
+8. **DOCUMENT** — Update this CLAUDE.md with everything that changed
+9. **REPORT** — Tell Craig in plain English what happened
+
+## PERFORMANCE TARGETS — NON-NEGOTIABLE
+
+| Metric | Target | Why |
+|--------|--------|-----|
+| Lighthouse Performance | 100 | Google rankings |
+| Lighthouse SEO | 100 | Google rankings |
+| Lighthouse Accessibility | 100 | Legal compliance + rankings |
+| Lighthouse Best Practices | 100 | Quality signal |
+| LCP (Largest Contentful Paint) | < 1.2s | Core Web Vitals |
+| INP (Interaction to Next Paint) | < 100ms | Core Web Vitals |
+| CLS (Cumulative Layout Shift) | < 0.05 | Core Web Vitals |
+| Time to First Byte | < 200ms | Perceived speed |
+| First Contentful Paint | < 800ms | Perceived speed |
+| JavaScript bundle size | < 100KB gzipped | Load speed |
+| Domain scan time | < 30s for 20 domains | User experience |
+| AI site generation | < 60s end-to-end | User experience |
+| Database queries | < 50ms p95 | Backend speed |
+| Uptime | 99.9% | Trust |
+
+## THE KILL LIST — WHAT WE DESTROY
+
+These competitors and we take their market share:
+1. **Flippa** — overpriced site marketplace, we're faster and AI-powered
+2. **Empire Flippers** — slow human brokerage, we automate it
+3. **Wix / Squarespace** — we sell ready-made sites, not DIY builders
+4. **Local web design agencies** — charging $5k+ for what we do in 60 seconds
+5. **Any "AI website builder"** — they let users build, we pre-build for them
+
+## SUCCESS METRICS — HOW WE KNOW WE'RE WINNING
+
+- **Month 1**: 100 sites generated, 10 sales, $10k revenue
+- **Month 3**: 500 sites generated, 50 sales/mo, $50k MRR (sales + subscriptions)
+- **Month 6**: 2000 sites generated, 150 sales/mo, $150k MRR
+- **Month 12**: 10,000 sites in inventory, 500+ sales/mo, $500k MRR
+- **Rankings**: Top 3 for "buy ready-made website NZ", "buy website Australia", "ready-made business website"
+- **Brand**: SaleOnline is the first name anyone in NZ/AU thinks of for ready-made websites
+
+---
+
+# =============================================================================
+# PART 2 — 48CO VOICE: ORIGINAL ENGINEERING STANDARDS
+# =============================================================================
+# The rules below apply to 48co Voice (grammar + voice product).
+# SaleOnline inherits these where relevant, but Part 1 takes precedence for
+# any SaleOnline-specific work.
+
 # CLAUDE.md — 48co Voice Engineering Standards & Rules
 # Built by Claude. Designed for humans.
 # Last deep scan: March 29, 2026
