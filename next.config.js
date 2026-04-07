@@ -2,6 +2,11 @@
 const nextConfig = {
   reactStrictMode: true,
 
+  // Fix Turbopack workspace root detection
+  turbopack: {
+    root: process.cwd(),
+  },
+
   // Security + caching headers
   async headers() {
     return [

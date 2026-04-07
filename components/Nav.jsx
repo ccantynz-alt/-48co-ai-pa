@@ -21,6 +21,7 @@ export default function Nav() {
           <a href="/compare" className="text-[13px] text-white/60 hover:text-white transition-colors">Compare</a>
           <a href="/security" className="text-[13px] text-white/60 hover:text-white transition-colors">Security</a>
           <a href="/live" className="text-[13px] text-white/60 hover:text-white transition-colors">Try Live</a>
+          <a href="/marketplace" className="text-[13px] text-gold-400 hover:text-gold-300 transition-colors font-medium">Marketplace</a>
         </div>
 
         <div className="flex items-center gap-3">
@@ -48,6 +49,7 @@ export default function Nav() {
           <Link href="/pricing" className="text-[14px] text-white/50 hover:text-white transition-colors font-medium py-1">Pricing</Link>
           <Link href="/security" className="text-[14px] text-white/50 hover:text-white transition-colors font-medium py-1">Security</Link>
           <Link href="/live" className="text-[14px] text-white/50 hover:text-white transition-colors font-medium py-1">Try Live</Link>
+          <Link href="/marketplace" className="text-[14px] text-gold-400 hover:text-gold-300 transition-colors font-medium py-1">Marketplace</Link>
           <Link href="/download" className="text-[14px] text-center px-5 py-2.5 rounded-lg bg-gold-400 text-navy-950 hover:bg-gold-300 transition-all font-semibold mt-2">
             Get Started
           </Link>
