@@ -10,7 +10,7 @@ const CODING_KEYWORDS = [
   'interface', 'struct', 'enum', 'module', 'require', 'extends',
   'implements', 'constructor', 'prototype', 'arrow function',
   'callback', 'promise', 'observable', 'middleware', 'endpoint',
-  'useState', 'useEffect', 'component', 'render',
+  'usestate', 'useeffect', 'component', 'render',
 ]
 
 /**

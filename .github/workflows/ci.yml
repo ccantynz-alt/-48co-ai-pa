@@ -31,6 +31,24 @@ jobs:
       - name: Build
         run: npm run build
 
+  extension-tests:
+    name: Extension Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        working-directory: extension
+        run: npm install
+
+      - name: Run tests
+        working-directory: extension
+        run: npx vitest run
+
   rust-check:
     name: Rust Check (Desktop & Shared)
     runs-on: ubuntu-latest
@@ -52,6 +70,14 @@ jobs:
       - name: Check tauri-app
         working-directory: tauri-app/src-tauri
         run: cargo check --all-targets
+
+      - name: Test shared-rust
+        working-directory: shared-rust
+        run: cargo test
+
+      - name: Test tauri-app
+        working-directory: tauri-app/src-tauri
+        run: cargo test
 
       - name: Clippy (shared-rust)
         working-directory: shared-rust
