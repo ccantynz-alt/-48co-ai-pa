@@ -7,8 +7,7 @@ export const dynamic = 'force-dynamic'
  * Query params: industry, country, sort (price_asc, price_desc, newest), search, page, limit
  */
 import { NextResponse } from 'next/server'
-import { sql } from '@vercel/postgres'
-import { initDb } from '../../../lib/db'
+import { sql, initDb } from '../../../lib/db'
 
 export async function GET(request) {
   try {

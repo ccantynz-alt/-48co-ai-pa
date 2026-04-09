@@ -1,9 +1,8 @@
 export const dynamic = "force-dynamic"
-import { sql } from '@vercel/postgres'
 import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { nanoid } from 'nanoid'
-import { initDb } from '../../../../lib/db'
+import { sql, initDb } from '../../../../lib/db'
 
 export async function POST(request) {
   try {

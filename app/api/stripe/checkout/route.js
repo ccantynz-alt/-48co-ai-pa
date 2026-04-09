@@ -9,9 +9,8 @@ export const dynamic = "force-dynamic"
  * Returns: { url: "https://checkout.stripe.com/..." }
  */
 import { NextResponse } from 'next/server'
-import { sql } from '@vercel/postgres'
 import { getStripe, PRICE_IDS, APP_URL } from '../../../../lib/stripe'
-import { authenticate, initDb } from '../../../../lib/db'
+import { sql, authenticate, initDb } from '../../../../lib/db'
 
 export async function POST(request) {
   try {

@@ -11,9 +11,8 @@ export const dynamic = 'force-dynamic'
  * Auth: Requires admin (checked via ADMIN_SECRET header)
  */
 import { NextResponse } from 'next/server'
-import { sql } from '@vercel/postgres'
 import { nanoid } from 'nanoid'
-import { initDb } from '../../../../lib/db'
+import { sql, initDb } from '../../../../lib/db'
 import { checkDomainsInBatch, generateDomainCandidates, estimateDomainValue, INDUSTRIES } from '../../../../lib/domains'
 import { scoreDomainOpportunity } from '../../../../lib/site-generator'
 

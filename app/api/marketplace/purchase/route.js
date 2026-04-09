@@ -10,9 +10,8 @@ export const dynamic = 'force-dynamic'
  * Auth: Requires logged-in user
  */
 import { NextResponse } from 'next/server'
-import { sql } from '@vercel/postgres'
 import { nanoid } from 'nanoid'
-import { authenticate, initDb } from '../../../../lib/db'
+import { sql, authenticate, initDb } from '../../../../lib/db'
 import { getStripe, APP_URL } from '../../../../lib/stripe'
 
 export async function POST(request) {

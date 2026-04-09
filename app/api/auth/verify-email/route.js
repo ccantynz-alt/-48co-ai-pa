@@ -1,8 +1,7 @@
 export const dynamic = "force-dynamic"
-import { sql } from '@vercel/postgres'
 import { NextResponse } from 'next/server'
 import { nanoid } from 'nanoid'
-import { initDb } from '../../../../lib/db'
+import { sql, initDb } from '../../../../lib/db'
 
 /**
  * POST /api/auth/verify-email — send a verification code to the user's email

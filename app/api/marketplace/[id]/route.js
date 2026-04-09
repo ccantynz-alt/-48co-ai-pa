@@ -6,8 +6,7 @@ export const dynamic = 'force-dynamic'
  * Get a single marketplace listing with full site preview.
  */
 import { NextResponse } from 'next/server'
-import { sql } from '@vercel/postgres'
-import { initDb } from '../../../../lib/db'
+import { sql, initDb } from '../../../../lib/db'
 
 export async function GET(request, { params }) {
   try {

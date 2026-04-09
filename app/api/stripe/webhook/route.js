@@ -9,9 +9,8 @@ export const dynamic = "force-dynamic"
  * Required env: STRIPE_WEBHOOK_SECRET
  */
 import { NextResponse } from 'next/server'
-import { sql } from '@vercel/postgres'
 import { getStripe } from '../../../../lib/stripe'
-import { initDb } from '../../../../lib/db'
+import { sql, initDb } from '../../../../lib/db'
 
 // Stripe needs the raw body to verify the webhook signature
 export const runtime = 'nodejs'
