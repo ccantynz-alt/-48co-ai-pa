@@ -1,0 +1,251 @@
+// 48Co — multi-project AI website builder
+// Schema designed for multi-project operators from day one.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  extensions = [pgvector(map: "vector")]
+}
+
+// ============================================================================
+//  USERS
+// ============================================================================
+model User {
+  id          String   @id @default(cuid())
+  clerkId     String   @unique
+  email       String   @unique
+  name        String?
+  avatarUrl   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  projects        Project[]
+  memoryFiles     MemoryFile[]    @relation("UserMemory")
+  procedural      ProceduralMemory[]
+  events          Event[]
+}
+
+// ============================================================================
+//  PROJECTS — core unit. A user has many. Each is an independent site/app.
+// ============================================================================
+model Project {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  slug        String   @unique                   // used for {slug}.48co.ai
+  name        String
+  description String?
+  kind        ProjectKind @default(WEBSITE)       // site, saas, ecommerce, dashboard, etc.
+  status      ProjectStatus @default(ACTIVE)
+
+  // style + brand — learned by Memory Curator, applied cross-session
+  brandPrimary   String?
+  brandAccent    String?
+  fontFamily     String?
+  voice          String?                          // brand voice notes
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  lastOpenedAt DateTime?
+
+  events       Event[]
+  files        ProjectFile[]
+  memoryFiles  MemoryFile[]  @relation("ProjectMemory")
+  embeddings   Embedding[]
+  deployments  Deployment[]
+  secrets      ProjectSecret[]
+  snapshots    Snapshot[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+enum ProjectKind {
+  WEBSITE
+  LANDING
+  SAAS
+  ECOMMERCE
+  DASHBOARD
+  BLOG
+  PORTFOLIO
+  OTHER
+}
+
+enum ProjectStatus {
+  ACTIVE
+  ARCHIVED
+  PUBLISHED
+}
+
+// ============================================================================
+//  EVENT LOG — every interaction, append-only. Basis for replay + training.
+// ============================================================================
+model Event {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId  String?
+  project    Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  kind       EventKind
+  agent      AgentRole?                            // which agent emitted it
+  content    Json                                  // full payload
+  tokenCost  Int?                                  // input tokens
+  tokenOut   Int?                                  // output tokens
+  costUsd    Decimal? @db.Decimal(10, 6)
+  model      String?
+
+  createdAt  DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([projectId, createdAt])
+  @@index([kind])
+}
+
+enum EventKind {
+  USER_PROMPT
+  AGENT_PLAN
+  AGENT_CRITIQUE
+  AGENT_ACTION
+  TOOL_CALL
+  TOOL_RESULT
+  FILE_WRITE
+  FILE_EDIT
+  DEPLOY
+  ERROR
+  COST_ALERT
+  LOOP_DETECTED
+  TASK_KILLED
+}
+
+enum AgentRole {
+  PLANNER
+  ARCHITECT
+  BUILDER
+  DESIGNER
+  REVIEWER
+  BROWSER
+  MEMORY_CURATOR
+  COST_SENTINEL
+}
+
+// ============================================================================
+//  PROJECT FILES — the virtual filesystem per project
+// ============================================================================
+model ProjectFile {
+  id         String   @id @default(cuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  path       String
+  content    String   @db.Text
+  kind       String?                               // mime-ish hint
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([projectId, path])
+  @@index([projectId])
+}
+
+// ============================================================================
+//  MEMORY — three layers: episodic, procedural, semantic
+// ============================================================================
+model MemoryFile {
+  // Procedural/contextual memory written by Claude's Memory tool.
+  // Scoped to either a specific project OR the whole user (cross-project).
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation("UserMemory", fields: [userId], references: [id], onDelete: Cascade)
+  projectId  String?
+  project    Project? @relation("ProjectMemory", fields: [projectId], references: [id], onDelete: Cascade)
+
+  path       String                                // e.g. "/memories/decisions.md"
+  content    String   @db.Text
+  scope      MemoryScope                           // per-project or cross-project
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, projectId, path])
+  @@index([userId, scope])
+}
+
+enum MemoryScope {
+  PROJECT
+  PORTFOLIO        // cross-project — the moat
+}
+
+model ProceduralMemory {
+  // "How this user likes things done" — distilled from corrections over time.
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  key        String                                // e.g. "preferred-stack", "voice-style"
+  value      String   @db.Text
+  confidence Float    @default(0.5)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, key])
+  @@index([userId])
+}
+
+model Embedding {
+  // Semantic recall — vector embeddings of chat turns, file diffs, decisions.
+  id         String   @id @default(cuid())
+  projectId  String?
+  project    Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sourceId   String                                // event.id, file.id, or memory.id
+  sourceKind String                                // "event" | "file" | "memory"
+  text       String   @db.Text
+  // vector column added via raw migration (pgvector 1536d)
+  createdAt  DateTime @default(now())
+
+  @@index([projectId])
+  @@index([sourceKind])
+}
+
+// ============================================================================
+//  DEPLOYMENTS, SNAPSHOTS, SECRETS
+// ============================================================================
+model Deployment {
+  id         String   @id @default(cuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  url        String
+  status     String   @default("pending")         // pending, live, failed
+  commitSha  String?
+  buildLog   String?  @db.Text
+  createdAt  DateTime @default(now())
+
+  @@index([projectId, createdAt])
+}
+
+model Snapshot {
+  // Point-in-time rollback. "Try something risky, revert in one click."
+  id         String   @id @default(cuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  label      String?
+  manifest   Json                                  // map of path → content hash
+  createdAt  DateTime @default(now())
+
+  @@index([projectId, createdAt])
+}
+
+model ProjectSecret {
+  id         String   @id @default(cuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  key        String
+  valueEnc   String   @db.Text                     // encrypted at rest
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([projectId, key])
+  @@index([projectId])
+}
