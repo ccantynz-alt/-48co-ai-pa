@@ -1,0 +1,17 @@
+name = "48co"
+compatibility_date = "2025-04-23"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".next"
+
+[vars]
+NEXT_PUBLIC_APP_URL = "https://app.48co.ai"
+
+# Secrets (set via `wrangler pages secret put <NAME>`):
+#   ANTHROPIC_API_KEY, OPENROUTER_API_KEY,
+#   DATABASE_URL, DIRECT_URL,
+#   CLERK_SECRET_KEY, NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+#   CLOUDFLARE_API_TOKEN, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY
+
+# Custom domain binding is configured in the Cloudflare Pages dashboard:
+#   app.48co.ai   -> this project
+#   *.48co.ai     -> user projects (wildcard, Session 4 wires)
