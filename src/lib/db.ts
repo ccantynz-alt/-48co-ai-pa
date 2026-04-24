@@ -1,6 +1,5 @@
 import { neon } from '@neondatabase/serverless';
 
-// Lazily initialized so build passes without DATABASE_URL
 let _sql: ReturnType<typeof neon> | null = null;
 
 export function getSql() {
@@ -13,16 +12,6 @@ export function getSql() {
   return _sql;
 }
 
-// Convenience proxy for tagged-template usage: sql`SELECT ...`
-export const sql = new Proxy(
-  ((...args: Parameters<ReturnType<typeof neon>>) => getSql()(...args)) as ReturnType<typeof neon>,
-  {
-    get(_target, prop: string | symbol) {
-      return (getSql() as unknown as Record<string | symbol, unknown>)[prop];
-    },
-  }
-);
-
 export async function initDb() {
   const db = getSql();
 
@@ -32,13 +21,7 @@ export async function initDb() {
       email TEXT UNIQUE NOT NULL,
       password_hash TEXT NOT NULL,
       name TEXT NOT NULL,
-      business_name TEXT,
-      phone TEXT,
-      address TEXT,
-      abn TEXT,
-      logo_url TEXT,
-      stripe_customer_id TEXT,
-      stripe_subscription_id TEXT,
+      github_token TEXT,
       plan TEXT DEFAULT 'free',
       created_at TIMESTAMPTZ DEFAULT NOW(),
       updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -46,92 +29,74 @@ export async function initDb() {
   `;
 
   await db`
-    CREATE TABLE IF NOT EXISTS customers (
+    CREATE TABLE IF NOT EXISTS projects (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       name TEXT NOT NULL,
-      email TEXT,
-      phone TEXT,
-      address TEXT,
-      notes TEXT,
-      created_at TIMESTAMPTZ DEFAULT NOW(),
-      updated_at TIMESTAMPTZ DEFAULT NOW()
-    )
-  `;
-
-  await db`
-    CREATE TABLE IF NOT EXISTS jobs (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      customer_id UUID REFERENCES customers(id) ON DELETE SET NULL,
-      title TEXT NOT NULL,
       description TEXT,
-      status TEXT DEFAULT 'pending' CHECK (status IN ('pending','scheduled','in_progress','completed','cancelled')),
-      priority TEXT DEFAULT 'normal' CHECK (priority IN ('low','normal','high','urgent')),
-      scheduled_start TIMESTAMPTZ,
-      scheduled_end TIMESTAMPTZ,
-      actual_start TIMESTAMPTZ,
-      actual_end TIMESTAMPTZ,
-      location TEXT,
-      notes TEXT,
+      color TEXT DEFAULT '#f97316',
+      default_model TEXT DEFAULT 'claude-sonnet-4-6',
       created_at TIMESTAMPTZ DEFAULT NOW(),
       updated_at TIMESTAMPTZ DEFAULT NOW()
     )
   `;
 
   await db`
-    CREATE TABLE IF NOT EXISTS quotes (
+    CREATE TABLE IF NOT EXISTS project_repos (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      customer_id UUID REFERENCES customers(id) ON DELETE SET NULL,
-      job_id UUID REFERENCES jobs(id) ON DELETE SET NULL,
-      quote_number TEXT NOT NULL,
-      title TEXT NOT NULL,
-      description TEXT,
-      line_items JSONB DEFAULT '[]',
-      subtotal NUMERIC(10,2) DEFAULT 0,
-      tax_rate NUMERIC(5,2) DEFAULT 15,
-      tax_amount NUMERIC(10,2) DEFAULT 0,
-      total NUMERIC(10,2) DEFAULT 0,
-      status TEXT DEFAULT 'draft' CHECK (status IN ('draft','sent','accepted','declined','expired')),
-      valid_until DATE,
-      notes TEXT,
-      ai_generated BOOLEAN DEFAULT FALSE,
+      project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+      owner TEXT NOT NULL,
+      name TEXT NOT NULL,
+      full_name TEXT NOT NULL,
+      default_branch TEXT DEFAULT 'main',
+      last_indexed_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;
+
+  await db`
+    CREATE TABLE IF NOT EXISTS project_memory (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+      key TEXT NOT NULL,
+      value TEXT NOT NULL,
+      category TEXT DEFAULT 'general',
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      updated_at TIMESTAMPTZ DEFAULT NOW(),
+      UNIQUE(project_id, key)
+    )
+  `;
+
+  await db`
+    CREATE TABLE IF NOT EXISTS conversations (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+      title TEXT,
+      model TEXT DEFAULT 'claude-sonnet-4-6',
+      message_count INTEGER DEFAULT 0,
+      summary TEXT,
       created_at TIMESTAMPTZ DEFAULT NOW(),
       updated_at TIMESTAMPTZ DEFAULT NOW()
     )
   `;
 
   await db`
-    CREATE TABLE IF NOT EXISTS invoices (
+    CREATE TABLE IF NOT EXISTS messages (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      customer_id UUID REFERENCES customers(id) ON DELETE SET NULL,
-      job_id UUID REFERENCES jobs(id) ON DELETE SET NULL,
-      quote_id UUID REFERENCES quotes(id) ON DELETE SET NULL,
-      invoice_number TEXT NOT NULL,
-      title TEXT NOT NULL,
-      line_items JSONB DEFAULT '[]',
-      subtotal NUMERIC(10,2) DEFAULT 0,
-      tax_rate NUMERIC(5,2) DEFAULT 15,
-      tax_amount NUMERIC(10,2) DEFAULT 0,
-      total NUMERIC(10,2) DEFAULT 0,
-      amount_paid NUMERIC(10,2) DEFAULT 0,
-      status TEXT DEFAULT 'draft' CHECK (status IN ('draft','sent','partial','paid','overdue','cancelled')),
-      due_date DATE,
-      paid_at TIMESTAMPTZ,
-      stripe_payment_intent_id TEXT,
-      notes TEXT,
-      created_at TIMESTAMPTZ DEFAULT NOW(),
-      updated_at TIMESTAMPTZ DEFAULT NOW()
+      conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+      role TEXT NOT NULL CHECK (role IN ('user', 'assistant', 'system')),
+      content TEXT NOT NULL,
+      model TEXT,
+      tokens_used INTEGER,
+      created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `;
 
-  await db`CREATE INDEX IF NOT EXISTS idx_customers_user_id ON customers(user_id)`;
-  await db`CREATE INDEX IF NOT EXISTS idx_jobs_user_id ON jobs(user_id)`;
-  await db`CREATE INDEX IF NOT EXISTS idx_jobs_customer_id ON jobs(customer_id)`;
-  await db`CREATE INDEX IF NOT EXISTS idx_quotes_user_id ON quotes(user_id)`;
-  await db`CREATE INDEX IF NOT EXISTS idx_invoices_user_id ON invoices(user_id)`;
+  await db`CREATE INDEX IF NOT EXISTS idx_projects_user_id ON projects(user_id)`;
+  await db`CREATE INDEX IF NOT EXISTS idx_project_repos_project_id ON project_repos(project_id)`;
+  await db`CREATE INDEX IF NOT EXISTS idx_project_memory_project_id ON project_memory(project_id)`;
+  await db`CREATE INDEX IF NOT EXISTS idx_conversations_project_id ON conversations(project_id)`;
+  await db`CREATE INDEX IF NOT EXISTS idx_messages_conversation_id ON messages(conversation_id)`;
 
   return { ok: true };
 }
