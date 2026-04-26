@@ -1,0 +1,16 @@
+{
+  "name": "48co — AI Platform for Trades",
+  "short_name": "48co",
+  "description": "AI quoting, compliance, marketplace for tradies and homeowners in NZ & Australia",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#f97316",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -7,6 +7,10 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 export const metadata: Metadata = {
   title: "48co — AI Platform for Trades & Construction",
   description: "AI-powered quoting, invoicing, compliance, and license management for Australian and New Zealand tradespeople.",
+  manifest: "/manifest.json",
+  themeColor: "#f97316",
+  icons: { icon: "/icon.svg", apple: "/icon.svg" },
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "48co" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

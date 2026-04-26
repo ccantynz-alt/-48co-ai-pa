@@ -9,8 +9,13 @@ const PUBLIC_PATHS = [
   "/find-tradies",
   "/tradies",
   "/jobs-board",
+  "/pricing",
+  "/a",
   "/api/auth",
   "/api/marketplace/jobs",
+  "/api/associations",
+  "/manifest.json",
+  "/icon.svg",
 ];
 
 export async function proxy(req: NextRequest) {

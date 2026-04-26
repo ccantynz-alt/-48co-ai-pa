@@ -34,15 +34,20 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  jobs           Job[]
-  quotes         Quote[]
-  invoices       Invoice[]
-  licenses       License[]
-  clients        Client[]
-  postedJobs     MarketplaceJob[] @relation("HomeownerJobs")
-  bids           Bid[]
-  reviewsGiven   Review[]         @relation("Reviewer")
-  reviewsReceived Review[]        @relation("Reviewee")
+  jobs                Job[]
+  quotes              Quote[]
+  invoices            Invoice[]
+  licenses            License[]
+  clients             Client[]
+  postedJobs          MarketplaceJob[]        @relation("HomeownerJobs")
+  bids                Bid[]
+  reviewsGiven        Review[]                @relation("Reviewer")
+  reviewsReceived     Review[]                @relation("Reviewee")
+  subscription        Subscription?
+  stripeAccount       StripeAccount?
+  notifications       Notification[]
+  associationMembers  AssociationMembership[]
+  associationAdmins   AssociationAdmin[]
 }
 
 model Client {
@@ -143,6 +148,7 @@ model Invoice {
   client         Client?          @relation(fields: [clientId], references: [id])
   marketplaceJob MarketplaceJob?  @relation(fields: [marketplaceJobId], references: [id])
   items          InvoiceItem[]
+  payment        Payment?
 }
 
 model InvoiceItem {
@@ -238,4 +244,99 @@ model Review {
   marketplaceJob MarketplaceJob @relation(fields: [marketplaceJobId], references: [id], onDelete: Cascade)
   reviewer       User           @relation("Reviewer", fields: [reviewerId], references: [id], onDelete: Cascade)
   reviewee       User           @relation("Reviewee", fields: [revieweeId], references: [id], onDelete: Cascade)
+}
+
+model Association {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?
+  logoUrl     String?
+  brandColor  String   @default("#f97316")
+  country     String   @default("AU")
+  tradeFocus  String?
+  websiteUrl  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  memberships AssociationMembership[]
+  admins      AssociationAdmin[]
+}
+
+model AssociationMembership {
+  id            String   @id @default(cuid())
+  associationId String
+  userId        String
+  status        String   @default("ACTIVE")
+  memberNumber  String?
+  joinedAt      DateTime @default(now())
+
+  association Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([associationId, userId])
+}
+
+model AssociationAdmin {
+  id            String @id @default(cuid())
+  associationId String
+  userId        String
+
+  association Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([associationId, userId])
+}
+
+model Subscription {
+  id                   String    @id @default(cuid())
+  userId               String    @unique
+  status               String    @default("TRIAL")
+  plan                 String    @default("STANDARD")
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  currentPeriodEnd     DateTime?
+  trialEndsAt          DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model StripeAccount {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  stripeAccountId String   @unique
+  onboarded       Boolean  @default(false)
+  payoutsEnabled  Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  body      String
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id                  String    @id @default(cuid())
+  invoiceId           String    @unique
+  amount              Float
+  platformFee         Float
+  stripePaymentIntent String?
+  status              String    @default("PENDING")
+  paidAt              DateTime?
+  createdAt           DateTime  @default(now())
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
 }

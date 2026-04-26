@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { notify, emailTemplates } from "@/lib/notifications";
+import { formatCurrency } from "@/lib/utils";
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
@@ -12,7 +14,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
-  const job = await prisma.marketplaceJob.findUnique({ where: { id: marketplaceJobId } });
+  const job = await prisma.marketplaceJob.findUnique({
+    where: { id: marketplaceJobId },
+    include: { homeowner: true },
+  });
   if (!job || job.status !== "OPEN") {
     return NextResponse.json({ error: "Job not accepting bids" }, { status: 400 });
   }
@@ -37,5 +42,20 @@ export async function POST(req: NextRequest) {
       estimatedDays: estimatedDays ? parseInt(estimatedDays) : null,
     },
   });
+
+  const tradie = await prisma.user.findUnique({ where: { id: session.userId } });
+  const link = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/jobs-board/${marketplaceJobId}`;
+  await notify({
+    userId: job.homeowner.id,
+    type: "BID_RECEIVED",
+    title: `New bid: ${formatCurrency(parseFloat(amount), job.country)}`,
+    body: `${tradie?.companyName || tradie?.name || "A tradie"} bid on your job "${job.title}".`,
+    link: `/jobs-board/${marketplaceJobId}`,
+    email: {
+      to: job.homeowner.email,
+      ...emailTemplates.bidReceived(job.title, tradie?.companyName || tradie?.name || "A tradie", formatCurrency(parseFloat(amount), job.country), link),
+    },
+  });
+
   return NextResponse.json(bid);
 }
