@@ -2,21 +2,39 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const COMPLIANCE_TEMPLATES: Record<string, { category: string; items: string[] }[]> = {
+const NZ_TEMPLATES: Record<string, { category: string; items: string[] }[]> = {
   Electrician: [
-    { category: "Licensing", items: ["Electrical contractor licence current", "Workers carry valid electrician licence", "Licence displayed on vehicle/site"] },
-    { category: "Safety", items: ["SWMS completed for high-risk work", "PPE provided and worn", "Lockout/tagout procedures followed", "RCD protection in use"] },
-    { category: "Documentation", items: ["Certificate of Compliance issued", "Test and inspection report completed", "Energy network notification lodged (if required)"] },
+    { category: "Licensing (NZ)", items: ["Electrical worker registered with EWRB", "Practising Licence current", "Electrical Workers ID card on site"] },
+    { category: "Compliance Documentation", items: ["Certificate of Compliance (CoC) issued under ESR 2010", "Electrical Safety Certificate (ESC) for prescribed work", "Record of Inspection (RoI) for high-risk PEW"] },
+    { category: "Health & Safety (HSWA 2015)", items: ["Site-specific JSA / Task Analysis completed", "Lockout-tagout procedure followed", "PPE: arc-rated clothing, insulated tools", "Notifiable work notified to WorkSafe NZ if required"] },
   ],
   Plumber: [
-    { category: "Licensing", items: ["Plumbing contractor licence current", "All workers hold valid plumbing licence", "Gas fitting licence if applicable"] },
-    { category: "Safety", items: ["SWMS completed", "PPE worn on site", "Confined space entry procedures (if applicable)"] },
-    { category: "Documentation", items: ["Certificate of Compliance issued (NSW/VIC)", "Compliance plate fitted to hot water system", "Council notification if required"] },
+    { category: "Licensing (NZ)", items: ["PGDB Certifying Plumber/Gasfitter/Drainlayer licence current", "Practising Licence held", "Supervision arrangement in place if exempt"] },
+    { category: "Compliance Documentation", items: ["Producer Statement (PS3) for restricted plumbing work", "Gas Safety Certificate issued (gasfitting)", "Drainage as-built plan submitted to council"] },
+    { category: "Health & Safety", items: ["Confined space entry permit (if applicable)", "Hot work permit", "Asbestos check on pre-2000 properties"] },
   ],
   Builder: [
-    { category: "Licensing", items: ["Builder licence or owner-builder permit current", "Sub-contractors hold valid licences"] },
-    { category: "Safety", items: ["SWMS for high-risk construction work", "White card held by all workers", "Site safety plan in place", "Fall protection installed"] },
-    { category: "Documentation", items: ["Development approval obtained", "Construction certificate issued", "Occupation certificate obtained on completion"] },
+    { category: "Licensing (NZ)", items: ["LBP licence current for restricted building work (RBW)", "Memorandum (Record of Building Work) prepared", "Sub-trades hold relevant LBP classes"] },
+    { category: "Building Consent", items: ["Building consent issued", "Inspections booked at correct stages", "Code Compliance Certificate (CCC) applied for on completion"] },
+    { category: "Health & Safety (HSWA)", items: ["Site-specific safety plan", "Notifiable work notified to WorkSafe NZ (>5 days, depth >1.5m, height >5m)", "Asbestos management plan if pre-2000", "Scaffolding certificate >5m"] },
+  ],
+};
+
+const AU_TEMPLATES: Record<string, { category: string; items: string[] }[]> = {
+  Electrician: [
+    { category: "Licensing (AU)", items: ["State electrical licence current (NSW Fair Trading / VIC ESV / QLD ESO etc.)", "Workers hold valid Electrician licence class", "Supervisor Certificate current if required"] },
+    { category: "Compliance Documentation", items: ["Certificate of Electrical Compliance (CoC / CCEW) issued", "Test results recorded per AS/NZS 3000", "Notice of Service Work submitted to network if required"] },
+    { category: "WHS", items: ["SWMS prepared for high-risk construction work", "RCD / safety switch testing per AS/NZS 3760", "PPE: insulated gloves, arc-rated workwear", "White card held by all on-site workers"] },
+  ],
+  Plumber: [
+    { category: "Licensing (AU)", items: ["State plumbing licence current", "Gas Fitting endorsement if applicable", "Backflow Prevention accreditation if required"] },
+    { category: "Compliance Documentation", items: ["Certificate of Compliance issued (NSW/VIC/SA)", "Gas Compliance Certificate issued and lodged", "Sewer / stormwater diagram lodged with water authority"] },
+    { category: "WHS", items: ["SWMS for excavation / confined space", "Asbestos register checked on pre-1990 properties", "Hot work permit if soldering near combustibles"] },
+  ],
+  Builder: [
+    { category: "Licensing (AU)", items: ["State builder licence current (e.g. NSW Fair Trading, QBCC, VBA)", "Home indemnity / warranty insurance in place", "Sub-contractors hold valid trade licences"] },
+    { category: "Approvals", items: ["Development Approval (DA) issued", "Construction Certificate (CC) issued", "Occupation Certificate (OC) obtained on completion"] },
+    { category: "WHS", items: ["Site-specific WHS Management Plan", "SWMS for high-risk construction work (Cl 291 WHS Reg)", "White Card held by all workers", "Principal Contractor appointed for work >$250k"] },
   ],
 };
 
@@ -38,18 +56,22 @@ export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { jobId, generateFromTrade } = await req.json();
+  const body = await req.json();
+  const { jobId, generateFromTrade, category, item } = body;
+
   const job = await prisma.job.findFirst({ where: { id: jobId, userId: session.userId } });
   if (!job) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   if (generateFromTrade) {
-    const tradeKey = Object.keys(COMPLIANCE_TEMPLATES).find((k) =>
+    const user = await prisma.user.findUnique({ where: { id: session.userId } });
+    const templates = user?.country === "NZ" ? NZ_TEMPLATES : AU_TEMPLATES;
+    const tradeKey = Object.keys(templates).find((k) =>
       session.tradeType.toLowerCase().includes(k.toLowerCase())
     );
-    const template = tradeKey ? COMPLIANCE_TEMPLATES[tradeKey] : COMPLIANCE_TEMPLATES["Builder"];
+    const template = tradeKey ? templates[tradeKey] : templates["Builder"];
 
     const items = template.flatMap((section) =>
-      section.items.map((item) => ({ jobId, category: section.category, item, status: "PENDING" }))
+      section.items.map((i) => ({ jobId, category: section.category, item: i, status: "PENDING" }))
     );
 
     await prisma.complianceCheck.createMany({ data: items });
@@ -57,7 +79,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(checks);
   }
 
-  const { category, item } = await req.json();
   const check = await prisma.complianceCheck.create({ data: { jobId, category, item, status: "PENDING" } });
   return NextResponse.json(check);
 }

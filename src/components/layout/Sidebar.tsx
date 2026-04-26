@@ -8,7 +8,7 @@ import {
   Briefcase,
   Award,
   ShieldCheck,
-  Users,
+  Search,
   LogOut,
   Zap,
 } from "lucide-react";
@@ -16,11 +16,13 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/jobs", label: "Jobs", icon: Briefcase },
+  { href: "/jobs", label: "My Jobs", icon: Briefcase },
   { href: "/quotes", label: "Quotes", icon: FileText },
   { href: "/invoices", label: "Invoices", icon: Receipt },
   { href: "/licenses", label: "Licenses", icon: Award },
   { href: "/compliance", label: "Compliance", icon: ShieldCheck },
+  { href: "/jobs-board", label: "Jobs Board", icon: Search },
+  { href: "/profile", label: "My Profile", icon: Award },
 ];
 
 export function Sidebar() {

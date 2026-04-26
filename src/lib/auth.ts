@@ -10,6 +10,7 @@ export interface SessionPayload {
   email: string;
   name: string;
   tradeType: string;
+  role: string;
   [key: string]: string;
 }
 

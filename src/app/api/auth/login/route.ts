@@ -20,10 +20,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
     }
 
-    const token = await createSession({ userId: user.id, email: user.email, name: user.name, tradeType: user.tradeType });
+    const token = await createSession({ userId: user.id, email: user.email, name: user.name, tradeType: user.tradeType, role: user.role });
     await setSessionCookie(token);
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, role: user.role });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
