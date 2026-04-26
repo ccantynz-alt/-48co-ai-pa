@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-geist);
+  --color-orange-500: #f97316;
+  --color-orange-600: #ea6c0f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-geist), system-ui, sans-serif;
+}

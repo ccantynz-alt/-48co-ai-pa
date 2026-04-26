@@ -1,0 +1,167 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  phone        String?
+  tradeType    String
+  companyName  String?
+  abn          String?
+  nzbn         String?
+  country      String   @default("AU")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  jobs      Job[]
+  quotes    Quote[]
+  invoices  Invoice[]
+  licenses  License[]
+  clients   Client[]
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  email     String?
+  phone     String?
+  address   String?
+  createdAt DateTime @default(now())
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobs     Job[]
+  quotes   Quote[]
+  invoices Invoice[]
+}
+
+model Job {
+  id          String    @id @default(cuid())
+  userId      String
+  clientId    String?
+  title       String
+  description String
+  address     String?
+  status      String    @default("LEAD")
+  tradeType   String?
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client           Client?           @relation(fields: [clientId], references: [id])
+  quotes           Quote[]
+  complianceChecks ComplianceCheck[]
+}
+
+model Quote {
+  id          String    @id @default(cuid())
+  userId      String
+  jobId       String?
+  clientId    String?
+  number      String
+  title       String
+  description String?
+  status      String    @default("DRAFT")
+  validUntil  DateTime?
+  notes       String?
+  aiGenerated Boolean   @default(false)
+  subtotal    Float     @default(0)
+  gst         Float     @default(0)
+  total       Float     @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user     User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job      Job?        @relation(fields: [jobId], references: [id])
+  client   Client?     @relation(fields: [clientId], references: [id])
+  items    QuoteItem[]
+  invoices Invoice[]
+}
+
+model QuoteItem {
+  id          String @id @default(cuid())
+  quoteId     String
+  description String
+  quantity    Float  @default(1)
+  unit        String @default("each")
+  unitPrice   Float
+  total       Float
+
+  quote Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+}
+
+model Invoice {
+  id                String    @id @default(cuid())
+  userId            String
+  quoteId           String?
+  clientId          String?
+  number            String
+  title             String
+  status            String    @default("DRAFT")
+  dueDate           DateTime?
+  paidAt            DateTime?
+  stripePaymentLink String?
+  notes             String?
+  subtotal          Float     @default(0)
+  gst               Float     @default(0)
+  total             Float     @default(0)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quote  Quote?        @relation(fields: [quoteId], references: [id])
+  client Client?       @relation(fields: [clientId], references: [id])
+  items  InvoiceItem[]
+}
+
+model InvoiceItem {
+  id          String @id @default(cuid())
+  invoiceId   String
+  description String
+  quantity    Float  @default(1)
+  unit        String @default("each")
+  unitPrice   Float
+  total       Float
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+}
+
+model License {
+  id          String    @id @default(cuid())
+  userId      String
+  type        String
+  name        String
+  number      String?
+  issuedBy    String?
+  issuedAt    DateTime?
+  expiresAt   DateTime?
+  status      String    @default("ACTIVE")
+  documentUrl String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ComplianceCheck {
+  id        String    @id @default(cuid())
+  jobId     String
+  category  String
+  item      String
+  status    String    @default("PENDING")
+  notes     String?
+  checkedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  job Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
+}
